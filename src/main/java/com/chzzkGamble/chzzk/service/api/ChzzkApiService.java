@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.service;
+package com.chzzkGamble.chzzk.service.api;
 
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.chzzk.dto.ChatInfoApiResponse;
@@ -11,15 +11,16 @@ import org.springframework.stereotype.Service;
 public class ChzzkApiService {
 
     private static final Gson gson = new Gson();
-    private final ChzzkRestClient client;
+    private final ChzzkRestClient restClient;
 
-    public ChzzkApiService(ChzzkRestClient client) {
-        this.client = client;
+
+    public ChzzkApiService(ChzzkRestClient restClient) {
+        this.restClient = restClient;
     }
 
     public ChannelInfoApiResponse getChannelInfo(String channelId) {
-        String additionalUrl = "/service/v1/channels/" + channelId;
-        String jsonString = client.get(additionalUrl);
+        String url = "https://api.chzzk.naver.com/service/v1/channels/" + channelId;
+        String jsonString = restClient.get(url);
 
         JsonObject content = JsonParser.parseString(jsonString)
                 .getAsJsonObject()
@@ -29,13 +30,24 @@ public class ChzzkApiService {
     }
 
     public ChatInfoApiResponse getChatInfo(String channelId) {
-        String additionalUrl = "/polling/v3/channels/" + channelId + "/live-status";
-        String jsonString = client.get(additionalUrl);
+        String url = "https://api.chzzk.naver.com/polling/v3/channels/" + channelId + "/live-status";
+        String jsonString = restClient.get(url);
 
         JsonObject content = JsonParser.parseString(jsonString)
                 .getAsJsonObject()
                 .getAsJsonObject("content");
 
         return gson.fromJson(content, ChatInfoApiResponse.class);
+    }
+
+    public String getChatAccessToken(String chatChannelId) {
+        String url = "https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId=" + chatChannelId + "&chatType=STREAMING";
+        String jsonString = restClient.get(url);
+
+        JsonObject content = JsonParser.parseString(jsonString)
+                .getAsJsonObject()
+                .getAsJsonObject("content");
+
+        return content.get("accessToken").getAsString();
     }
 }

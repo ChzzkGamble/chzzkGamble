@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.service;
+package com.chzzkGamble.chzzk.service.api;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -6,11 +6,11 @@ import org.springframework.web.client.RestClient;
 @Component
 public class ChzzkRestClient {
 
-    private static final RestClient client = RestClient.create("https://api.chzzk.naver.com");
+    private static final RestClient client = RestClient.create();
 
-    public String get(String additionalUrl) {
+    public String get(String url) {
         return client.get()
-                .uri(additionalUrl)
+                .uri(url)
                 .retrieve()
                 .body(String.class);
     }

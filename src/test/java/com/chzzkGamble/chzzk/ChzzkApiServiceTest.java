@@ -1,6 +1,6 @@
 package com.chzzkGamble.chzzk;
 
-import com.chzzkGamble.chzzk.service.ChzzkApiService;
+import com.chzzkGamble.chzzk.service.api.ChzzkApiService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +46,10 @@ public class ChzzkApiServiceTest {
     void getChatInfo_InvalidChannelId_Exception() {
         assertThatThrownBy(() -> chzzkApiService.getChatInfo(DdahyoniChannelId + "777"))
                 .isInstanceOf(HttpClientErrorException.NotFound.class);
+    }
+
+    @Test
+    @DisplayName("채팅방과 연결할 수 있다.")
+    void connectChatRoom() {
     }
 }
