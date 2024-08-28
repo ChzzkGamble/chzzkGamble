@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.service.api;
+package com.chzzkGamble.chzzk.api;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;

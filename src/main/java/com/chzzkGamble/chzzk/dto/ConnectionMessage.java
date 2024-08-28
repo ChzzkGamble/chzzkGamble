@@ -1,10 +1,13 @@
-package com.chzzkGamble.chzzk.service.chat;
+package com.chzzkGamble.chzzk.dto;
 
 import com.chzzkGamble.chzzk.ChzzkChatCommand;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-public class ConnectionMessage {
+@ToString
+public class ConnectionMessage implements Message {
+
     Bdy bdy;
     String cid;
     Integer cmd = ChzzkChatCommand.CONNECT.getNum();

@@ -1,9 +1,9 @@
-package com.chzzkGamble.chzzk.service.chat;
+package com.chzzkGamble.chzzk.chat;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import com.chzzkGamble.chzzk.service.api.ChzzkApiService;
+import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;

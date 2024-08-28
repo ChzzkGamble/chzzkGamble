@@ -6,5 +6,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ChannelInfoApiResponse {
+
     private String channelName;
 }

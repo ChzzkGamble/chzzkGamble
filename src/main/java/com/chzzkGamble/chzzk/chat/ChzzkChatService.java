@@ -1,6 +1,6 @@
-package com.chzzkGamble.chzzk.service.chat;
+package com.chzzkGamble.chzzk.chat;
 
-import com.chzzkGamble.chzzk.service.api.ChzzkApiService;
+import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import org.springframework.stereotype.Service;
 
 @Service

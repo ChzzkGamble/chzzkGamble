@@ -1,6 +1,6 @@
 package com.chzzkGamble.chzzk;
 
-import com.chzzkGamble.chzzk.service.chat.ChzzkChatService;
+import com.chzzkGamble.chzzk.chat.ChzzkChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
