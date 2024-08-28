@@ -1,6 +1,7 @@
 package com.chzzkGamble.chzzk.service;
 
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
+import com.chzzkGamble.chzzk.dto.ChatInfoApiResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -25,5 +26,16 @@ public class ChzzkApiService {
                 .getAsJsonObject("content");
 
         return gson.fromJson(content, ChannelInfoApiResponse.class);
+    }
+
+    public ChatInfoApiResponse getChatInfo(String channelId) {
+        String additionalUrl = "/polling/v3/channels/" + channelId + "/live-status";
+        String jsonString = client.get(additionalUrl);
+
+        JsonObject content = JsonParser.parseString(jsonString)
+                .getAsJsonObject()
+                .getAsJsonObject("content");
+
+        return gson.fromJson(content, ChatInfoApiResponse.class);
     }
 }
