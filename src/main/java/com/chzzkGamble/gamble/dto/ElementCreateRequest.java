@@ -7,8 +7,4 @@ import java.util.List;
 public class ElementCreateRequest {
 
     List<String> elements;
-
-    public ElementCreateRequest(List<String> elements) {
-        this.elements = elements;
-    }
 }

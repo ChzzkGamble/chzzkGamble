@@ -1,5 +1,7 @@
 package com.chzzkGamble.gamble.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
@@ -10,13 +12,14 @@ public class RouletteCreateRequest {
 
     private final String channelId;
 
-    public RouletteCreateRequest(String streamUri) {
+    @JsonCreator
+    public RouletteCreateRequest(@JsonProperty("streamUri") String streamUri) {
         if (streamUri.startsWith(BASIC_URL)) {
             this.channelId = streamUri.substring(BASIC_URL.length());
         }
         else if (streamUri.startsWith(BASIC_URI)) {
             this.channelId = streamUri.substring(BASIC_URI.length());
         }
-        throw new RuntimeException("잘못된 주소입니다.");
+        else throw new RuntimeException("잘못된 주소입니다.");
     }
 }
