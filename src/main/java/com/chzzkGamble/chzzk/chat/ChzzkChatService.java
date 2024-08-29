@@ -42,6 +42,6 @@ public class ChzzkChatService {
     }
 
     public boolean isConnected(UUID rouletteId) {
-        return !socketClientMap.containsKey(rouletteId) || socketClientMap.get(rouletteId).isConnected();
+        return socketClientMap.containsKey(rouletteId) && socketClientMap.get(rouletteId).isConnected();
     }
 }
