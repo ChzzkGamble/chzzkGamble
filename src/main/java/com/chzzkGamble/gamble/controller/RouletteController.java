@@ -50,14 +50,14 @@ public class RouletteController {
     @PostMapping("/start")
     public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
         Roulette roulette = rouletteService.readRoulette(UUID.fromString(cookie.getValue()));
-        chzzkChatService.connectChatRoom(roulette.getChannelId());
+        chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/end")
     public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {
-        Roulette roulette = rouletteService.readRoulette(UUID.fromString(cookie.getValue()));
-        chzzkChatService.disconnectChatRoom(roulette.getChannelId());
+        UUID rouletteId = UUID.fromString(cookie.getValue());
+        chzzkChatService.disconnectChatRoom(rouletteId);
         return ResponseEntity.ok().build();
     }
 
