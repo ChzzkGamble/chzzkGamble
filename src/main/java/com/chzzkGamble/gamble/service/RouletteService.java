@@ -24,7 +24,7 @@ public class RouletteService {
         return rouletteRepository.save(roulette);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
         return rouletteRepository.findById(rouletteId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 룰렛입니다."));
@@ -37,8 +37,15 @@ public class RouletteService {
         return rouletteElementRepository.save(element);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<RouletteElement> readRouletteElements(UUID rouletteId) {
         return rouletteElementRepository.findByRouletteId(rouletteId);
+    }
+
+    @Transactional
+    public void vote(Long elementId, int voteCount) {
+        RouletteElement element = rouletteElementRepository.findById(elementId)
+                .orElseThrow(() -> new RuntimeException("요소를 찾을 수 없습니다. " + elementId));
+        element.increaseCount(voteCount);
     }
 }
