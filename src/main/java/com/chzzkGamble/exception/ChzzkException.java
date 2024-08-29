@@ -1,5 +1,8 @@
 package com.chzzkGamble.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ChzzkException extends RuntimeException {
 
     private final ChzzkExceptionCode exceptionCode;
@@ -13,10 +16,5 @@ public class ChzzkException extends RuntimeException {
         super();
         this.exceptionCode = exceptionCode;
         this.supplementaryMessage = supplementaryMessage;
-    }
-
-    @Override
-    public String getMessage() {
-        return exceptionCode.getMessage() + System.lineSeparator() + supplementaryMessage;
     }
 }
