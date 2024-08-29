@@ -54,6 +54,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         // 2. if donation, send to gamble
         if (ChzzkChatCommand.DONATION.getNum() == cmd) {
             DonationMessage donationMessage = new DonationMessage(message);
+            if (!donationMessage.isDonation()) return;
             String msg = donationMessage.msg;
             int cheese = donationMessage.cheese;
             rouletteService.vote(channelId, msg, cheese);
@@ -92,7 +93,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         int cheese;
         String msg;
 
-        public DonationMessage(WebSocketMessage<?> message) {
+        DonationMessage(WebSocketMessage<?> message) {
             JsonArray bdy = JsonParser.parseString((String) message.getPayload())
                     .getAsJsonObject()
                     .getAsJsonArray("bdy");
@@ -113,7 +114,11 @@ public class ChzzkSessionHandler implements WebSocketHandler {
                     return Integer.parseInt(s.split(":")[1]);
                 }
             }
-            throw new ChzzkException(ChzzkExceptionCode.JSON_PARSING, "extras : " + extras);
+            return 0; //subscribe
+        }
+
+        private boolean isDonation() {
+            return cheese != 0;
         }
     }
 }
