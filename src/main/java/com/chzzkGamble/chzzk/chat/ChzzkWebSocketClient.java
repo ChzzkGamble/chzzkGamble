@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
+import com.chzzkGamble.gamble.service.RouletteService;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
@@ -16,8 +17,8 @@ public class ChzzkWebSocketClient {
     private final WebSocketHandler handler;
     private WebSocketSession session;
 
-    public ChzzkWebSocketClient(ChzzkApiService apiService, String channelId) {
-        this.handler = new ChzzkSessionHandler(apiService, channelId);
+    public ChzzkWebSocketClient(ChzzkApiService apiService, RouletteService rouletteService, String channelId) {
+        this.handler = new ChzzkSessionHandler(apiService, rouletteService, channelId);
     }
 
     public void connect(String url) {

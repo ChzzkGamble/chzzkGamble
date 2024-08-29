@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RouletteService {
 
+    private static final int CHEESE_UNIT = 1_000;
+
     private final RouletteRepository rouletteRepository;
     private final RouletteElementRepository rouletteElementRepository;
 
@@ -52,9 +54,29 @@ public class RouletteService {
     }
 
     @Transactional
+    public void vote(String channelId, String msg, int cheese) {
+        List<Roulette> roulettes = rouletteRepository.findByChannelId(channelId);
+        roulettes.forEach(roulette -> vote(roulette, msg, cheese));
+    }
+
+    @Transactional
+    public void vote(Roulette roulette, String msg, int cheese) {
+        List<RouletteElement> elements = rouletteElementRepository.findByRouletteId(roulette.getId());
+        elements.stream()
+                .filter(element -> contains(msg, element.getName()))
+                .findFirst()
+                .ifPresent(element -> vote(element.getId(), cheese / CHEESE_UNIT));
+    }
+
+    @Transactional
     public void vote(Long elementId, int voteCount) {
         RouletteElement element = rouletteElementRepository.findById(elementId)
                 .orElseThrow(() -> new RuntimeException("요소를 찾을 수 없습니다. " + elementId));
         element.increaseCount(voteCount);
+    }
+
+    private boolean contains(String message, String word) {
+        // TODO : change algorithm to KMP
+        return message.contains(word);
     }
 }

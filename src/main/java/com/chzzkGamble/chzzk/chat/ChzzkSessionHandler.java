@@ -5,8 +5,10 @@ import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.dto.ConnectionMessage;
 import com.chzzkGamble.chzzk.dto.Message;
 import com.chzzkGamble.chzzk.dto.PongMessage;
+import com.chzzkGamble.gamble.service.RouletteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -18,10 +20,12 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ChzzkApiService apiService;
+    private final RouletteService rouletteService;
     private final String channelId;
 
-    public ChzzkSessionHandler(ChzzkApiService apiService, String channelId) {
+    public ChzzkSessionHandler(ChzzkApiService apiService, RouletteService rouletteService, String channelId) {
         this.apiService = apiService;
+        this.rouletteService = rouletteService;
         this.channelId = channelId;
     }
 
@@ -36,16 +40,18 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        int cmd = parseCmd(message);
+        ParsedMessage parsedMessage = new ParsedMessage(message);
 
         // 1. if ping, send pong
-        if (ChzzkChatCommand.PING.getNum() == cmd) {
+        if (ChzzkChatCommand.PING.getNum() == parsedMessage.cmd) {
             session.sendMessage(new TextMessage(writeAsString(new PongMessage())));
         }
 
         // 2. if donation, send to gamble
-        if (ChzzkChatCommand.DONATION.getNum() == cmd) {
-            // TODO
+        if (ChzzkChatCommand.DONATION.getNum() == parsedMessage.cmd) {
+            String msg = parsedMessage.msg;
+            int cheese = parsedMessage.cheese;
+            rouletteService.vote(channelId, msg, cheese);
         }
     }
 
@@ -71,10 +77,24 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         }
     }
 
-    private int parseCmd(WebSocketMessage<?> message) {
-        return JsonParser.parseString((String) message.getPayload())
-                .getAsJsonObject()
-                .getAsJsonObject("cmd")
-                .getAsInt();
+    private static class ParsedMessage {
+        int cmd;
+        int cheese;
+        String msg;
+
+        public ParsedMessage(WebSocketMessage<?> message) {
+            JsonObject jsonObject = JsonParser.parseString((String) message.getPayload())
+                    .getAsJsonObject();
+            this.cmd = jsonObject.getAsJsonObject("cmd").getAsInt();
+            this.msg = jsonObject.getAsJsonObject("bdy").get("msg").getAsString();
+            this.cheese = parseCheese(jsonObject.getAsJsonObject("bdy").get("extra").getAsString());
+        }
+
+        // "{\"isAnonymous\":true,\"payType\":\"CURRENCY\",\"payAmount\":1000,\"donationType\":\"CHAT\",\"weeklyRankList\":[]}"
+        private int parseCheese(String extra) {
+            int frontIndex = extra.lastIndexOf("payAmount\\\":");
+            int backIndex = extra.indexOf(",\\\"donationType");
+            return Integer.parseInt(extra.substring(frontIndex, backIndex));
+        }
     }
 }
