@@ -40,4 +40,8 @@ public class ChzzkChatService {
         ChzzkWebSocketClient socketClient = socketClientMap.remove(rouletteId);
         socketClient.disconnect();
     }
+
+    public boolean isConnected(UUID rouletteId) {
+        return !socketClientMap.containsKey(rouletteId) || socketClientMap.get(rouletteId).isConnected();
+    }
 }

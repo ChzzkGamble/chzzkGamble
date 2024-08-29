@@ -69,4 +69,20 @@ public class ChzzkChatServiceTest {
                 .isInstanceOf(ChzzkException.class)
                 .hasMessage(ChzzkExceptionCode.CHAT_IS_DISCONNECTED.getMessage());
     }
+
+    @Test
+    @DisplayName("WebSocket으로 여러 룰렛과 동시에 연결할 수 있다.")
+    void connectChatRoom_concurrency() {
+        // given
+        Roulette roulette1 = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette2 = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette3 = rouletteService.createRoulette(CHANNEL_ID);
+
+        // when & then
+        assertThatCode(() -> {
+            chzzkChatService.connectChatRoom(CHANNEL_ID, roulette1.getId());
+            chzzkChatService.connectChatRoom(CHANNEL_ID, roulette2.getId());
+            chzzkChatService.connectChatRoom(CHANNEL_ID, roulette3.getId());
+        }).doesNotThrowAnyException();
+    }
 }

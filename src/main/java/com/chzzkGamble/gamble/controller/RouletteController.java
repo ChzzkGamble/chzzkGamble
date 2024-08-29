@@ -54,6 +54,14 @@ public class RouletteController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Void> checkConnection(@CookieValue(name = "rouletteId") Cookie cookie) {
+        if (chzzkChatService.isConnected(UUID.fromString(cookie.getValue()))) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @PostMapping("/end")
     public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());

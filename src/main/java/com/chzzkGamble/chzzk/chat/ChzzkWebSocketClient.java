@@ -37,8 +37,13 @@ public class ChzzkWebSocketClient {
         }
         try {
             session.close();
+            session = null;
         } catch (IOException e) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_DISCONNECTION);
         }
+    }
+
+    public boolean isConnected() {
+        return session == null || session.isOpen();
     }
 }
