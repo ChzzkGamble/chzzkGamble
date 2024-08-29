@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -26,6 +28,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     private final ChzzkApiService apiService;
     private final RouletteService rouletteService;
     private final String channelId;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public ChzzkSessionHandler(ChzzkApiService apiService, RouletteService rouletteService, String channelId) {
         this.apiService = apiService;
@@ -40,6 +43,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
         ConnectionMessage message = new ConnectionMessage(chatAccessToken, chatChannelId);
         session.sendMessage(new TextMessage(writeAsString(message)));
+        logger.info("connection established : {}", channelId);
     }
 
     @Override
@@ -55,6 +59,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         if (ChzzkChatCommand.DONATION.getNum() == cmd) {
             DonationMessage donationMessage = new DonationMessage(message);
             if (!donationMessage.isDonation()) return;
+            logger.debug(donationMessage.toString());
             String msg = donationMessage.msg;
             int cheese = donationMessage.cheese;
             rouletteService.vote(channelId, msg, cheese);
@@ -74,6 +79,8 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
+        logger.info("connection closed : {}", channelId);
+        logger.info("closeStatus : {}", closeStatus);
     }
 
     @Override
