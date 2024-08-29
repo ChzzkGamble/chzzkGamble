@@ -9,4 +9,4 @@ spring:
     defer-datasource-initialization: true
     show-sql: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
