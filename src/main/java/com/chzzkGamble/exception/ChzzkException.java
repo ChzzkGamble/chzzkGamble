@@ -17,4 +17,9 @@ public class ChzzkException extends RuntimeException {
         this.exceptionCode = exceptionCode;
         this.supplementaryMessage = supplementaryMessage;
     }
+
+    @Override
+    public String getMessage() {
+        return exceptionCode.getMessage();
+    }
 }
