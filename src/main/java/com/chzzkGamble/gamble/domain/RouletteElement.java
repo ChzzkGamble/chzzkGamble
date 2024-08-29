@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -34,5 +35,18 @@ public class RouletteElement {
     public void increaseCount(int amount) {
         if (amount <= 0 || count + amount < 0) throw new RuntimeException("잘못된 상승 수치입니다. " + amount);
         count += amount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RouletteElement that = (RouletteElement) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
