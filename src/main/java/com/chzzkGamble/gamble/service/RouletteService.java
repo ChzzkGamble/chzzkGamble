@@ -37,6 +37,15 @@ public class RouletteService {
         return rouletteElementRepository.save(element);
     }
 
+    @Transactional
+    public List<RouletteElement> addElements(UUID rouletteId, List<String> elementNames) {
+        Roulette roulette = readRoulette(rouletteId);
+        List<RouletteElement> elements = elementNames.stream()
+                .map(name -> new RouletteElement(name, 0, roulette))
+                .toList();
+        return rouletteElementRepository.saveAll(elements);
+    }
+
     @Transactional(readOnly = true)
     public List<RouletteElement> readRouletteElements(UUID rouletteId) {
         return rouletteElementRepository.findByRouletteId(rouletteId);
