@@ -1,5 +1,6 @@
 package com.chzzkGamble.gamble.controller;
 
+import com.chzzkGamble.chzzk.chat.ChzzkChatService;
 import com.chzzkGamble.gamble.domain.Roulette;
 import com.chzzkGamble.gamble.dto.ElementCreateRequest;
 import com.chzzkGamble.gamble.dto.RouletteCreateRequest;
@@ -24,9 +25,10 @@ import java.util.UUID;
 public class RouletteController {
 
     private final RouletteService rouletteService;
+    private final ChzzkChatService chzzkChatService;
 
-    @PostMapping("/start")
-    public ResponseEntity<Void> start(@RequestBody RouletteCreateRequest request) {
+    @PostMapping("/create")
+    public ResponseEntity<Void> createRoulette(@RequestBody RouletteCreateRequest request) {
         String channelId = request.getChannelId();
         Roulette roulette = rouletteService.createRoulette(channelId);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
@@ -37,11 +39,25 @@ public class RouletteController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
 
-    @PostMapping("/element")
+    @PostMapping("/elements")
     public ResponseEntity<Void> addElement(@CookieValue(name = "rouletteId") Cookie cookie,
                                            @RequestBody ElementCreateRequest request) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
         rouletteService.addElements(rouletteId, request.getElements());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/start")
+    public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
+        Roulette roulette = rouletteService.readRoulette(UUID.fromString(cookie.getValue()));
+        chzzkChatService.connectChatRoom(roulette.getChannelId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/end")
+    public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {
+        Roulette roulette = rouletteService.readRoulette(UUID.fromString(cookie.getValue()));
+        chzzkChatService.disconnectChatRoom(roulette.getChannelId());
         return ResponseEntity.ok().build();
     }
 
