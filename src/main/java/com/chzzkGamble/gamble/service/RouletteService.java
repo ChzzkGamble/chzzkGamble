@@ -8,6 +8,7 @@ import com.chzzkGamble.gamble.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.repository.RouletteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -68,11 +69,12 @@ public class RouletteService {
                 .ifPresent(element -> vote(element.getId(), cheese / CHEESE_UNIT));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void vote(Long elementId, int voteCount) {
         RouletteElement element = rouletteElementRepository.findById(elementId)
                 .orElseThrow(() -> new RuntimeException("요소를 찾을 수 없습니다. " + elementId));
         element.increaseCount(voteCount);
+        rouletteElementRepository.save(element);
     }
 
     private boolean contains(String message, String word) {

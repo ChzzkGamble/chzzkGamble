@@ -8,8 +8,10 @@ import com.chzzkGamble.chzzk.dto.PongMessage;
 import com.chzzkGamble.gamble.service.RouletteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -40,24 +42,31 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        ParsedMessage parsedMessage = new ParsedMessage(message);
+        int cmd = parseCmd(message);
 
         // 1. if ping, send pong
-        if (ChzzkChatCommand.PING.getNum() == parsedMessage.cmd) {
+        if (ChzzkChatCommand.PING.getNum() == cmd) {
             session.sendMessage(new TextMessage(writeAsString(new PongMessage())));
         }
 
         // 2. if donation, send to gamble
-        if (ChzzkChatCommand.DONATION.getNum() == parsedMessage.cmd) {
-            String msg = parsedMessage.msg;
-            int cheese = parsedMessage.cheese;
+        if (ChzzkChatCommand.DONATION.getNum() == cmd) {
+            DonationMessage donationMessage = new DonationMessage(message);
+            String msg = donationMessage.msg;
+            int cheese = donationMessage.cheese;
             rouletteService.vote(channelId, msg, cheese);
         }
     }
 
+    private int parseCmd(WebSocketMessage<?> message) {
+        return JsonParser.parseString((String) message.getPayload())
+                .getAsJsonObject()
+                .getAsJsonPrimitive("cmd")
+                .getAsInt();
+    }
+
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-
     }
 
     @Override
@@ -77,24 +86,40 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         }
     }
 
-    private static class ParsedMessage {
-        int cmd;
+    private static class DonationMessage {
         int cheese;
         String msg;
 
-        public ParsedMessage(WebSocketMessage<?> message) {
-            JsonObject jsonObject = JsonParser.parseString((String) message.getPayload())
-                    .getAsJsonObject();
-            this.cmd = jsonObject.getAsJsonObject("cmd").getAsInt();
-            this.msg = jsonObject.getAsJsonObject("bdy").get("msg").getAsString();
-            this.cheese = parseCheese(jsonObject.getAsJsonObject("bdy").get("extra").getAsString());
+        public DonationMessage(WebSocketMessage<?> message) {
+            JsonArray bdy = JsonParser.parseString((String) message.getPayload())
+                    .getAsJsonObject()
+                    .getAsJsonArray("bdy");
+            for (int i = 0; i < bdy.size(); i++) {
+                JsonObject jsonObject = bdy.get(i).getAsJsonObject();
+                if (jsonObject.get("msg") != null) {
+                    this.msg = jsonObject.get("msg").getAsString();
+                }
+                if (jsonObject.get("extras") != null) {
+                    this.cheese = parseCheese(jsonObject.get("extras").getAsJsonPrimitive().getAsString());
+                }
+            }
         }
 
-        // "{\"isAnonymous\":true,\"payType\":\"CURRENCY\",\"payAmount\":1000,\"donationType\":\"CHAT\",\"weeklyRankList\":[]}"
-        private int parseCheese(String extra) {
-            int frontIndex = extra.lastIndexOf("payAmount\\\":");
-            int backIndex = extra.indexOf(",\\\"donationType");
-            return Integer.parseInt(extra.substring(frontIndex, backIndex));
+        private static int parseCheese(String extras) {
+            for (String s : StringUtils.commaDelimitedListToSet(extras)) {
+                if (s.contains("payAmount")) {
+                    return Integer.parseInt(s.split(":")[1]);
+                }
+            }
+            throw new RuntimeException("치즈 파싱에 실패했습니다. " + extras);
+        }
+
+        @Override
+        public String toString() {
+            return "DonationMessage{" +
+                    "cheese=" + cheese +
+                    ", msg='" + msg + '\'' +
+                    '}';
         }
     }
 }
