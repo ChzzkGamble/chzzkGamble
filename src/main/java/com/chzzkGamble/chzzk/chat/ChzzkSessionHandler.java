@@ -5,6 +5,8 @@ import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.dto.ConnectionMessage;
 import com.chzzkGamble.chzzk.dto.Message;
 import com.chzzkGamble.chzzk.dto.PongMessage;
+import com.chzzkGamble.exception.ChzzkException;
+import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.gamble.service.RouletteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,7 +84,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         try {
             return objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("메시지 파싱에 에러가 생겼습니다." + message);
+            throw new ChzzkException(ChzzkExceptionCode.JSON_CONVERT, "message : " + message);
         }
     }
 
@@ -111,15 +113,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
                     return Integer.parseInt(s.split(":")[1]);
                 }
             }
-            throw new RuntimeException("치즈 파싱에 실패했습니다. " + extras);
-        }
-
-        @Override
-        public String toString() {
-            return "DonationMessage{" +
-                    "cheese=" + cheese +
-                    ", msg='" + msg + '\'' +
-                    '}';
+            throw new ChzzkException(ChzzkExceptionCode.JSON_PARSING, "extras : " + extras);
         }
     }
 }

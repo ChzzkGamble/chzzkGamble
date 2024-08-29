@@ -13,7 +13,6 @@ public class ChzzkApiService {
     private static final Gson gson = new Gson();
     private final ChzzkRestClient restClient;
 
-
     public ChzzkApiService(ChzzkRestClient restClient) {
         this.restClient = restClient;
     }

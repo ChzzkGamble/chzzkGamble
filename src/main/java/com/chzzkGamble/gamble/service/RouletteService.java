@@ -2,6 +2,8 @@ package com.chzzkGamble.gamble.service;
 
 import java.util.List;
 import java.util.UUID;
+import com.chzzkGamble.exception.GambleException;
+import com.chzzkGamble.exception.GambleExceptionCode;
 import com.chzzkGamble.gamble.domain.Roulette;
 import com.chzzkGamble.gamble.domain.RouletteElement;
 import com.chzzkGamble.gamble.repository.RouletteElementRepository;
@@ -30,7 +32,7 @@ public class RouletteService {
     @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
         return rouletteRepository.findById(rouletteId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 룰렛입니다."));
+                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND, "rouletteId : " + rouletteId));
     }
 
     @Transactional
@@ -72,7 +74,7 @@ public class RouletteService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void vote(Long elementId, int voteCount) {
         RouletteElement element = rouletteElementRepository.findById(elementId)
-                .orElseThrow(() -> new RuntimeException("요소를 찾을 수 없습니다. " + elementId));
+                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_ELEMENT_NOT_FOUND, "elementId : " + elementId));
         element.increaseCount(voteCount);
         rouletteElementRepository.save(element);
     }

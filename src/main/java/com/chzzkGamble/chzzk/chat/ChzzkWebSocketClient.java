@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
+import com.chzzkGamble.exception.ChzzkException;
+import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.gamble.service.RouletteService;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
@@ -25,20 +27,18 @@ public class ChzzkWebSocketClient {
         try {
             session = client.execute(handler, url).get(30, TimeUnit.SECONDS);
         } catch (TimeoutException | ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException("채팅방 연결에 실패했습니다.");
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION, e.getMessage());
         }
     }
 
     public void disconnect() {
         if (session == null) {
-            throw new RuntimeException("연결 상태가 아닙니다.");
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED);
         }
         try {
             session.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("연결 종료 도중 오류가 발생했습니다.");
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_DISCONNECTION);
         }
     }
 }

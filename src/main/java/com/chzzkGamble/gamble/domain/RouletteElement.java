@@ -1,5 +1,7 @@
 package com.chzzkGamble.gamble.domain;
 
+import com.chzzkGamble.exception.GambleException;
+import com.chzzkGamble.exception.GambleExceptionCode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,7 +35,7 @@ public class RouletteElement {
     }
 
     public void increaseCount(int amount) {
-        if (amount <= 0 || count + amount < 0) throw new RuntimeException("잘못된 상승 수치입니다. " + amount);
+        if (amount <= 0 || count + amount < 0) throw new GambleException(GambleExceptionCode.ROULETTE_ELEMENT_INCREASE, "amount : " + amount);
         count += amount;
     }
 
