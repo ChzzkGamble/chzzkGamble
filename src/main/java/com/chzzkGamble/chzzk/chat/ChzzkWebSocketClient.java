@@ -7,7 +7,7 @@ import java.util.concurrent.TimeoutException;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.chzzkGamble.gamble.service.RouletteService;
+import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;

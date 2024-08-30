@@ -1,4 +1,4 @@
-package com.chzzkGamble.gamble.dto;
+package com.chzzkGamble.gamble.roulette.dto;
 
 import lombok.Getter;
 import java.util.List;

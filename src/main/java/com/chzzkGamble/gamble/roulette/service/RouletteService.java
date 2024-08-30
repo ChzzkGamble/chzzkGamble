@@ -1,14 +1,14 @@
-package com.chzzkGamble.gamble.service;
+package com.chzzkGamble.gamble.roulette.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import com.chzzkGamble.exception.GambleException;
 import com.chzzkGamble.exception.GambleExceptionCode;
-import com.chzzkGamble.gamble.domain.Roulette;
-import com.chzzkGamble.gamble.domain.RouletteElement;
-import com.chzzkGamble.gamble.repository.RouletteElementRepository;
-import com.chzzkGamble.gamble.repository.RouletteRepository;
+import com.chzzkGamble.gamble.roulette.domain.Roulette;
+import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
+import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
+import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

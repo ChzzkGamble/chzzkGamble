@@ -7,7 +7,7 @@ import com.chzzkGamble.chzzk.dto.Message;
 import com.chzzkGamble.chzzk.dto.PongMessage;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.chzzkGamble.gamble.service.RouletteService;
+import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;

@@ -1,6 +1,6 @@
-package com.chzzkGamble.gamble.dto;
+package com.chzzkGamble.gamble.roulette.dto;
 
-import com.chzzkGamble.gamble.domain.RouletteElement;
+import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import lombok.Getter;
 
 @Getter

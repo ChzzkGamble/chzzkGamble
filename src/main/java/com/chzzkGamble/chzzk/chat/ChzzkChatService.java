@@ -3,7 +3,7 @@ package com.chzzkGamble.chzzk.chat;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.chzzkGamble.gamble.service.RouletteService;
+import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.UUID;

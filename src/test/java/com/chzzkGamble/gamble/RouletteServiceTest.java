@@ -1,9 +1,9 @@
 package com.chzzkGamble.gamble;
 
-import com.chzzkGamble.gamble.domain.Roulette;
-import com.chzzkGamble.gamble.domain.RouletteElement;
-import com.chzzkGamble.gamble.repository.RouletteElementRepository;
-import com.chzzkGamble.gamble.service.RouletteService;
+import com.chzzkGamble.gamble.roulette.domain.Roulette;
+import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
+import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
+import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.chzzkGamble.gamble.domain;
+package com.chzzkGamble.gamble.roulette.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

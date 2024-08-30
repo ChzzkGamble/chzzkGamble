@@ -1,9 +1,9 @@
-package com.chzzkGamble.gamble.repository;
+package com.chzzkGamble.gamble.roulette.repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import com.chzzkGamble.gamble.domain.RouletteElement;
+import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

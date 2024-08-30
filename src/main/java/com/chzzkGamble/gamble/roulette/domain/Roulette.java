@@ -1,4 +1,4 @@
-package com.chzzkGamble.gamble.domain;
+package com.chzzkGamble.gamble.roulette.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

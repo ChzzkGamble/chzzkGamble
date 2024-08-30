@@ -1,15 +1,15 @@
-package com.chzzkGamble.gamble.controller;
+package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.ChzzkChatService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.chzzkGamble.gamble.domain.Roulette;
-import com.chzzkGamble.gamble.dto.ElementCreateRequest;
-import com.chzzkGamble.gamble.dto.RouletteCreateRequest;
-import com.chzzkGamble.gamble.dto.RouletteElementResponse;
-import com.chzzkGamble.gamble.dto.RouletteResponse;
-import com.chzzkGamble.gamble.service.RouletteService;
+import com.chzzkGamble.gamble.roulette.domain.Roulette;
+import com.chzzkGamble.gamble.roulette.dto.ElementCreateRequest;
+import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
+import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
+import com.chzzkGamble.gamble.roulette.dto.RouletteResponse;
+import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
