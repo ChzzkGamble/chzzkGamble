@@ -1,5 +1,6 @@
 package com.chzzkGamble.gamble.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import com.chzzkGamble.exception.GambleException;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RouletteService {
 
     private static final int CHEESE_UNIT = 1_000;
+    public static final long HOUR_LIMIT = 2L;
 
     private final RouletteRepository rouletteRepository;
     private final RouletteElementRepository rouletteElementRepository;
@@ -56,8 +58,7 @@ public class RouletteService {
 
     @Transactional
     public void vote(String channelId, String msg, int cheese) {
-        // TODO : 2시간 내에 생성된 룰렛에만 적용
-        List<Roulette> roulettes = rouletteRepository.findByChannelId(channelId);
+        List<Roulette> roulettes = rouletteRepository.findByChannelIdAndCreatedAtIsAfter(channelId, LocalDateTime.now().minusHours(HOUR_LIMIT));
         roulettes.forEach(roulette -> vote(roulette, msg, cheese));
     }
 

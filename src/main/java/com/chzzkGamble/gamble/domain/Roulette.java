@@ -1,18 +1,23 @@
 package com.chzzkGamble.gamble.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Roulette {
 
     @Id
@@ -22,6 +27,9 @@ public class Roulette {
     private String channelId;
 
     private String channelName;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     public Roulette(String channelId, String channelName) {
         this.channelId = channelId;

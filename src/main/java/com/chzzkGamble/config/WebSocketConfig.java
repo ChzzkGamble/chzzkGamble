@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.chat;
+package com.chzzkGamble.config;
 
 import jakarta.websocket.ContainerProvider;
 import org.springframework.context.annotation.Configuration;
