@@ -10,7 +10,6 @@ import com.chzzkGamble.gamble.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.repository.RouletteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -57,6 +56,7 @@ public class RouletteService {
 
     @Transactional
     public void vote(String channelId, String msg, int cheese) {
+        // TODO : 2시간 내에 생성된 룰렛에만 적용
         List<Roulette> roulettes = rouletteRepository.findByChannelId(channelId);
         roulettes.forEach(roulette -> vote(roulette, msg, cheese));
     }
@@ -65,20 +65,16 @@ public class RouletteService {
     public void vote(Roulette roulette, String msg, int cheese) {
         List<RouletteElement> elements = rouletteElementRepository.findByRouletteId(roulette.getId());
         elements.stream()
-                .filter(element -> contains(msg, element.getName()))
+                .filter(element -> msg.contains(element.getName()))
                 .findFirst()
                 .ifPresent(element -> vote(element.getId(), cheese / CHEESE_UNIT));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void vote(Long elementId, int voteCount) {
         RouletteElement element = rouletteElementRepository.findById(elementId)
                 .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_ELEMENT_NOT_FOUND, "elementId : " + elementId));
         element.increaseCount(voteCount);
         rouletteElementRepository.save(element);
-    }
-
-    private boolean contains(String message, String word) {
-        return message.contains(word);
     }
 }
