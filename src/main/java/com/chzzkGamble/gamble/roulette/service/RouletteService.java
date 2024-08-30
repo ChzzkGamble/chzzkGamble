@@ -62,8 +62,7 @@ public class RouletteService {
         roulettes.forEach(roulette -> vote(roulette, msg, cheese));
     }
 
-    @Transactional
-    public void vote(Roulette roulette, String msg, int cheese) {
+    private void vote(Roulette roulette, String msg, int cheese) {
         List<RouletteElement> elements = rouletteElementRepository.findByRouletteId(roulette.getId());
         elements.stream()
                 .filter(element -> msg.contains(element.getName()))
@@ -71,8 +70,7 @@ public class RouletteService {
                 .ifPresent(element -> vote(element.getId(), cheese / CHEESE_UNIT));
     }
 
-    @Transactional
-    public void vote(Long elementId, int voteCount) {
+    private void vote(Long elementId, int voteCount) {
         RouletteElement element = rouletteElementRepository.findById(elementId)
                 .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_ELEMENT_NOT_FOUND, "elementId : " + elementId));
         element.increaseCount(voteCount);

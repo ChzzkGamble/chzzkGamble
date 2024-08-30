@@ -27,7 +27,7 @@ public class ChzzkWebSocketClient {
         try {
             session = client.execute(handler, url).get(30, TimeUnit.SECONDS);
         } catch (TimeoutException | ExecutionException | InterruptedException e) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION, e.getMessage());
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
         }
     }
 
@@ -39,7 +39,7 @@ public class ChzzkWebSocketClient {
             session.close();
             session = null;
         } catch (IOException e) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_DISCONNECTION);
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_DISCONNECTION_ERROR);
         }
     }
 

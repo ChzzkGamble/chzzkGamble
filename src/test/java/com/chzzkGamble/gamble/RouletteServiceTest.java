@@ -86,10 +86,11 @@ public class RouletteServiceTest {
         RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
 
         // when
-        rouletteService.vote(element.getId(), 3);
+        rouletteService.vote(CHANNEL_ID, "요소", 3_000);
 
         // then
-        assertThat(element.getCount()).isEqualTo(3);
+        RouletteElement votedElement = rouletteElementRepository.findById(element.getId()).orElseThrow();
+        assertThat(votedElement.getCount()).isEqualTo(3);
     }
 
     @Test
@@ -97,11 +98,11 @@ public class RouletteServiceTest {
     void vote_minusVote_Exception() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
+        rouletteService.addElement(roulette.getId(), "요소");
 
         // when & then
-        assertThatThrownBy(() -> rouletteService.vote(element.getId(), -1))
-                .isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> rouletteService.vote(CHANNEL_ID, "요소", -1_000))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -116,7 +117,7 @@ public class RouletteServiceTest {
         ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
         for (int i = 0; i < threadsCount; i++) {
             executorService.submit(() ->
-                rouletteService.vote(element.getId(), 1)
+                rouletteService.vote(CHANNEL_ID, "요소", 1_000)
             );
         }
         executorService.shutdown();

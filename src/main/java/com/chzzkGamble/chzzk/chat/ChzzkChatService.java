@@ -12,7 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ChzzkChatService {
 
-    public static final String CHZZK_CHAT_SERVER = "wss://kr-ss2.chat.naver.com/chat";
+    private static final String CHZZK_CHAT_SERVER = "wss://kr-ss2.chat.naver.com/chat";
+    private static final int MAX_CONNECTION_LIMIT = 10;
 
     private final ChzzkApiService apiService;
     private final RouletteService rouletteService;
@@ -26,6 +27,9 @@ public class ChzzkChatService {
     public void connectChatRoom(String channelId, UUID gambleId) {
         if (socketClientMap.containsKey(gambleId)) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTED, "gambleId : " + gambleId);
+        }
+        if (socketClientMap.size() > MAX_CONNECTION_LIMIT) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
         }
 
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, rouletteService, channelId);

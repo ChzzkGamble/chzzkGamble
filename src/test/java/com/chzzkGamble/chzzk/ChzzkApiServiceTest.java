@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.HttpClientErrorException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,13 +33,11 @@ public class ChzzkApiServiceTest {
         assertThat(channelName).isEqualTo("(알 수 없음)");
     }
 
-    // 채팅방 id는 변경될 수 있으며, 상황에 따라 실패할 수 있는 테스트 입니다.
-    // @ignore 가 필요하다면 붙이기 바랍니다.
     @Test
     @DisplayName("채팅 정보를 가져올 수 있다.")
     void getChatInfo() {
-        String chatChannelId = chzzkApiService.getChatInfo(DdahyoniChannelId).getChatChannelId();
-        assertThat(chatChannelId).isEqualTo("N1NIoQ");
+        assertThatCode(() -> chzzkApiService.getChatInfo(DdahyoniChannelId))
+                .doesNotThrowAnyException();
     }
 
     @Test
