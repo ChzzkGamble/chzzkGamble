@@ -11,13 +11,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ChzzkChatServiceTest {
 
     private static final String CHANNEL_ID = "0dad8baf12a436f722faa8e5001c5011";
+    private static final String CHANNEL_NAME = "따효니";
+
     private Roulette roulette;
 
     @Autowired
@@ -28,7 +32,7 @@ public class ChzzkChatServiceTest {
 
     @BeforeEach
     void setUp() {
-        roulette = rouletteService.createRoulette(CHANNEL_ID);
+        roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
     }
 
     @Test
@@ -72,17 +76,24 @@ public class ChzzkChatServiceTest {
 
     @Test
     @DisplayName("WebSocket으로 여러 룰렛과 동시에 연결할 수 있다.")
-    void connectChatRoom_concurrency() {
+    void connectChatRoom_concurrency() throws InterruptedException {
         // given
-        Roulette roulette1 = rouletteService.createRoulette(CHANNEL_ID);
-        Roulette roulette2 = rouletteService.createRoulette(CHANNEL_ID);
-        Roulette roulette3 = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette1 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+        Roulette roulette2 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+        Roulette roulette3 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
 
-        // when & then
-        assertThatCode(() -> {
-            chzzkChatService.connectChatRoom(CHANNEL_ID, roulette1.getId());
-            chzzkChatService.connectChatRoom(CHANNEL_ID, roulette2.getId());
-            chzzkChatService.connectChatRoom(CHANNEL_ID, roulette3.getId());
-        }).doesNotThrowAnyException();
+        // when
+        chzzkChatService.connectChatRoom(CHANNEL_ID, roulette1.getId());
+        chzzkChatService.connectChatRoom(CHANNEL_ID, roulette2.getId());
+        chzzkChatService.connectChatRoom(CHANNEL_ID, roulette3.getId());
+        Thread.sleep(5000L);
+
+        // then
+        assertAll(() -> {
+                    assertThat(chzzkChatService.isConnected(roulette1.getId())).isTrue();
+                    assertThat(chzzkChatService.isConnected(roulette2.getId())).isTrue();
+                    assertThat(chzzkChatService.isConnected(roulette3.getId())).isTrue();
+                    assertThat(chzzkChatService.isConnected(roulette.getId())).isFalse();
+                });
     }
 }

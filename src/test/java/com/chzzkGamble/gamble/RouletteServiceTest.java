@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class RouletteServiceTest {
 
     private static final String CHANNEL_ID = "ch_id";
+    private static final String CHANNEL_NAME = "ch_name";
 
     @Autowired
     RouletteService rouletteService;
@@ -30,7 +31,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛을 생성할 수 있다.")
     void createRoulette() {
         // given & when & then
-        assertThatCode(() -> rouletteService.createRoulette(CHANNEL_ID))
+        assertThatCode(() -> rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME))
                 .doesNotThrowAnyException();
     }
 
@@ -38,7 +39,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛을 불러올 수 있다.")
     void readRoulette() {
         // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
 
         // when & then
         assertThatCode(() -> rouletteService.readRoulette(roulette.getId()))
@@ -57,7 +58,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛 요소를 추가할 수 있다.")
     void addElement() {
         // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
 
         // when & then
         assertThatCode(() -> rouletteService.addElement(roulette.getId(), "요소1"))
@@ -68,7 +69,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛 요소 목록을 불러올 수 있다.")
     void readElements() {
         // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
         RouletteElement element1 = rouletteService.addElement(roulette.getId(), "요소1");
         RouletteElement element2 = rouletteService.addElement(roulette.getId(), "요소2");
 
@@ -81,7 +82,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛 요소에 투표할 수 있다.")
     void vote() {
         // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
         RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
 
         // when
@@ -95,7 +96,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛 요소에 음수 개수만큼 투표할 수 없다.")
     void vote_minusVote_Exception() {
         // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
         RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
 
         // when & then
@@ -107,7 +108,7 @@ public class RouletteServiceTest {
     @DisplayName("룰렛 요소 투표에 동시성 제어가 되어있다.")
     void vote_concurrencyControl() throws InterruptedException {
         // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID);
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
         RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
 
         // when

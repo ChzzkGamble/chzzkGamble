@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS roulette CASCADE;
 
 CREATE TABLE roulette(
     id          VARCHAR PRIMARY KEY,
-    channel_id  VARCHAR NOT NULL
+    channel_id  VARCHAR NOT NULL,
+    channel_name VARCHAR NOT NULL
 );
 
 CREATE TABLE roulette_element(

@@ -1,5 +1,6 @@
 package com.chzzkGamble.gamble.controller;
 
+import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.ChzzkChatService;
 import com.chzzkGamble.gamble.domain.Roulette;
 import com.chzzkGamble.gamble.dto.ElementCreateRequest;
@@ -25,15 +26,17 @@ import java.util.UUID;
 public class RouletteController {
 
     private final RouletteService rouletteService;
+    private final ChzzkApiService chzzkApiService;
     private final ChzzkChatService chzzkChatService;
 
     @PostMapping("/create")
     public ResponseEntity<Void> createRoulette(@RequestBody RouletteCreateRequest request) {
         String channelId = request.getChannelId();
-        Roulette roulette = rouletteService.createRoulette(channelId);
+        String channelName = chzzkApiService.getChannelInfo(channelId).getChannelName();
+        Roulette roulette = rouletteService.createRoulette(channelId, channelName);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .httpOnly(true)
-                .maxAge(2 * 60 * 60L)
+                .maxAge(2 * 60 * 60L) // 2 hours
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();

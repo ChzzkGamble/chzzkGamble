@@ -3,6 +3,8 @@ package com.chzzkGamble.gamble.domain;
 import java.util.Objects;
 import java.util.UUID;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,13 +16,16 @@ import lombok.NoArgsConstructor;
 public class Roulette {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String channelId;
 
-    public Roulette(UUID id, String channelId) {
-        this.id = id;
+    private String channelName;
+
+    public Roulette(String channelId, String channelName) {
         this.channelId = channelId;
+        this.channelName = channelName;
     }
 
     @Override

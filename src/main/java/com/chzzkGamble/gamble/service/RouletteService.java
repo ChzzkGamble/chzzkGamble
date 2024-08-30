@@ -23,9 +23,8 @@ public class RouletteService {
     private final RouletteElementRepository rouletteElementRepository;
 
     @Transactional
-    public Roulette createRoulette(String channelId) {
-        UUID id = UUID.randomUUID();
-        Roulette roulette = new Roulette(id, channelId);
+    public Roulette createRoulette(String channelId, String channelName) {
+        Roulette roulette = new Roulette(channelId, channelName);
         return rouletteRepository.save(roulette);
     }
 
