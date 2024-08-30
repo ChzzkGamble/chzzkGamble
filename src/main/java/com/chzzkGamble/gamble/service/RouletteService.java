@@ -31,7 +31,7 @@ public class RouletteService {
 
     @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
-        return rouletteRepository.findById(rouletteId)
+        return rouletteRepository.findByIdAndCreatedAtAfter(rouletteId, LocalDateTime.now().minusHours(HOUR_LIMIT))
                 .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND, "rouletteId : " + rouletteId));
     }
 
