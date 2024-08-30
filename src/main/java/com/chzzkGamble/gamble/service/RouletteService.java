@@ -42,12 +42,12 @@ public class RouletteService {
     }
 
     @Transactional
-    public List<RouletteElement> addElements(UUID rouletteId, List<String> elementNames) {
+    public void addElements(UUID rouletteId, List<String> elementNames) {
         Roulette roulette = readRoulette(rouletteId);
         List<RouletteElement> elements = elementNames.stream()
                 .map(name -> new RouletteElement(name, 0, roulette))
                 .toList();
-        return rouletteElementRepository.saveAll(elements);
+        rouletteElementRepository.saveAll(elements);
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +79,6 @@ public class RouletteService {
     }
 
     private boolean contains(String message, String word) {
-        // TODO : change algorithm to KMP
         return message.contains(word);
     }
 }
