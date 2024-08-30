@@ -23,25 +23,25 @@ public class ChzzkChatService {
         this.rouletteService = rouletteService;
     }
 
-    public void connectChatRoom(String channelId, UUID rouletteId) {
-        if (socketClientMap.containsKey(rouletteId)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTED, "rouletteId : " + rouletteId);
+    public void connectChatRoom(String channelId, UUID gambleId) {
+        if (socketClientMap.containsKey(gambleId)) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTED, "gambleId : " + gambleId);
         }
 
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, rouletteService, channelId);
         socketClient.connect(CHZZK_CHAT_SERVER);
-        socketClientMap.put(rouletteId, socketClient);
+        socketClientMap.put(gambleId, socketClient);
     }
 
-    public void disconnectChatRoom(UUID rouletteId) {
-        if (!socketClientMap.containsKey(rouletteId)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED, "rouletteId : " + rouletteId);
+    public void disconnectChatRoom(UUID gambleId) {
+        if (!socketClientMap.containsKey(gambleId)) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED, "gambleId : " + gambleId);
         }
-        ChzzkWebSocketClient socketClient = socketClientMap.remove(rouletteId);
+        ChzzkWebSocketClient socketClient = socketClientMap.remove(gambleId);
         socketClient.disconnect();
     }
 
-    public boolean isConnected(UUID rouletteId) {
-        return socketClientMap.containsKey(rouletteId) && socketClientMap.get(rouletteId).isConnected();
+    public boolean isConnected(UUID gambleId) {
+        return socketClientMap.containsKey(gambleId) && socketClientMap.get(gambleId).isConnected();
     }
 }
