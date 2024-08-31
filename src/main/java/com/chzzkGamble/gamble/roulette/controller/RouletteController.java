@@ -43,7 +43,10 @@ public class RouletteController {
 
         Roulette roulette = rouletteService.createRoulette(channelId, channelName);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
+                .path("/")
                 .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
                 .maxAge(2 * 60 * 60L) // 2 hours
                 .build();
 
