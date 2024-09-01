@@ -9,6 +9,7 @@ import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
+import com.chzzkGamble.utils.StringParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RouletteService {
 
     private static final int CHEESE_UNIT = 1_000;
-    public static final long HOUR_LIMIT = 2L;
+    private static final long HOUR_LIMIT = 2L;
+    private static final char LEFT_DELIMITER = '<';
+    private static final char RIGHT_DELIMITER = '>';
 
     private final RouletteRepository rouletteRepository;
     private final RouletteElementRepository rouletteElementRepository;
@@ -35,22 +38,6 @@ public class RouletteService {
                 .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND, "rouletteId : " + rouletteId));
     }
 
-    @Transactional
-    public RouletteElement addElement(UUID rouletteId, String elementName) {
-        Roulette roulette = readRoulette(rouletteId);
-        RouletteElement element = new RouletteElement(elementName, 0, roulette);
-        return rouletteElementRepository.save(element);
-    }
-
-    @Transactional
-    public void addElements(UUID rouletteId, List<String> elementNames) {
-        Roulette roulette = readRoulette(rouletteId);
-        List<RouletteElement> elements = elementNames.stream()
-                .map(name -> new RouletteElement(name, 0, roulette))
-                .toList();
-        rouletteElementRepository.saveAll(elements);
-    }
-
     @Transactional(readOnly = true)
     public List<RouletteElement> readRouletteElements(UUID rouletteId) {
         return rouletteElementRepository.findByRouletteId(rouletteId);
@@ -58,21 +45,28 @@ public class RouletteService {
 
     @Transactional
     public void vote(String channelId, String msg, int cheese) {
+        String elementName;
+        try {
+            elementName = StringParser.parseFromTo(msg, LEFT_DELIMITER, RIGHT_DELIMITER);
+        } catch (IllegalArgumentException e) {
+            return; // this is a donation not for vote
+        }
+        
         List<Roulette> roulettes = rouletteRepository.findByChannelIdAndCreatedAtIsAfter(channelId, LocalDateTime.now().minusHours(HOUR_LIMIT));
-        roulettes.forEach(roulette -> vote(roulette, msg, cheese));
+        roulettes.forEach(roulette -> vote(roulette, elementName, cheese));
     }
 
-    private void vote(Roulette roulette, String msg, int cheese) {
+    private void vote(Roulette roulette, String elementName, int cheese) {
         List<RouletteElement> elements = rouletteElementRepository.findByRouletteId(roulette.getId());
-        elements.stream()
-                .filter(element -> msg.contains(element.getName()))
+        RouletteElement rouletteElement = elements.stream()
+                .filter(element -> elementName.equals(element.getName()))
                 .findFirst()
-                .ifPresent(element -> vote(element.getId(), cheese / CHEESE_UNIT));
+                .orElse(new RouletteElement(elementName, 0, roulette));
+        
+        vote(rouletteElement, cheese / CHEESE_UNIT);
     }
 
-    private void vote(Long elementId, int voteCount) {
-        RouletteElement element = rouletteElementRepository.findById(elementId)
-                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_ELEMENT_NOT_FOUND, "elementId : " + elementId));
+    private void vote(RouletteElement element, int voteCount) {
         element.increaseCount(voteCount);
         rouletteElementRepository.save(element);
     }

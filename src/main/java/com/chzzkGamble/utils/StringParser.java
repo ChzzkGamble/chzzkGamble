@@ -2,7 +2,7 @@ package com.chzzkGamble.utils;
 
 public class StringParser {
 
-    static String parseFromTo(String text, char from, char to) {
+    public static String parseFromTo(String text, char from, char to) {
         if (from == to) {
             throw new IllegalArgumentException("같은 char로 파싱할 수 없습니다 : " + from);
         }

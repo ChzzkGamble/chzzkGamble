@@ -5,7 +5,6 @@ import com.chzzkGamble.chzzk.chat.ChzzkChatService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
-import com.chzzkGamble.gamble.roulette.dto.ElementCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.dto.RouletteResponse;
@@ -51,14 +50,6 @@ public class RouletteController {
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
-    }
-
-    @PostMapping("/elements")
-    public ResponseEntity<Void> addElement(@CookieValue(name = "rouletteId") Cookie cookie,
-                                           @RequestBody ElementCreateRequest request) {
-        UUID rouletteId = UUID.fromString(cookie.getValue());
-        rouletteService.addElements(rouletteId, request.getElements());
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/start")

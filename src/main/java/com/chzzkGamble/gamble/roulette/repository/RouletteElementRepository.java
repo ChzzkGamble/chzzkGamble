@@ -14,4 +14,6 @@ public interface RouletteElementRepository extends JpaRepository<RouletteElement
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<RouletteElement> findById(Long id);
+
+    Optional<RouletteElement> findByNameAndRouletteId(String name, UUID rouletteId);
 }

@@ -55,23 +55,12 @@ public class RouletteServiceTest {
     }
 
     @Test
-    @DisplayName("룰렛 요소를 추가할 수 있다.")
-    void addElement() {
-        // given
-        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-
-        // when & then
-        assertThatCode(() -> rouletteService.addElement(roulette.getId(), "요소1"))
-                .doesNotThrowAnyException();
-    }
-
-    @Test
     @DisplayName("룰렛 요소 목록을 불러올 수 있다.")
     void readElements() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        RouletteElement element1 = rouletteService.addElement(roulette.getId(), "요소1");
-        RouletteElement element2 = rouletteService.addElement(roulette.getId(), "요소2");
+        RouletteElement element1 = rouletteElementRepository.save(new RouletteElement("요소1", 0 ,roulette));
+        RouletteElement element2 = rouletteElementRepository.save(new RouletteElement("요소2", 0 ,roulette));
 
         // when & then
         assertThat(rouletteService.readRouletteElements(roulette.getId()))
@@ -83,13 +72,27 @@ public class RouletteServiceTest {
     void vote() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
+        RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
 
         // when
-        rouletteService.vote(CHANNEL_ID, "요소", 3_000);
+        rouletteService.vote(CHANNEL_ID, "<요소>", 3_000);
 
         // then
         RouletteElement votedElement = rouletteElementRepository.findById(element.getId()).orElseThrow();
+        assertThat(votedElement.getCount()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("룰렛에 없는 요소에 투표할 수 있다.")
+    void vote_notInRoulette() {
+        // given
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+
+        // when
+        rouletteService.vote(CHANNEL_ID, "<요소>", 3_000);
+
+        // then
+        RouletteElement votedElement = rouletteElementRepository.findByNameAndRouletteId("요소", roulette.getId()).orElseThrow();
         assertThat(votedElement.getCount()).isEqualTo(3);
     }
 
@@ -98,10 +101,10 @@ public class RouletteServiceTest {
     void vote_minusVote_Exception() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        rouletteService.addElement(roulette.getId(), "요소");
+        rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
 
         // when & then
-        assertThatThrownBy(() -> rouletteService.vote(CHANNEL_ID, "요소", -1_000))
+        assertThatThrownBy(() -> rouletteService.vote(CHANNEL_ID, "<요소>", -1_000))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -110,14 +113,14 @@ public class RouletteServiceTest {
     void vote_concurrencyControl() throws InterruptedException {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        RouletteElement element = rouletteService.addElement(roulette.getId(), "요소");
+        RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
 
         // when
         int threadsCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
         for (int i = 0; i < threadsCount; i++) {
             executorService.submit(() ->
-                rouletteService.vote(CHANNEL_ID, "요소", 1_000)
+                rouletteService.vote(CHANNEL_ID, "<요소>", 1_000)
             );
         }
         executorService.shutdown();
