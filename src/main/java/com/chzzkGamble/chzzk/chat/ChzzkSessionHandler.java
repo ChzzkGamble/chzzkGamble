@@ -82,8 +82,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
-        logger.info("connection closed : {}", channelId);
-        logger.info("closeStatus : {}", closeStatus);
+        logger.info("connection closed : {}, closeStatus : {}", channelName, closeStatus);
     }
 
     @Override
