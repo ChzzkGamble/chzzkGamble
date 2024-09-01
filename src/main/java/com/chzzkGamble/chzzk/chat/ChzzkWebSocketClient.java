@@ -19,8 +19,8 @@ public class ChzzkWebSocketClient {
     private final WebSocketHandler handler;
     private WebSocketSession session;
 
-    public ChzzkWebSocketClient(ChzzkApiService apiService, RouletteService rouletteService, String channelId) {
-        this.handler = new ChzzkSessionHandler(apiService, rouletteService, channelId);
+    public ChzzkWebSocketClient(ChzzkApiService apiService, RouletteService rouletteService, String channelId, String channelName) {
+        this.handler = new ChzzkSessionHandler(apiService, rouletteService, channelId, channelName);
     }
 
     public void connect(String url) {

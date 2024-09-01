@@ -28,12 +28,14 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     private final ChzzkApiService apiService;
     private final RouletteService rouletteService;
     private final String channelId;
+    private final String channelName;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ChzzkSessionHandler(ChzzkApiService apiService, RouletteService rouletteService, String channelId) {
+    public ChzzkSessionHandler(ChzzkApiService apiService, RouletteService rouletteService, String channelId, String channelName) {
         this.apiService = apiService;
         this.rouletteService = rouletteService;
         this.channelId = channelId;
+        this.channelName = channelName;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
         ConnectionMessage message = new ConnectionMessage(chatAccessToken, chatChannelId);
         session.sendMessage(new TextMessage(writeAsString(message)));
-        logger.info("connection established : {}", channelId);
+        logger.info("connection established : {}", channelName);
     }
 
     @Override
@@ -53,13 +55,14 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         // 1. if ping, send pong
         if (ChzzkChatCommand.PING.getNum() == cmd) {
             session.sendMessage(new TextMessage(writeAsString(new PongMessage())));
+            logger.info("PING-PONG with {}", channelName);
         }
 
         // 2. if donation, send to gamble
         if (ChzzkChatCommand.DONATION.getNum() == cmd) {
-            DonationMessage donationMessage = new DonationMessage(message);
+            DonationMessage donationMessage = new DonationMessage(channelName, message);
             if (!donationMessage.isDonation()) return;
-            logger.debug(donationMessage.toString());
+            logger.info(donationMessage.toString());
             String msg = donationMessage.msg;
             int cheese = donationMessage.cheese;
             rouletteService.vote(channelId, msg, cheese);
@@ -97,10 +100,12 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     }
 
     private static class DonationMessage {
+        String channelName;
         int cheese;
         String msg;
 
-        DonationMessage(WebSocketMessage<?> message) {
+        DonationMessage(String channelName, WebSocketMessage<?> message) {
+            this.channelName = channelName;
             JsonArray bdy = JsonParser.parseString((String) message.getPayload())
                     .getAsJsonObject()
                     .getAsJsonArray("bdy");
@@ -126,6 +131,15 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
         private boolean isDonation() {
             return cheese != 0;
+        }
+
+        @Override
+        public String toString() {
+            return "DonationMessage{" +
+                    "channelName=" + channelName +
+                    ", cheese=" + cheese +
+                    ", msg='" + msg + '\'' +
+                    '}';
         }
     }
 }

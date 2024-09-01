@@ -32,7 +32,8 @@ public class ChzzkChatService {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
         }
 
-        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, rouletteService, channelId);
+        String channelName = apiService.getChannelInfo(channelId).getChannelName();
+        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, rouletteService, channelId, channelName);
         socketClient.connect(CHZZK_CHAT_SERVER);
         socketClientMap.put(gambleId, socketClient);
     }
