@@ -44,7 +44,7 @@ public class RouletteService {
     }
 
     @Transactional
-    public void vote(String channelId, String msg, int cheese) {
+    public void vote(String channelName, String msg, int cheese) {
         String elementName;
         try {
             elementName = StringParser.parseFromTo(msg, LEFT_DELIMITER, RIGHT_DELIMITER);
@@ -52,7 +52,7 @@ public class RouletteService {
             return; // this is a donation not for vote
         }
         
-        List<Roulette> roulettes = rouletteRepository.findByChannelIdAndCreatedAtIsAfter(channelId, LocalDateTime.now().minusHours(HOUR_LIMIT));
+        List<Roulette> roulettes = rouletteRepository.findByChannelNameAndCreatedAtIsAfter(channelName, LocalDateTime.now().minusHours(HOUR_LIMIT));
         roulettes.forEach(roulette -> vote(roulette, elementName, cheese));
     }
 

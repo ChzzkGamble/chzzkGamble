@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RouletteRepository extends JpaRepository<Roulette, UUID> {
 
-    List<Roulette> findByChannelIdAndCreatedAtIsAfter(String channelId, LocalDateTime dateTime);
+    List<Roulette> findByChannelNameAndCreatedAtIsAfter(String channelName, LocalDateTime dateTime);
 
     Optional<Roulette> findByIdAndCreatedAtAfter(UUID id, LocalDateTime dateTime);
 }

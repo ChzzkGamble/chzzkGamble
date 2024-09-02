@@ -18,19 +18,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:roulette.sql") // insert 12 roulettes at 2024-08-30T00:00:00 for 2 hour interval
 public class RouletteRepositoryTest {
 
-    private static final String CHANNEL_ID = "ch_id";
+    private static final String CHANNEL_NAME = "ch_name";
 
     @Autowired
     RouletteRepository rouletteRepository;
 
     @Test
     @DisplayName("특정 시간 이후 룰렛만 가져올 수 있다.")
-    void findByChannelIdAndCreatedAtIsAfter() {
+    void findByChannelNameAndCreatedAtIsAfter() {
         // given
         LocalDateTime localDateTime = LocalDateTime.of(2024, 8, 30, 3, 0, 0);
 
         // when
-        List<Roulette> roulettes = rouletteRepository.findByChannelIdAndCreatedAtIsAfter(CHANNEL_ID, localDateTime);
+        List<Roulette> roulettes = rouletteRepository.findByChannelNameAndCreatedAtIsAfter(CHANNEL_NAME, localDateTime);
 
         // then
         assertThat(roulettes).hasSize(10);
