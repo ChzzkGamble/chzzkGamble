@@ -1,5 +1,7 @@
 package com.chzzkGamble.gamble.roulette.dto;
 
+import com.chzzkGamble.exception.ChzzkException;
+import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -20,6 +22,6 @@ public class RouletteCreateRequest {
         else if (streamUri.startsWith(BASIC_URI)) {
             this.channelId = streamUri.substring(BASIC_URI.length());
         }
-        else throw new RuntimeException("잘못된 주소입니다.");
+        else throw new ChzzkException(ChzzkExceptionCode.STREAM_URI_INVALID);
     }
 }

@@ -3,45 +3,51 @@ package com.chzzkGamble.chzzk.chat;
 import com.chzzkGamble.chzzk.ChzzkChatCommand;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.dto.ConnectionMessage;
+import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.chzzk.dto.Message;
 import com.chzzkGamble.chzzk.dto.PongMessage;
+import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+import java.util.UUID;
 
 public class ChzzkSessionHandler implements WebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final ChzzkApiService apiService;
-    private final RouletteService rouletteService;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final ChzzkApiService chzzkApiService;
+    private final ApplicationEventPublisher publisher;
     private final String channelId;
     private final String channelName;
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final UUID gambleId;
 
-    public ChzzkSessionHandler(ChzzkApiService apiService, RouletteService rouletteService, String channelId, String channelName) {
-        this.apiService = apiService;
-        this.rouletteService = rouletteService;
+    public ChzzkSessionHandler(ChzzkApiService chzzkApiService,
+                               ApplicationEventPublisher publisher,
+                               String channelId,
+                               String channelName,
+                               UUID gambleId) {
+        this.publisher = publisher;
+        this.chzzkApiService = chzzkApiService;
         this.channelId = channelId;
         this.channelName = channelName;
+        this.gambleId = gambleId;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String chatChannelId = apiService.getChatInfo(channelId).getChatChannelId();
-        String chatAccessToken = apiService.getChatAccessToken(chatChannelId);
+        String chatChannelId = chzzkApiService.getChatInfo(channelId).getChatChannelId();
+        String chatAccessToken = chzzkApiService.getChatAccessToken(chatChannelId);
 
         ConnectionMessage message = new ConnectionMessage(chatAccessToken, chatChannelId);
         session.sendMessage(new TextMessage(writeAsString(message)));
@@ -63,17 +69,8 @@ public class ChzzkSessionHandler implements WebSocketHandler {
             DonationMessage donationMessage = new DonationMessage(channelName, message);
             if (!donationMessage.isDonation()) return;
             logger.info(donationMessage.toString());
-            String msg = donationMessage.msg;
-            int cheese = donationMessage.cheese;
-            rouletteService.vote(channelId, msg, cheese);
+            publisher.publishEvent(donationMessage);
         }
-    }
-
-    private int parseCmd(WebSocketMessage<?> message) {
-        return JsonParser.parseString((String) message.getPayload())
-                .getAsJsonObject()
-                .getAsJsonPrimitive("cmd")
-                .getAsInt();
     }
 
     @Override
@@ -83,6 +80,10 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         logger.info("connection closed : {}, closeStatus : {}", channelName, closeStatus);
+        if (!closeStatus.equalsCode(CloseStatus.NORMAL)) {
+            // 예기치 못한 이유로 연결이 끊어졌을 때 재연결
+            publisher.publishEvent(new AbnormalWebSocketClosedEvent(gambleId));
+        }
     }
 
     @Override
@@ -98,47 +99,10 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         }
     }
 
-    private static class DonationMessage {
-        String channelName;
-        int cheese;
-        String msg;
-
-        DonationMessage(String channelName, WebSocketMessage<?> message) {
-            this.channelName = channelName;
-            JsonArray bdy = JsonParser.parseString((String) message.getPayload())
-                    .getAsJsonObject()
-                    .getAsJsonArray("bdy");
-            for (int i = 0; i < bdy.size(); i++) {
-                JsonObject jsonObject = bdy.get(i).getAsJsonObject();
-                if (jsonObject.get("msg") != null) {
-                    this.msg = jsonObject.get("msg").getAsString();
-                }
-                if (jsonObject.get("extras") != null) {
-                    this.cheese = parseCheese(jsonObject.get("extras").getAsJsonPrimitive().getAsString());
-                }
-            }
-        }
-
-        private static int parseCheese(String extras) {
-            for (String s : StringUtils.commaDelimitedListToSet(extras)) {
-                if (s.contains("payAmount")) {
-                    return Integer.parseInt(s.split(":")[1]);
-                }
-            }
-            return 0; //subscribe
-        }
-
-        private boolean isDonation() {
-            return cheese != 0;
-        }
-
-        @Override
-        public String toString() {
-            return "DonationMessage{" +
-                    "channelName=" + channelName +
-                    ", cheese=" + cheese +
-                    ", msg='" + msg + '\'' +
-                    '}';
-        }
+    private int parseCmd(WebSocketMessage<?> message) {
+        return JsonParser.parseString((String) message.getPayload())
+                .getAsJsonObject()
+                .getAsJsonPrimitive("cmd")
+                .getAsInt();
     }
 }

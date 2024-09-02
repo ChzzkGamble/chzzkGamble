@@ -3,6 +3,8 @@ package com.chzzkGamble.gamble.roulette.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import com.chzzkGamble.chzzk.dto.DonationMessage;
+import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.GambleException;
 import com.chzzkGamble.exception.GambleExceptionCode;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
@@ -11,6 +13,7 @@ import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
 import com.chzzkGamble.utils.StringParser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +44,13 @@ public class RouletteService {
     @Transactional(readOnly = true)
     public List<RouletteElement> readRouletteElements(UUID rouletteId) {
         return rouletteElementRepository.findByRouletteId(rouletteId);
+    }
+
+    @Transactional
+    @EventListener(DonationEvent.class)
+    public void handleDonation(DonationEvent donationEvent) {
+        DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
+        vote(donationMessage.getChannelName(), donationMessage.getMsg(), donationMessage.getCheese());
     }
 
     @Transactional

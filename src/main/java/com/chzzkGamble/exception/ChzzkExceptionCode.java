@@ -12,6 +12,7 @@ public enum ChzzkExceptionCode {
 
     // api 1_xxx
     CHANNEL_ID_INVALID(BAD_REQUEST, 1_001, "유효하지 않은 채널 ID 입니다."),
+    STREAM_URI_INVALID(BAD_REQUEST, 1_002, "잘못된 채널 주소 입니다."),
 
     // chat 2_xxx
     CHAT_IS_CONNECTED(BAD_REQUEST, 2_001, "채팅방과 이미 연결되어 있습니다."),
@@ -19,6 +20,7 @@ public enum ChzzkExceptionCode {
     CHAT_CONNECTION_ERROR(INTERNAL_SERVER_ERROR,2_003, "채팅방 연결에 실패했습니다"),
     CHAT_DISCONNECTION_ERROR(INTERNAL_SERVER_ERROR,2_004, "채팅방 연결 종료에 실패했습니다."),
     CHAT_CONNECTION_LIMIT(SERVICE_UNAVAILABLE, 2_005, "채팅방 최대 연결 수를 초과했습니다."),
+    CHAT_RECONNECTION_ERROR(INTERNAL_SERVER_ERROR, 2_006, "채팅방 재연결에 실패했습니다."),
 
     // json 3_xxx
     JSON_CONVERT(INTERNAL_SERVER_ERROR,3_001, "JSON 변환 중 오류가 생겼습니다."),
