@@ -3,6 +3,7 @@ package com.chzzkGamble.chzzk.chat;
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
@@ -16,7 +17,8 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 public class ChzzkWebSocketClient {
 
-    private static final String CHZZK_CHAT_SERVER = "wss://kr-ss2.chat.naver.com/chat";
+    private static final String CHZZK_CHAT_SERVER = "wss://kr-ss";
+    private static final String ChZZK_CHAT_SERVER2 = ".chat.naver.com/chat";
 
     private final WebSocketClient client = new StandardWebSocketClient();
     private final WebSocketHandler handler;
@@ -31,8 +33,10 @@ public class ChzzkWebSocketClient {
     }
 
     public void connect() {
+        int serverId = ThreadLocalRandom.current().nextInt(1, 6);
         try {
-            session = client.execute(handler, CHZZK_CHAT_SERVER).get(30, TimeUnit.SECONDS);
+            session = client.execute(handler, CHZZK_CHAT_SERVER + serverId + ChZZK_CHAT_SERVER2).get(30, TimeUnit.SECONDS);
+            session.setTextMessageSizeLimit(64 * 1024); // 64 KB
         } catch (TimeoutException | ExecutionException | InterruptedException e) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
         }

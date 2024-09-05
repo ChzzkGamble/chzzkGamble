@@ -25,6 +25,7 @@ public class ChzzkChatService {
         this.publisher = publisher;
     }
 
+    // TODO : 동시성 제어 (짧은 시간 내 여러번 요청)
     public void connectChatRoom(String channelId, UUID gambleId) {
         if (socketClientMap.containsKey(gambleId)) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTED, "gambleId : " + gambleId);
