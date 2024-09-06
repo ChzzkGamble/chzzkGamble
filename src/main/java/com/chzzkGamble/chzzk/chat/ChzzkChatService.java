@@ -8,8 +8,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 public class ChzzkChatService {
@@ -19,14 +21,19 @@ public class ChzzkChatService {
     private final ChzzkApiService apiService;
     private final ApplicationEventPublisher publisher;
     private final Map<UUID, ChzzkWebSocketClient> socketClientMap = new ConcurrentHashMap<>();
+    private final Set<UUID> tempGambleIds = new ConcurrentSkipListSet<>();
 
     public ChzzkChatService(ChzzkApiService apiService, ApplicationEventPublisher publisher) {
         this.apiService = apiService;
         this.publisher = publisher;
     }
 
-    // TODO : 동시성 제어 (짧은 시간 내 여러번 요청)
     public void connectChatRoom(String channelId, UUID gambleId) {
+        if (tempGambleIds.contains(gambleId)) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTING);
+        }
+        tempGambleIds.add(gambleId);
+
         if (socketClientMap.containsKey(gambleId)) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTED, "gambleId : " + gambleId);
         }
@@ -38,6 +45,7 @@ public class ChzzkChatService {
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelId, channelName, gambleId);
         socketClient.connect();
         socketClientMap.put(gambleId, socketClient);
+        tempGambleIds.remove(gambleId);
     }
 
     @EventListener(AbnormalWebSocketClosedEvent.class)
