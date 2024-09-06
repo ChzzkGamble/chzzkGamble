@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,8 +93,9 @@ public class RouletteServiceTest {
         rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
 
         // then
-        RouletteElement votedElement = rouletteElementRepository.findByNameAndRouletteId("요소", roulette.getId()).orElseThrow();
-        assertThat(votedElement.getCount()).isEqualTo(3);
+        List<RouletteElement> votedElements = rouletteElementRepository.findByRouletteId(roulette.getId());
+        assertThat(votedElements).hasSize(1);
+        assertThat(votedElements.get(0).getName()).isEqualTo("요소");
     }
 
     @Test

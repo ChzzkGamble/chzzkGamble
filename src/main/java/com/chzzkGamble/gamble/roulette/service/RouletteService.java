@@ -67,13 +67,10 @@ public class RouletteService {
     }
 
     private void vote(Roulette roulette, String elementName, int cheese) {
-        List<RouletteElement> elements = rouletteElementRepository.findByRouletteId(roulette.getId());
-        RouletteElement rouletteElement = elements.stream()
-                .filter(element -> elementName.equals(element.getName()))
-                .findFirst()
+        RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
                 .orElse(new RouletteElement(elementName, 0, roulette));
         
-        vote(rouletteElement, cheese / CHEESE_UNIT);
+        vote(element, cheese / CHEESE_UNIT);
     }
 
     private void vote(RouletteElement element, int voteCount) {
