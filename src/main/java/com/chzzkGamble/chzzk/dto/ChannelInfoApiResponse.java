@@ -8,4 +8,5 @@ import lombok.ToString;
 public class ChannelInfoApiResponse {
 
     private String channelName;
+    private String channelImageUrl;
 }
