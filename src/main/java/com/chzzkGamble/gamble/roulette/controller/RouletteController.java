@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("/roulette")
 @RequiredArgsConstructor
 public class RouletteController {
 
