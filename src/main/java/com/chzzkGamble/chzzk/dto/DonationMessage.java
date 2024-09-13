@@ -6,12 +6,14 @@ import com.google.gson.JsonParser;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.WebSocketMessage;
+import java.util.Arrays;
 
 @Getter
 public class DonationMessage {
     String channelName;
     int cheese;
     String msg;
+    DonationType type;
 
     public DonationMessage(String channelName, WebSocketMessage<?> message) {
         this.channelName = channelName;
@@ -24,7 +26,9 @@ public class DonationMessage {
                 this.msg = jsonObject.get("msg").getAsString();
             }
             if (jsonObject.get("extras") != null) {
-                this.cheese = parseCheese(jsonObject.get("extras").getAsJsonPrimitive().getAsString());
+                String extras = jsonObject.get("extras").getAsJsonPrimitive().getAsString();
+                this.cheese = parseCheese(extras);
+                this.type = DonationType.from(parseType(extras));
             }
         }
     }
@@ -38,6 +42,15 @@ public class DonationMessage {
         return 0; //subscribe
     }
 
+    private static String parseType(String extras) {
+        for (String s : StringUtils.commaDelimitedListToSet(extras)) {
+            if (s.contains("donationType")) {
+                return s.split(":")[1];
+            }
+        }
+        return "";
+    }
+
     public boolean isDonation() {
         return cheese != 0;
     }
@@ -45,9 +58,21 @@ public class DonationMessage {
     @Override
     public String toString() {
         return "DonationMessage{" +
-                "channelName=" + channelName +
+                "channelName='" + channelName + '\'' +
                 ", cheese=" + cheese +
                 ", msg='" + msg + '\'' +
+                ", type=" + type +
                 '}';
+    }
+
+    public enum DonationType {
+        CHAT, VIDEO, OTHER;
+
+        static DonationType from(String name) {
+            return Arrays.stream(values())
+                    .filter(value -> value.name().equals(name))
+                    .findFirst()
+                    .orElse(OTHER);
+        }
     }
 }
