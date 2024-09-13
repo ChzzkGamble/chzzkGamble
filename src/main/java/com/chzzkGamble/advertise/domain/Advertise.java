@@ -22,6 +22,8 @@ public class Advertise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     private String imageUrl;
 
     private Integer cost;
@@ -31,9 +33,22 @@ public class Advertise {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Advertise(String imageUrl, Integer cost, boolean isApproved) {
+    public Advertise(String name, String imageUrl, Integer cost, boolean isApproved) {
+        this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
         this.isApproved = isApproved;
+    }
+
+    @Override
+    public String toString() {
+        return "Advertise{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", cost=" + cost +
+                ", isApproved=" + isApproved +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

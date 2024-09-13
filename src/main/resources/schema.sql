@@ -12,3 +12,12 @@ CREATE TABLE roulette_element(
     roulette_id  VARCHAR NOT NULL,
     FOREIGN KEY (roulette_id) REFERENCES roulette (id)
 );
+
+CREATE TABLE advertise(
+    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR NOT NULL,
+    image_url    VARCHAR NOT NULL,
+    cost         INTEGER NOT NULL,
+    is_approved  BOOLEAN NOT NULL,
+    created_at   TIMESTAMP NOT NULL
+);

@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AdvertiseMapTest {
 
-    private static final Advertise ad1 = new Advertise("url1", 1000, true);
-    private static final Advertise ad2 = new Advertise("url2", 3000, true);
-    private static final Advertise ad3 = new Advertise("url3", 5000, true);
-    private static final Advertise ad4 = new Advertise("url3", 7000, false);
+    private static final Advertise ad1 = new Advertise("ad1","url1", 1000, true);
+    private static final Advertise ad2 = new Advertise("ad2","url2", 3000, true);
+    private static final Advertise ad3 = new Advertise("ad3","url3", 5000, true);
+    private static final Advertise ad4 = new Advertise("ad4","url3", 7000, false);
 
     @Test
     @DisplayName("광고 Map을 만들 수 있다.")
@@ -98,6 +98,6 @@ public class AdvertiseMapTest {
         AdvertiseMap advertiseMap = AdvertiseMap.from(Collections.emptyList());
 
         // when & then
-        assertThat(advertiseMap.getRandom().getImageUrl()).isEqualTo("IMAGE_URL_HERE");
+        assertThat(advertiseMap.getRandom().getName()).isEqualTo("Default Advertise");
     }
 }

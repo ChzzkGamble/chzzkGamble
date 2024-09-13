@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdvertiseMap {
 
-    private static final Advertise DEFAULT_ADVERTISE = new Advertise("IMAGE_URL_HERE", 0, true);
+    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0, true);
 
     private final Map<Advertise, Long> adCumulativeCosts;
     private final Map<Advertise, Double> adProbabilities;
@@ -55,5 +55,13 @@ public class AdvertiseMap {
 
     public Map<Advertise, Double> getProbabilities() {
         return Map.copyOf(adProbabilities);
+    }
+
+    @Override
+    public String toString() {
+        return "AdvertiseMap{" +
+                "adProbabilities=" + adProbabilities +
+                ", totalAmount=" + totalAmount +
+                '}';
     }
 }
