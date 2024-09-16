@@ -1,5 +1,8 @@
 package com.chzzkGamble.advertise.domain;
 
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,7 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdvertiseMap {
 
-    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0, true);
+    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0L, true);
+    private static final long ADVERTISE_DURATION_DAYS = 10L;
 
     private final Map<Advertise, Long> adCumulativeCosts;
     private final Map<Advertise, Double> adProbabilities;
@@ -20,8 +24,8 @@ public class AdvertiseMap {
         this.totalAmount = totalAmount;
     }
 
-    public static AdvertiseMap from(List<Advertise> advertises) {
-        long totalAmount = 0;
+    public static AdvertiseMap from(List<Advertise> advertises, Clock clock) {
+        long totalAmount = 0L;
         Map<Advertise, Long> costMap = new LinkedHashMap<>();
         Map<Advertise, Double> probabilityMap = new HashMap<>();
 
@@ -29,17 +33,23 @@ public class AdvertiseMap {
             if (!advertise.isApproved()) {
                 continue;
             }
-            totalAmount += advertise.getCost();
+            totalAmount += getAdjustedCost(advertise, clock);
             costMap.put(advertise, totalAmount);
         }
         for (Advertise advertise : advertises) {
             if (!advertise.isApproved()) {
                 continue;
             }
-            probabilityMap.put(advertise, advertise.getCost() / (double) totalAmount);
+            probabilityMap.put(advertise, getAdjustedCost(advertise, clock) / (double) totalAmount);
         }
 
         return new AdvertiseMap(costMap, probabilityMap, totalAmount);
+    }
+
+    private static Long getAdjustedCost(Advertise advertise, Clock clock) {
+        Duration duration = Duration.between(advertise.getCreatedAt(), LocalDateTime.now(clock));
+        long pastDays = duration.getSeconds() / 86400;
+        return advertise.getCost() * (ADVERTISE_DURATION_DAYS - pastDays) / ADVERTISE_DURATION_DAYS;
     }
 
     public Advertise getRandom() {

@@ -18,7 +18,7 @@ import java.util.Map;
 public class AdvertiseService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdvertiseService.class);
-    private static final long ADVERTISE_DURATION = 10L; // 10 days
+    private static final long ADVERTISE_DURATION_DAYS = 10L; // 10 days
 
     private final AdvertiseRepository advertiseRepository;
     private final Clock clock;
@@ -27,7 +27,7 @@ public class AdvertiseService {
     public AdvertiseService(AdvertiseRepository advertiseRepository, Clock clock) {
         this.advertiseRepository = advertiseRepository;
         this.clock = clock;
-        this.advertiseMap = AdvertiseMap.from(Collections.emptyList());
+        this.advertiseMap = AdvertiseMap.from(Collections.emptyList(), clock);
     }
 
     public Advertise createAdvertise(Advertise advertise) {
@@ -46,8 +46,8 @@ public class AdvertiseService {
     @Scheduled(fixedDelayString = "${advertise.update-interval}")
     public void updateAdvertiseMap() {
         List<Advertise> validAdvertise = advertiseRepository.findByCreatedAtAfterAndApprovedIsTrue(
-                LocalDateTime.now(clock).minusDays(ADVERTISE_DURATION));
-        advertiseMap = AdvertiseMap.from(validAdvertise);
+                LocalDateTime.now(clock).minusDays(ADVERTISE_DURATION_DAYS));
+        advertiseMap = AdvertiseMap.from(validAdvertise, clock);
 
         logger.info("updated : {}", advertiseMap);
     }
