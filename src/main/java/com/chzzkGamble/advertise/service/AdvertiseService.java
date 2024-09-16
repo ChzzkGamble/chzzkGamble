@@ -30,6 +30,10 @@ public class AdvertiseService {
         this.advertiseMap = AdvertiseMap.from(Collections.emptyList());
     }
 
+    public Advertise createAdvertise(Advertise advertise) {
+        return advertiseRepository.save(advertise);
+    }
+
     public Advertise getAdvertise() {
         return advertiseMap.getRandom();
     }

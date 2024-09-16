@@ -3,12 +3,15 @@ package com.chzzkGamble.advertise.controller;
 import com.chzzkGamble.advertise.domain.Advertise;
 import com.chzzkGamble.advertise.dto.AdvertiseProbabilityResponse;
 import com.chzzkGamble.advertise.dto.AdvertiseProbabilityResponses;
+import com.chzzkGamble.advertise.dto.AdvertiseRequest;
 import com.chzzkGamble.advertise.dto.AdvertiseResponse;
 import com.chzzkGamble.advertise.service.AdvertiseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.net.URI;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -17,6 +20,13 @@ import java.util.Map;
 public class AdvertiseController {
 
     private final AdvertiseService advertiseService;
+
+    // TODO : Authentication 구현
+    @PostMapping("/advertise")
+    public ResponseEntity<Void> createAdvertise(AdvertiseRequest request) {
+        Advertise advertise = advertiseService.createAdvertise(request.toEntity());
+        return ResponseEntity.created(URI.create("advertise/" + advertise.getId())).build();
+    }
 
     @GetMapping("/advertise")
     public ResponseEntity<AdvertiseResponse> getAdvertise() {
