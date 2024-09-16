@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdvertiseMap {
 
-    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0L, true);
+    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0L);
     private static final long ADVERTISE_DURATION_DAYS = 10L;
 
     private final Map<Advertise, Long> adCumulativeCosts;
@@ -30,16 +30,10 @@ public class AdvertiseMap {
         Map<Advertise, Double> probabilityMap = new HashMap<>();
 
         for (Advertise advertise : advertises) {
-            if (!advertise.isApproved()) {
-                continue;
-            }
             totalAmount += getAdjustedCost(advertise, clock);
             costMap.put(advertise, totalAmount);
         }
         for (Advertise advertise : advertises) {
-            if (!advertise.isApproved()) {
-                continue;
-            }
             probabilityMap.put(advertise, getAdjustedCost(advertise, clock) / (double) totalAmount);
         }
 

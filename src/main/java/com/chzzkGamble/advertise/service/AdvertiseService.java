@@ -45,7 +45,7 @@ public class AdvertiseService {
     @Transactional(readOnly = true)
     @Scheduled(fixedDelayString = "${advertise.update-interval}")
     public void updateAdvertiseMap() {
-        List<Advertise> validAdvertise = advertiseRepository.findByCreatedAtAfterAndApprovedIsTrue(
+        List<Advertise> validAdvertise = advertiseRepository.findByCreatedAtAfter(
                 LocalDateTime.now(clock).minusDays(ADVERTISE_DURATION_DAYS));
         advertiseMap = AdvertiseMap.from(validAdvertise, clock);
 

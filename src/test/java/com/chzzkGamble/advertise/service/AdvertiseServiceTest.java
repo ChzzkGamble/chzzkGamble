@@ -40,7 +40,7 @@ public class AdvertiseServiceTest {
     @DisplayName("광고 목록을 업데이트할 수 있다.")
     void updateAdvertiseMap() {
         // given
-        advertiseRepository.save(new Advertise("따효니", "image1", 1000L, true));
+        advertiseRepository.save(new Advertise("따효니", "image1", 1000L));
 
         // when
         advertiseService.updateAdvertiseMap();
@@ -53,7 +53,7 @@ public class AdvertiseServiceTest {
     @DisplayName("10일이 지난 광고는 업데이트되지 않는다.")
     void updateAdvertiseMap_after10Days() {
         // given
-        advertiseRepository.save(new Advertise("따효니", "image1", 1000L, true));
+        advertiseRepository.save(new Advertise("따효니", "image1", 1000L));
         doReturn(Instant.now(after10Days))
                 .when(clock)
                 .instant();
@@ -72,7 +72,7 @@ public class AdvertiseServiceTest {
         assertThat(advertiseService.getAdvertiseProbabilities()).isEmpty();
 
         // when
-        advertiseRepository.save(new Advertise("따효니", "image1", 1000L, true));
+        advertiseRepository.save(new Advertise("따효니", "image1", 1000L));
         Thread.sleep(4 * 1000L);
 
         // then

@@ -32,10 +32,9 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AdvertiseMapTest {
 
-    private final Advertise ad1 = new Advertise("ad1","url1", 1000L, true);
-    private final Advertise ad2 = new Advertise("ad2","url2", 3000L, true);
-    private final Advertise ad3 = new Advertise("ad3","url3", 5000L, true);
-    private final Advertise ad4 = new Advertise("ad4","url3", 7000L, false);
+    private final Advertise ad1 = new Advertise("ad1","url1", 1000L);
+    private final Advertise ad2 = new Advertise("ad2","url2", 3000L);
+    private final Advertise ad3 = new Advertise("ad3","url3", 5000L);
     private final Clock clock = Clock.system(ZoneId.of("Asia/Seoul"));
 
     @Autowired
@@ -52,14 +51,13 @@ public class AdvertiseMapTest {
         advertiseRepository.save(ad1);
         advertiseRepository.save(ad2);
         advertiseRepository.save(ad3);
-        advertiseRepository.save(ad4);
     }
 
     @Test
     @DisplayName("광고 Map을 만들 수 있다.")
     void from() {
         // given & when & then
-        assertThatCode(() -> AdvertiseMap.from(List.of(ad1, ad2, ad3, ad4), clock))
+        assertThatCode(() -> AdvertiseMap.from(List.of(ad1, ad2, ad3), clock))
                 .doesNotThrowAnyException();
     }
 
@@ -75,7 +73,7 @@ public class AdvertiseMapTest {
     @DisplayName("광고 확률을 정확히 표시할 수 있다.")
     void getProbabilities() {
         // given
-        AdvertiseMap advertiseMap = AdvertiseMap.from(List.of(ad1, ad2, ad3, ad4), clock);
+        AdvertiseMap advertiseMap = AdvertiseMap.from(List.of(ad1, ad2, ad3), clock);
 
         // when
         Map<Advertise, Double> probabilities = advertiseMap.getProbabilities();
@@ -103,14 +101,14 @@ public class AdvertiseMapTest {
         when(dateTimeProvider.getNow())
                 .thenReturn(Optional.of(pastDay));
 
-        Advertise pastAd = new Advertise("name", "url", 1000L, true);
+        Advertise pastAd = new Advertise("name", "url", 1000L);
         advertiseRepository.save(pastAd);
 
         // save today advertise
         when(dateTimeProvider.getNow())
                 .thenReturn(Optional.of(today));
 
-        Advertise todayAd = new Advertise("name", "url", 2000L, true);
+        Advertise todayAd = new Advertise("name", "url", 2000L);
         advertiseRepository.save(todayAd);
 
         // when
@@ -124,44 +122,28 @@ public class AdvertiseMapTest {
         autoCloseable.close();
     }
 
-    @Test
-    @DisplayName("승인되지 않은 광고는 확률 상 존재하지 않는다.")
-    void getProbabilities_notApproved() {
-        // given
-        AdvertiseMap advertiseMap = AdvertiseMap.from(List.of(ad1, ad2, ad3, ad4), clock);
-
-        // when
-        Map<Advertise, Double> probabilities = advertiseMap.getProbabilities();
-
-        // then
-        assertThat(probabilities.containsKey(ad4)).isFalse();
-    }
-
     @RepeatedTest(100)
     @DisplayName("랜덤 광고를 확률에 맞게 획득할 수 있다.")
     void getRandom() {
         // given
-        AdvertiseMap advertiseMap = AdvertiseMap.from(List.of(ad1, ad2, ad3, ad4), clock);
+        AdvertiseMap advertiseMap = AdvertiseMap.from(List.of(ad1, ad2, ad3), clock);
 
         // when
         int ad1Count = 0;
         int ad2Count = 0;
         int ad3Count = 0;
-        int ad4Count = 0;
 
         for (int i = 0; i < 9000; i++) {
             Advertise ad = advertiseMap.getRandom();
             if (ad.equals(ad1)) ad1Count++;
             if (ad.equals(ad2)) ad2Count++;
             if (ad.equals(ad3)) ad3Count++;
-            if (ad.equals(ad4)) ad4Count++;
         }
 
         // then
         assertThat(ad1Count).isBetween(500, 1500);
         assertThat(ad2Count).isBetween(2500, 3500);
         assertThat(ad3Count).isBetween(4500, 5500);
-        assertThat(ad4Count).isEqualTo(0);
     }
 
     @Test
