@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS roulette_element CASCADE;
+DROP TABLE IF EXISTS roulette CASCADE;
+DROP TABLE IF EXISTS advertise CASCADE;
+
 CREATE TABLE roulette(
     id           uuid default random_uuid() PRIMARY KEY,
     channel_id   VARCHAR NOT NULL,

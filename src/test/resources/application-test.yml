@@ -1,2 +1,2 @@
 advertise:
-  update-interval: 10000 # 10 seconds
+  update-interval: 3000 # 3 seconds
