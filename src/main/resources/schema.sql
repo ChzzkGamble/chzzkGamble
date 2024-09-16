@@ -17,7 +17,7 @@ CREATE TABLE advertise(
     id           BIGINT AUTO_INCREMENT PRIMARY KEY,
     name         VARCHAR NOT NULL,
     image_url    VARCHAR NOT NULL,
-    cost         INTEGER NOT NULL,
+    cost         BIGINT NOT NULL,
     approved     BOOLEAN NOT NULL,
     created_at   TIMESTAMP NOT NULL
 );

@@ -26,14 +26,14 @@ public class Advertise {
 
     private String imageUrl;
 
-    private Integer cost;
+    private Long cost;
 
     private boolean approved;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Advertise(String name, String imageUrl, Integer cost, boolean approved) {
+    public Advertise(String name, String imageUrl, Long cost, boolean approved) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;

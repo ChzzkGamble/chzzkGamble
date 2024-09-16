@@ -8,10 +8,10 @@ public class AdvertiseRequest {
 
     private String name;
     private String imageUrl;
-    private Integer cost;
-    private boolean isApproved;
+    private Long cost;
+    private boolean approved;
 
     public Advertise toEntity() {
-        return new Advertise(name, imageUrl, cost, isApproved);
+        return new Advertise(name, imageUrl, cost, approved);
     }
 }
