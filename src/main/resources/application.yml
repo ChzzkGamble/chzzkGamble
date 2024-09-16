@@ -10,3 +10,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+
+advertise:
+  update-interval: 30 * 60 * 1000 # 30 minutes

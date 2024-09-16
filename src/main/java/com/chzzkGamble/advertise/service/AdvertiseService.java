@@ -43,10 +43,11 @@ public class AdvertiseService {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(fixedDelay = 60 * 1000L) // 30 minutes
+    @Scheduled(fixedDelayString = "${advertise.update-interval}")
     public void updateAdvertiseMap() {
-        List<Advertise> advertises = advertiseRepository.findByCreatedAtAfter(LocalDateTime.now(clock).minusDays(ADVERTISE_DURATION));
-        advertiseMap = AdvertiseMap.from(advertises);
+        List<Advertise> validAdvertise = advertiseRepository.findByCreatedAtAfterAndApprovedIsTrue(
+                LocalDateTime.now(clock).minusDays(ADVERTISE_DURATION));
+        advertiseMap = AdvertiseMap.from(validAdvertise);
 
         logger.info("updated : {}", advertiseMap);
     }

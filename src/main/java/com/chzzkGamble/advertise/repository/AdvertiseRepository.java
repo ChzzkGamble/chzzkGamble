@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AdvertiseRepository extends JpaRepository<Advertise, Long> {
 
-    List<Advertise> findByCreatedAtAfter(LocalDateTime validDateTime);
+    List<Advertise> findByCreatedAtAfterAndApprovedIsTrue(LocalDateTime validDateTime);
 }

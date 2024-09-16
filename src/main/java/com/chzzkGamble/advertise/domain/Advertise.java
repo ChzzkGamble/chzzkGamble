@@ -28,16 +28,16 @@ public class Advertise {
 
     private Integer cost;
 
-    private boolean isApproved;
+    private boolean approved;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Advertise(String name, String imageUrl, Integer cost, boolean isApproved) {
+    public Advertise(String name, String imageUrl, Integer cost, boolean approved) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
-        this.isApproved = isApproved;
+        this.approved = approved;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Advertise {
                 ", name='" + name + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", cost=" + cost +
-                ", isApproved=" + isApproved +
+                ", isApproved=" + approved +
                 ", createdAt=" + createdAt +
                 '}';
     }

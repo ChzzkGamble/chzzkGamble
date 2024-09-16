@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class AdvertiseServiceTest {
 
     private static final Clock after10Days;
@@ -61,5 +63,19 @@ public class AdvertiseServiceTest {
 
         // then
         assertThat(advertiseService.getAdvertise().getName()).isEqualTo("Default Advertise");
+    }
+
+    @Test
+    @DisplayName("일정 주기로 광고 목록이 업데이트 된다.") // 10 seconds in test profile
+    void updateAdvertiseMap_scheduled() throws InterruptedException {
+        // given
+        assertThat(advertiseService.getAdvertiseProbabilities()).isEmpty();
+
+        // when
+        advertiseRepository.save(new Advertise("따효니", "image1", 1000, true));
+        Thread.sleep(10 * 1000L);
+
+        // then
+        assertThat(advertiseService.getAdvertiseProbabilities()).hasSize(1);
     }
 }

@@ -18,6 +18,6 @@ CREATE TABLE advertise(
     name         VARCHAR NOT NULL,
     image_url    VARCHAR NOT NULL,
     cost         INTEGER NOT NULL,
-    is_approved  BOOLEAN NOT NULL,
+    approved     BOOLEAN NOT NULL,
     created_at   TIMESTAMP NOT NULL
 );
