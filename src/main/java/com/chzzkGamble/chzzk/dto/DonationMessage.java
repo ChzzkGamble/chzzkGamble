@@ -45,7 +45,7 @@ public class DonationMessage {
     private static String parseType(String extras) {
         for (String s : StringUtils.commaDelimitedListToSet(extras)) {
             if (s.contains("donationType")) {
-                return s.split(":")[1];
+                return s.split(":")[1].replace("\"", "");
             }
         }
         return "";
