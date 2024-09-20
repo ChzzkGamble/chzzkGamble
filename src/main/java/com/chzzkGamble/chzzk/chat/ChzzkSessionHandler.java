@@ -80,6 +80,11 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         logger.info("connection closed : {}, closeStatus : {}", channelName, closeStatus);
+        if (closeStatus.equalsCode(CloseStatus.SERVER_ERROR)) {
+            // 서버 측 연결 문제인 경우, 재연결해도 소용없을 확률이 높다.
+            return;
+        }
+
         if (!closeStatus.equalsCode(CloseStatus.NORMAL)) {
             // 예기치 못한 이유로 연결이 끊어졌을 때 재연결
             publisher.publishEvent(new AbnormalWebSocketClosedEvent(gambleId));

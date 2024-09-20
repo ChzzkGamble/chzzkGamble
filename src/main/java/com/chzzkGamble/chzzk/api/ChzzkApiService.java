@@ -2,10 +2,13 @@ package com.chzzkGamble.chzzk.api;
 
 import com.chzzkGamble.chzzk.dto.ChatInfoApiResponse;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
+import com.chzzkGamble.exception.ChzzkException;
+import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 @Service
 public class ChzzkApiService {
@@ -41,7 +44,12 @@ public class ChzzkApiService {
 
     public String getChatAccessToken(String chatChannelId) {
         String url = "https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId=" + chatChannelId + "&chatType=STREAMING";
-        String jsonString = restClient.get(url);
+        String jsonString;
+        try {
+            jsonString = restClient.get(url);
+        } catch (HttpServerErrorException.InternalServerError internalServerError) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_ACCESS_ERROR);
+        }
 
         JsonObject content = JsonParser.parseString(jsonString)
                 .getAsJsonObject()
