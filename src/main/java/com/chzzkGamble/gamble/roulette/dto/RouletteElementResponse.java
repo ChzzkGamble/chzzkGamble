@@ -6,21 +6,24 @@ import lombok.Getter;
 @Getter
 public class RouletteElementResponse {
 
-    Long id;
-    String name;
-    Integer count;
+    private Long id;
+    private String name;
+    private Integer vote;
+    private String percentage;
 
-    public RouletteElementResponse(Long id, String name, Integer count) {
+    public RouletteElementResponse(Long id, String name, Integer vote, String percentage) {
         this.id = id;
         this.name = name;
-        this.count = count;
+        this.vote = vote;
+        this.percentage = percentage;
     }
 
-    public static RouletteElementResponse from(RouletteElement element) {
+    public static RouletteElementResponse of(RouletteElement element, Integer totalVote) {
         return new RouletteElementResponse(
                 element.getId(),
                 element.getName(),
-                element.getCount()
+                element.getCount(),
+                String.format("%.2f%%", (double) element.getCount() / totalVote * 100)
         );
     }
 }

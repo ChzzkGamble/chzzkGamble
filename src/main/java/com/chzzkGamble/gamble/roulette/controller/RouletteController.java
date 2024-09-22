@@ -6,9 +6,9 @@ import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
+import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
-import com.chzzkGamble.gamble.roulette.dto.RouletteResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
@@ -83,13 +83,17 @@ public class RouletteController {
     }
 
     @GetMapping
-    public ResponseEntity<RouletteResponse> readRoulette(@CookieValue(name = "rouletteId") Cookie cookie) {
+    public List<RouletteElementResponse> readRoulette(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
-        List<RouletteElementResponse> elementResponses = rouletteService.readRouletteElements(rouletteId)
-                .stream()
-                .map(RouletteElementResponse::from)
-                .toList();
+        List<RouletteElement> rouletteElements = rouletteService.readRouletteElements(rouletteId);
 
-        return ResponseEntity.ok(new RouletteResponse(elementResponses));
+        int totalVote = rouletteElements.stream()
+                .mapToInt(RouletteElement::getCount)
+                .sum();
+
+        return rouletteElements
+                .stream()
+                .map(element -> RouletteElementResponse.of(element, totalVote))
+                .toList();
     }
 }
