@@ -36,7 +36,7 @@ public class ChzzkChatServiceTest {
     }
 
     @Test
-    @DisplayName("채팅방과 WebScoket 방식으로 연결할 수 있다.")
+    @DisplayName("채팅방과 WebSocket 방식으로 연결할 수 있다.")
     void connectChatRoom() {
         assertThatCode(() -> chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId()))
                 .doesNotThrowAnyException();

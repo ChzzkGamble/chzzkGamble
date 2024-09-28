@@ -41,7 +41,7 @@ public class ChzzkApiServiceTest {
     }
 
     @Test
-    @DisplayName("채팅 정보를 가져올 수 없다.")
+    @DisplayName("채팅 정보를 가져올 수 없다.: ChannelId가 잘못된 경우")
     void getChatInfo_InvalidChannelId_Exception() {
         assertThatThrownBy(() -> chzzkApiService.getChatInfo(DdahyoniChannelId + "777"))
                 .isInstanceOf(HttpClientErrorException.NotFound.class);
