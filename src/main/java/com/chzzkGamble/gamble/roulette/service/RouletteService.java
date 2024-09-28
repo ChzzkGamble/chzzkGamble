@@ -79,16 +79,16 @@ public class RouletteService {
     }
 
     @Transactional
-    public void startVote(UUID rouletteId) {
+    public Roulette startVote(UUID rouletteId) {
         Roulette roulette = readRoulette(rouletteId);
         roulette.startVote();
-        rouletteRepository.save(roulette);
+        return rouletteRepository.save(roulette);
     }
 
     @Transactional
-    public void endVote(UUID rouletteId) {
+    public Roulette endVote(UUID rouletteId) {
         Roulette roulette = readRoulette(rouletteId);
         roulette.endVote();
-        rouletteRepository.save(roulette);
+        return rouletteRepository.save(roulette);
     }
 }
