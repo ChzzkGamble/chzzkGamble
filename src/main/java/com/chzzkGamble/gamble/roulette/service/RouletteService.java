@@ -91,4 +91,8 @@ public class RouletteService {
         roulette.endVote();
         return rouletteRepository.save(roulette);
     }
+
+    public boolean hasVotingRoulette(String channelName) {
+        return !rouletteRepository.findByChannelNameAndVotingIsTrue(channelName).isEmpty();
+    }
 }

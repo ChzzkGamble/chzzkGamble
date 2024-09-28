@@ -135,4 +135,16 @@ public class RouletteServiceTest {
         RouletteElement votedElement = rouletteElementRepository.findById(element.getId()).orElseThrow();
         assertThat(votedElement.getCount()).isEqualTo(10);
     }
+
+    @Test
+    @DisplayName("해당 채널에 투표중인 룰렛이 있는지 확인할 수 있다.")
+    void hasVotingRoulette() {
+        // given
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+
+        // when & then
+        assertThat(rouletteService.hasVotingRoulette(CHANNEL_NAME)).isFalse();
+        rouletteService.startVote(roulette.getId());
+        assertThat(rouletteService.hasVotingRoulette(CHANNEL_NAME)).isTrue();
+    }
 }
