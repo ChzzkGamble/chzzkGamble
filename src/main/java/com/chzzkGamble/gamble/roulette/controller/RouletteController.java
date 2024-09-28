@@ -28,7 +28,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RouletteController {
 
-
     private final RouletteService rouletteService;
     private final ChzzkApiService chzzkApiService;
     private final ChzzkChatService chzzkChatService;
@@ -36,7 +35,6 @@ public class RouletteController {
     @PostMapping("/create")
     public ResponseEntity<ChannelInfoApiResponse> createRoulette(@RequestBody RouletteCreateRequest request) {
         String channelId = request.getChannelId();
-
         ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(channelId);
         String channelName = channelInfo.getChannelName();
 
@@ -46,7 +44,7 @@ public class RouletteController {
                 .httpOnly(true)
                 .sameSite("None")
                 .secure(true)
-                .maxAge(2 * 60 * 60L) // 2 hours
+                .maxAge(5 * 60 * 60L) // 5 hours
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK)

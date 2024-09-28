@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RouletteService {
 
     private static final int CHEESE_UNIT = 1_000;
-    private static final long HOUR_LIMIT = 2L;
+    private static final long HOUR_LIMIT = 5L;
     private static final char LEFT_DELIMITER = '<';
     private static final char RIGHT_DELIMITER = '>';
 
