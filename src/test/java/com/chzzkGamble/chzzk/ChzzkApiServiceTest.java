@@ -46,9 +46,4 @@ public class ChzzkApiServiceTest {
         assertThatThrownBy(() -> chzzkApiService.getChatInfo(DdahyoniChannelId + "777"))
                 .isInstanceOf(HttpClientErrorException.NotFound.class);
     }
-
-    @Test
-    @DisplayName("채팅방과 연결할 수 있다.")
-    void connectChatRoom() {
-    }
 }
