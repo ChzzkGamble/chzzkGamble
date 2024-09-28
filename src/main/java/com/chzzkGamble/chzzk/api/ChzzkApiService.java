@@ -28,7 +28,11 @@ public class ChzzkApiService {
                 .getAsJsonObject()
                 .getAsJsonObject("content");
 
-        return gson.fromJson(content, ChannelInfoApiResponse.class);
+        ChannelInfoApiResponse response = gson.fromJson(content, ChannelInfoApiResponse.class);
+        if (response.isInvalid()) {
+            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_ID_INVALID, "channelId : " + channelId);
+        }
+        return response;
     }
 
     public ChatInfoApiResponse getChatInfo(String channelId) {

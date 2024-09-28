@@ -3,8 +3,6 @@ package com.chzzkGamble.gamble.roulette.controller;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
-import com.chzzkGamble.exception.ChzzkException;
-import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
@@ -30,7 +28,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RouletteController {
 
-    private static final String INVALID_CHANNEL_NAME = "(알 수 없음)";
 
     private final RouletteService rouletteService;
     private final ChzzkApiService chzzkApiService;
@@ -42,9 +39,6 @@ public class RouletteController {
 
         ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(channelId);
         String channelName = channelInfo.getChannelName();
-        if (channelName.equals(INVALID_CHANNEL_NAME)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_ID_INVALID, "channelId : " + channelId);
-        }
 
         Roulette roulette = rouletteService.createRoulette(channelId, channelName);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
@@ -63,7 +57,7 @@ public class RouletteController {
     @PostMapping("/start")
     public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
         Roulette roulette = rouletteService.readRoulette(UUID.fromString(cookie.getValue()));
-        chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId());
+        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
         return ResponseEntity.ok().build();
     }
 
