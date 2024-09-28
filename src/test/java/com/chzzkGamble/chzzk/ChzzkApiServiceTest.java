@@ -1,6 +1,8 @@
 package com.chzzkGamble.chzzk;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
+import com.chzzkGamble.exception.ChzzkException;
+import com.chzzkGamble.exception.ChzzkExceptionCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,11 @@ public class ChzzkApiServiceTest {
     }
 
     @Test
-    @DisplayName("채널 정보를 가져올 수 있다: ChannelId가 잘못된 경우")
+    @DisplayName("채널 정보를 가져올 수 없다: ChannelId가 잘못된 경우")
     void getChannelInfo_InvalidChannelId() {
-        String channelName = chzzkApiService.getChannelInfo(DdahyoniChannelId + "777").getChannelName();
-        assertThat(channelName).isEqualTo("(알 수 없음)");
+        assertThatThrownBy(() -> chzzkApiService.getChannelInfo(DdahyoniChannelId + "777"))
+                .isInstanceOf(ChzzkException.class)
+                .hasMessage(ChzzkExceptionCode.CHANNEL_ID_INVALID.getMessage());
     }
 
     @Test

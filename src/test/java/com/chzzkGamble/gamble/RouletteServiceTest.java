@@ -76,6 +76,7 @@ public class RouletteServiceTest {
         RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
 
         // when
+        rouletteService.startVote(roulette.getId());
         rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
 
         // then
@@ -90,6 +91,7 @@ public class RouletteServiceTest {
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
 
         // when
+        rouletteService.startVote(roulette.getId());
         rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
 
         // then
@@ -115,6 +117,7 @@ public class RouletteServiceTest {
     void vote_concurrencyControl() throws InterruptedException {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+        rouletteService.startVote(roulette.getId());
         RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
 
         // when
