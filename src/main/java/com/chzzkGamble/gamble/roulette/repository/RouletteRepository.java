@@ -12,4 +12,6 @@ public interface RouletteRepository extends JpaRepository<Roulette, UUID> {
     List<Roulette> findByChannelNameAndCreatedAtIsAfter(String channelName, LocalDateTime dateTime);
 
     Optional<Roulette> findByIdAndCreatedAtAfter(UUID id, LocalDateTime dateTime);
+
+    List<Roulette> findByChannelNameAndVotingIsTrue(String channelName);
 }

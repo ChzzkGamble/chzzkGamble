@@ -62,7 +62,7 @@ public class RouletteService {
             return; // this is a donation not for vote
         }
         
-        List<Roulette> roulettes = rouletteRepository.findByChannelNameAndCreatedAtIsAfter(channelName, LocalDateTime.now().minusHours(HOUR_LIMIT));
+        List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(channelName);
         roulettes.forEach(roulette -> vote(roulette, elementName, cheese));
     }
 
@@ -76,5 +76,19 @@ public class RouletteService {
     private void vote(RouletteElement element, int voteCount) {
         element.increaseCount(voteCount);
         rouletteElementRepository.save(element);
+    }
+
+    @Transactional
+    public void startVote(UUID rouletteId) {
+        Roulette roulette = readRoulette(rouletteId);
+        roulette.startVote();
+        rouletteRepository.save(roulette);
+    }
+
+    @Transactional
+    public void endVote(UUID rouletteId) {
+        Roulette roulette = readRoulette(rouletteId);
+        roulette.endVote();
+        rouletteRepository.save(roulette);
     }
 }

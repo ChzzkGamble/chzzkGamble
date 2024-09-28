@@ -35,5 +35,14 @@ public class RouletteRepositoryTest {
         // then
         assertThat(roulettes).hasSize(10);
     }
-}
 
+    @Test
+    @DisplayName("투표 중인 룰렛만 가져올 수 있다.")
+    void findByChannelNameAndVotingIsTrue() {
+        // given & when
+        List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(CHANNEL_NAME);
+
+        // then
+        assertThat(roulettes).hasSize(10);
+    }
+}
