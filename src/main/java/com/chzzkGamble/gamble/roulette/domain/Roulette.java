@@ -28,12 +28,22 @@ public class Roulette {
 
     private String channelName;
 
+    private boolean voting = false;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
     public Roulette(String channelId, String channelName) {
         this.channelId = channelId;
         this.channelName = channelName;
+    }
+
+    public void startVote() {
+        voting = true;
+    }
+
+    public void endVote() {
+        voting = false;
     }
 
     @Override
