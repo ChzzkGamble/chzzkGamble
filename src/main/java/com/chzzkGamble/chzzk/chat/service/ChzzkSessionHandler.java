@@ -28,25 +28,22 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ChzzkApiService chzzkApiService;
     private final ApplicationEventPublisher publisher;
-    private final String channelId;
     private final String channelName;
     private final UUID gambleId;
 
     public ChzzkSessionHandler(ChzzkApiService chzzkApiService,
                                ApplicationEventPublisher publisher,
-                               String channelId,
                                String channelName,
                                UUID gambleId) {
         this.publisher = publisher;
         this.chzzkApiService = chzzkApiService;
-        this.channelId = channelId;
         this.channelName = channelName;
         this.gambleId = gambleId;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String chatChannelId = chzzkApiService.getChatInfo(channelId).getChatChannelId();
+        String chatChannelId = chzzkApiService.getChatInfoByChannelName(channelName).getChatChannelId();
         String chatAccessToken = chzzkApiService.getChatAccessToken(chatChannelId);
 
         ConnectionMessage message = new ConnectionMessage(chatAccessToken, chatChannelId);

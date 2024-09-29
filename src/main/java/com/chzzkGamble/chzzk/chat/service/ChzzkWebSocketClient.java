@@ -26,10 +26,9 @@ public class ChzzkWebSocketClient {
 
     public ChzzkWebSocketClient(ChzzkApiService apiService,
                                 ApplicationEventPublisher publisher,
-                                String channelId,
                                 String channelName,
                                 UUID gambleId) {
-        this.handler = new ChzzkSessionHandler(apiService, publisher, channelId, channelName, gambleId);
+        this.handler = new ChzzkSessionHandler(apiService, publisher, channelName, gambleId);
     }
 
     public void connect() {

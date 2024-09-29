@@ -42,7 +42,7 @@ public class ChzzkChatService {
         }
 
         String channelName = apiService.getChannelInfo(channelId).getChannelName();
-        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelId, channelName, gambleId);
+        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName, gambleId);
         socketClient.connect();
         socketClientMap.put(gambleId, socketClient);
         tempGambleIds.remove(gambleId);
