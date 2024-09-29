@@ -28,7 +28,7 @@ public class ChzzkChatService {
         this.publisher = publisher;
     }
 
-    public void connectChatRoom(String channelId, UUID gambleId) {
+    public void connectChatRoom(String channelName, UUID gambleId) {
         if (tempGambleIds.contains(gambleId)) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTING);
         }
@@ -41,7 +41,6 @@ public class ChzzkChatService {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
         }
 
-        String channelName = apiService.getChannelInfo(channelId).getChannelName();
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName, gambleId);
         socketClient.connect();
         socketClientMap.put(gambleId, socketClient);

@@ -38,7 +38,7 @@ public class ChzzkChatServiceTest {
     @Test
     @DisplayName("채팅방과 WebSocket 방식으로 연결할 수 있다.")
     void connectChatRoom() {
-        assertThatCode(() -> chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId()))
+        assertThatCode(() -> chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId()))
                 .doesNotThrowAnyException();
     }
 
@@ -46,10 +46,10 @@ public class ChzzkChatServiceTest {
     @DisplayName("이미 연결된 룰렛은 채팅방과 연결할 수 없다.")
     void connectChatRoom_alreadyConnected_exception() {
         // given
-        chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId());
+        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
 
         // when & then
-        assertThatThrownBy(() -> chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId()))
+        assertThatThrownBy(() -> chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId()))
                 .isInstanceOf(ChzzkException.class)
                 .hasMessage(ChzzkExceptionCode.CHAT_IS_CONNECTED.getMessage());
     }
@@ -58,7 +58,7 @@ public class ChzzkChatServiceTest {
     @DisplayName("연결된 채팅방과 연결을 끊을 수 있다.")
     void disconnectChatRoom() {
         // given
-        chzzkChatService.connectChatRoom(roulette.getChannelId(), roulette.getId());
+        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
 
         // when & then
         assertThatCode(() -> chzzkChatService.disconnectChatRoom(roulette.getId()))
@@ -83,9 +83,9 @@ public class ChzzkChatServiceTest {
         Roulette roulette3 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
 
         // when
-        chzzkChatService.connectChatRoom(CHANNEL_ID, roulette1.getId());
-        chzzkChatService.connectChatRoom(CHANNEL_ID, roulette2.getId());
-        chzzkChatService.connectChatRoom(CHANNEL_ID, roulette3.getId());
+        chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette1.getId());
+        chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette2.getId());
+        chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette3.getId());
         Thread.sleep(5000L);
 
         // then
