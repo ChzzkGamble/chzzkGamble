@@ -1,7 +1,7 @@
 package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
-import com.chzzkGamble.chzzk.chat.ChzzkChatService;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;

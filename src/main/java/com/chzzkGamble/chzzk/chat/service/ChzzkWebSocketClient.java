@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.chat;
+package com.chzzkGamble.chzzk.chat.service;
 
 import java.io.IOException;
 import java.util.UUID;

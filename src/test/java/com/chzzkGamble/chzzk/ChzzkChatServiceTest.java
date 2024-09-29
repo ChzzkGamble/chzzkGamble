@@ -1,6 +1,6 @@
 package com.chzzkGamble.chzzk;
 
-import com.chzzkGamble.chzzk.chat.ChzzkChatService;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
