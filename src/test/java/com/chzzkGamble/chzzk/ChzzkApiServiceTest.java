@@ -56,4 +56,11 @@ public class ChzzkApiServiceTest {
         assertThatCode(() -> chzzkApiService.getChatInfoByChannelName("따효니"))
                 .doesNotThrowAnyException();
     }
+
+    @Test
+    @DisplayName("채널명으로 채팅방 토큰을 가져올 수 있다.")
+    void getChatAccessTokenByChannelName() {
+        assertThatCode(() -> chzzkApiService.getChatAccessTokenByChannelName("따효니"))
+                .doesNotThrowAnyException();
+    }
 }

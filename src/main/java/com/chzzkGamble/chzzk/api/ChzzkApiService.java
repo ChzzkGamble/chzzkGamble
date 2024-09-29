@@ -83,4 +83,9 @@ public class ChzzkApiService {
 
         return content.get("accessToken").getAsString();
     }
+
+    public String getChatAccessTokenByChannelName(String channelName) {
+        String chatChannelId = getChatInfoByChannelName(channelName).getChatChannelId();
+        return getChatAccessToken(chatChannelId);
+    }
 }
