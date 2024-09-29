@@ -5,6 +5,7 @@ import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,27 @@ public class ChzzkApiService {
                 .getAsJsonObject("content");
 
         return gson.fromJson(content, ChatInfoApiResponse.class);
+    }
+
+    public ChatInfoApiResponse getChatInfoByChannelName(String channelName) {
+        String url = "https://api.chzzk.naver.com/service/v1/search/channels?keyword=" + channelName;
+        String jsonString = restClient.get(url);
+
+        JsonArray data = JsonParser.parseString(jsonString)
+                .getAsJsonObject()
+                .getAsJsonObject("content")
+                .getAsJsonArray("data");
+
+        if (data.isEmpty()) {
+            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND);
+        }
+
+        String channelId = data.get(0).getAsJsonObject()
+                .getAsJsonObject("channel")
+                .getAsJsonPrimitive("channelId")
+                .getAsString();
+
+        return getChatInfo(channelId);
     }
 
     public String getChatAccessToken(String chatChannelId) {

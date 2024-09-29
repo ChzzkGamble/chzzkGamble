@@ -49,4 +49,11 @@ public class ChzzkApiServiceTest {
         assertThatThrownBy(() -> chzzkApiService.getChatInfo(DdahyoniChannelId + "777"))
                 .isInstanceOf(HttpClientErrorException.NotFound.class);
     }
+
+    @Test
+    @DisplayName("채널명으로 채팅 정보를 가져올 수 있다.")
+    void getChatInfo_byChannelName() {
+        assertThatCode(() -> chzzkApiService.getChatInfoByChannelName("따효니"))
+                .doesNotThrowAnyException();
+    }
 }

@@ -13,6 +13,7 @@ public enum ChzzkExceptionCode {
     // api 1_xxx
     CHANNEL_ID_INVALID(BAD_REQUEST, 1_001, "유효하지 않은 채널 ID 입니다."),
     STREAM_URI_INVALID(BAD_REQUEST, 1_002, "잘못된 채널 주소 입니다."),
+    CHANNEL_INFO_NOT_FOUND(BAD_REQUEST, 1_003, "채널 정보를 찾아오지 못했습니다."),
 
     // chat 2_xxx
     CHAT_IS_CONNECTED(BAD_REQUEST, 2_001, "채팅방과 이미 연결되어 있습니다."),
