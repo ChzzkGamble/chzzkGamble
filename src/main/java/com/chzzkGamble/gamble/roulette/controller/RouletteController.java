@@ -1,11 +1,11 @@
 package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
+import com.chzzkGamble.chzzk.chat.dto.ChatConnectRequest;
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
-import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
@@ -70,8 +70,8 @@ public class RouletteController {
     public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
         Roulette roulette = rouletteService.endVote(rouletteId);
-        if (rouletteService.hasVotingRoulette(roulette.getChannelName())) {
-            chzzkChatService.disconnectChatRoom(rouletteId);
+        if (!rouletteService.hasVotingRoulette(roulette.getChannelName())) {
+            chzzkChatService.disconnectChatRoom(roulette.getChannelName());
         }
 
         return ResponseEntity.ok().build();
