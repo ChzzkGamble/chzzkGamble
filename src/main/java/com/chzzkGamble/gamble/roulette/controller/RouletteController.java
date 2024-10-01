@@ -53,8 +53,8 @@ public class RouletteController {
 
     @PostMapping("/start")
     public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
-        Roulette roulette = rouletteService.startVote(UUID.fromString(cookie.getValue()));
-        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
+        // TODO : check connection is established
+        rouletteService.startVote(UUID.fromString(cookie.getValue()));
         return ResponseEntity.ok().build();
     }
 
