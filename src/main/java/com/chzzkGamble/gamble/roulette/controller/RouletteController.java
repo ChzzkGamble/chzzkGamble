@@ -33,12 +33,11 @@ public class RouletteController {
     private final ChzzkChatService chzzkChatService;
 
     @PostMapping("/create")
-    public ResponseEntity<ChannelInfoApiResponse> createRoulette(@RequestBody RouletteCreateRequest request) {
-        String channelId = request.getChannelId();
-        ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(channelId);
+    public ResponseEntity<ChannelInfoApiResponse> createRoulette(@RequestBody ChatConnectRequest request) {
+        ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(request.getChannelName());
         String channelName = channelInfo.getChannelName();
 
-        Roulette roulette = rouletteService.createRoulette(channelId, channelName);
+        Roulette roulette = rouletteService.createRoulette(null, channelName);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
                 .httpOnly(true)

@@ -43,7 +43,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String chatChannelId = chzzkApiService.getChatInfoByChannelName(channelName).getChatChannelId();
+        String chatChannelId = chzzkApiService.getChatInfo(channelName).getChatChannelId();
         String chatAccessToken = chzzkApiService.getChatAccessToken(chatChannelId);
 
         ConnectionMessage message = new ConnectionMessage(chatAccessToken, chatChannelId);

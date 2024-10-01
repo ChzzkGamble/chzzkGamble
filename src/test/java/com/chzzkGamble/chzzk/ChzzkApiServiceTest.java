@@ -24,22 +24,22 @@ public class ChzzkApiServiceTest {
     @Test
     @DisplayName("채널 정보를 가져올 수 있다.")
     void getChannelInfo() {
-        String channelName = chzzkApiService.getChannelInfo(DdahyoniChannelId).getChannelName();
-        assertThat(channelName).isEqualTo("따효니");
+        String channelName = chzzkApiService.getChannelInfo("따효니").getChannelId();
+        assertThat(channelName).isEqualTo(DdahyoniChannelId);
     }
 
     @Test
-    @DisplayName("채널 정보를 가져올 수 없다: ChannelId가 잘못된 경우")
+    @DisplayName("채널 정보를 가져올 수 없다: 이름을 잘못된 경우")
     void getChannelInfo_InvalidChannelId() {
-        assertThatThrownBy(() -> chzzkApiService.getChannelInfo(DdahyoniChannelId + "777"))
+        assertThatThrownBy(() -> chzzkApiService.getChannelInfo("ANDOSNO239r9777"))
                 .isInstanceOf(ChzzkException.class)
-                .hasMessage(ChzzkExceptionCode.CHANNEL_ID_INVALID.getMessage());
+                .hasMessage(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND.getMessage());
     }
 
     @Test
     @DisplayName("채팅 정보를 가져올 수 있다.")
     void getChatInfo() {
-        assertThatCode(() -> chzzkApiService.getChatInfo(DdahyoniChannelId))
+        assertThatCode(() -> chzzkApiService.getChatInfo("따효니"))
                 .doesNotThrowAnyException();
     }
 
@@ -48,12 +48,5 @@ public class ChzzkApiServiceTest {
     void getChatInfo_InvalidChannelId_Exception() {
         assertThatThrownBy(() -> chzzkApiService.getChatInfo(DdahyoniChannelId + "777"))
                 .isInstanceOf(HttpClientErrorException.NotFound.class);
-    }
-
-    @Test
-    @DisplayName("채널명으로 채팅 정보를 가져올 수 있다.")
-    void getChatInfo_byChannelName() {
-        assertThatCode(() -> chzzkApiService.getChatInfoByChannelName("따효니"))
-                .doesNotThrowAnyException();
     }
 }

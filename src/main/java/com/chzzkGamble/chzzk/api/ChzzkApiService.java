@@ -1,7 +1,7 @@
 package com.chzzkGamble.chzzk.api;
 
-import com.chzzkGamble.chzzk.dto.ChatInfoApiResponse;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
+import com.chzzkGamble.chzzk.dto.ChatInfoApiResponse;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.google.gson.Gson;
@@ -15,29 +15,17 @@ import org.springframework.web.client.HttpServerErrorException;
 public class ChzzkApiService {
 
     private static final Gson gson = new Gson();
+
     private final ChzzkRestClient restClient;
 
     public ChzzkApiService(ChzzkRestClient restClient) {
         this.restClient = restClient;
     }
 
-    public ChannelInfoApiResponse getChannelInfo(String channelId) {
-        String url = "https://api.chzzk.naver.com/service/v1/channels/" + channelId;
-        String jsonString = restClient.get(url);
+    public ChatInfoApiResponse getChatInfo(String channelName) {
+        ChannelInfoApiResponse response = getChannelInfo(channelName);
 
-        JsonObject content = JsonParser.parseString(jsonString)
-                .getAsJsonObject()
-                .getAsJsonObject("content");
-
-        ChannelInfoApiResponse response = gson.fromJson(content, ChannelInfoApiResponse.class);
-        if (response.isInvalid()) {
-            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_ID_INVALID, "channelId : " + channelId);
-        }
-        return response;
-    }
-
-    public ChatInfoApiResponse getChatInfo(String channelId) {
-        String url = "https://api.chzzk.naver.com/polling/v3/channels/" + channelId + "/live-status";
+        String url = "https://api.chzzk.naver.com/polling/v3/channels/" + response.getChannelId() + "/live-status";
         String jsonString = restClient.get(url);
 
         JsonObject content = JsonParser.parseString(jsonString)
@@ -47,7 +35,7 @@ public class ChzzkApiService {
         return gson.fromJson(content, ChatInfoApiResponse.class);
     }
 
-    public ChatInfoApiResponse getChatInfoByChannelName(String channelName) {
+    public ChannelInfoApiResponse getChannelInfo(String channelName) {
         String url = "https://api.chzzk.naver.com/service/v1/search/channels?keyword=" + channelName;
         String jsonString = restClient.get(url);
 
@@ -60,12 +48,9 @@ public class ChzzkApiService {
             throw new ChzzkException(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND);
         }
 
-        String channelId = data.get(0).getAsJsonObject()
-                .getAsJsonObject("channel")
-                .getAsJsonPrimitive("channelId")
-                .getAsString();
-
-        return getChatInfo(channelId);
+        return gson.fromJson(data.get(0)
+                .getAsJsonObject()
+                .getAsJsonObject("channel"), ChannelInfoApiResponse.class);
     }
 
     public String getChatAccessToken(String chatChannelId) {

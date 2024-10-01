@@ -7,12 +7,12 @@ import lombok.ToString;
 @ToString
 public class ChannelInfoApiResponse {
 
-    private static final String INVALID_CHANNEL_NAME = "(알 수 없음)";
-
+    private String channelId;
     private String channelName;
     private String channelImageUrl;
+    private boolean verifiedMark;
 
     public boolean isInvalid() {
-        return channelName == null || channelName.equals(INVALID_CHANNEL_NAME);
+        return verifiedMark;
     }
 }
