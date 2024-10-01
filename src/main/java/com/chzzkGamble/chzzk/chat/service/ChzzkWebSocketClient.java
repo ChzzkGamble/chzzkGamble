@@ -1,7 +1,6 @@
 package com.chzzkGamble.chzzk.chat.service;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -26,9 +25,8 @@ public class ChzzkWebSocketClient {
 
     public ChzzkWebSocketClient(ChzzkApiService apiService,
                                 ApplicationEventPublisher publisher,
-                                String channelName,
-                                UUID gambleId) {
-        this.handler = new ChzzkSessionHandler(apiService, publisher, channelName, gambleId);
+                                String channelName) {
+        this.handler = new ChzzkSessionHandler(apiService, publisher, channelName);
     }
 
     public void connect() {

@@ -20,7 +20,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
-import java.util.UUID;
 
 public class ChzzkSessionHandler implements WebSocketHandler {
 
@@ -29,16 +28,13 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     private final ChzzkApiService chzzkApiService;
     private final ApplicationEventPublisher publisher;
     private final String channelName;
-    private final UUID gambleId;
 
     public ChzzkSessionHandler(ChzzkApiService chzzkApiService,
                                ApplicationEventPublisher publisher,
-                               String channelName,
-                               UUID gambleId) {
+                               String channelName) {
         this.publisher = publisher;
         this.chzzkApiService = chzzkApiService;
         this.channelName = channelName;
-        this.gambleId = gambleId;
     }
 
     @Override
@@ -84,7 +80,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
         if (!closeStatus.equalsCode(CloseStatus.NORMAL)) {
             // 예기치 못한 이유로 연결이 끊어졌을 때 재연결
-            publisher.publishEvent(new AbnormalWebSocketClosedEvent(gambleId));
+            publisher.publishEvent(new AbnormalWebSocketClosedEvent(channelName));
         }
     }
 
