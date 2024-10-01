@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS roulette_element CASCADE;
 DROP TABLE IF EXISTS roulette CASCADE;
 DROP TABLE IF EXISTS advertise CASCADE;
+DROP TABLE IF EXISTS chat CASCADE;
 
 CREATE TABLE roulette(
     id           uuid default random_uuid() PRIMARY KEY,
