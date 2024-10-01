@@ -103,12 +103,16 @@ public class ChzzkChatService {
         socketClient.disconnect();
     }
 
+    @Transactional
     public void disconnectChatRoom(String channelName) {
         if (!chatClients.containsKey(channelName)) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED, "channelName : " + channelName);
         }
         ChzzkWebSocketClient socketClient = chatClients.remove(channelName);
         socketClient.disconnect();
+
+        chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
+                .ifPresent(Chat::close);
     }
 
     // deprecated
