@@ -37,7 +37,7 @@ public class RouletteController {
         ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(request.getChannelName());
         String channelName = channelInfo.getChannelName();
 
-        Roulette roulette = rouletteService.createRoulette(null, channelName);
+        Roulette roulette = rouletteService.createRoulette(channelName);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
                 .httpOnly(true)

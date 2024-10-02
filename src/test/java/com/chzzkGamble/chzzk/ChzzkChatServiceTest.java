@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ChzzkChatServiceTest {
 
-    private static final String CHANNEL_ID = "0dad8baf12a436f722faa8e5001c5011";
     private static final String CHANNEL_NAME = "따효니";
 
     private Roulette roulette;
@@ -32,7 +31,7 @@ public class ChzzkChatServiceTest {
 
     @BeforeEach
     void setUp() {
-        roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+        roulette = rouletteService.createRoulette(CHANNEL_NAME);
     }
 
     @Test
@@ -78,9 +77,9 @@ public class ChzzkChatServiceTest {
     @DisplayName("WebSocket으로 여러 룰렛과 동시에 연결할 수 있다.")
     void connectChatRoom_concurrency() throws InterruptedException {
         // given
-        Roulette roulette1 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        Roulette roulette2 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        Roulette roulette3 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+        Roulette roulette1 = rouletteService.createRoulette(CHANNEL_NAME);
+        Roulette roulette2 = rouletteService.createRoulette(CHANNEL_NAME);
+        Roulette roulette3 = rouletteService.createRoulette(CHANNEL_NAME);
 
         // when
         chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette1.getId());

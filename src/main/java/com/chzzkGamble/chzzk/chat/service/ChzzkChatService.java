@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 public class ChzzkChatService {
-
+    // TODO 새 method 테스트 추가
     private static final int MAX_CONNECTION_LIMIT = 10;
 
     private final ChzzkApiService apiService;

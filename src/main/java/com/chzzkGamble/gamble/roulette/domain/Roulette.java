@@ -26,8 +26,6 @@ public class Roulette {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String channelId;
-
     private String channelName;
 
     private boolean voting = false;
@@ -35,8 +33,7 @@ public class Roulette {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Roulette(String channelId, String channelName) {
-        this.channelId = channelId;
+    public Roulette(String channelName) {
         this.channelName = channelName;
     }
 

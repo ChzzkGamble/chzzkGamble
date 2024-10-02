@@ -30,8 +30,8 @@ public class RouletteService {
     private final RouletteElementRepository rouletteElementRepository;
 
     @Transactional
-    public Roulette createRoulette(String channelId, String channelName) {
-        Roulette roulette = new Roulette(channelId, channelName);
+    public Roulette createRoulette(String channelName) {
+        Roulette roulette = new Roulette(channelName);
         return rouletteRepository.save(roulette);
     }
 
