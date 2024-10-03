@@ -13,5 +13,8 @@ spring:
     hibernate:
       ddl-auto: none
 
+chat:
+  close-interval: 360000 # 10 minutes
+
 advertise:
   update-interval: 1800000 # 30 minutes

@@ -1,2 +1,5 @@
 advertise:
   update-interval: 3000 # 3 seconds
+
+chat:
+  close-interval: 1000 # 1 second

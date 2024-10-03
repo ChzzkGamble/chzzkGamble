@@ -1,6 +1,5 @@
 package com.chzzkGamble.gamble.roulette.controller;
 
-import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
@@ -28,7 +27,6 @@ import java.util.UUID;
 public class RouletteController {
 
     private final RouletteService rouletteService;
-    private final ChzzkChatService chzzkChatService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoulette(@RequestBody @Valid RouletteCreateRequest request) {
@@ -50,17 +48,6 @@ public class RouletteController {
     public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
         // TODO : check connection is established
         rouletteService.startVote(UUID.fromString(cookie.getValue()));
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/end")
-    public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {
-        UUID rouletteId = UUID.fromString(cookie.getValue());
-        Roulette roulette = rouletteService.endVote(rouletteId);
-        if (!rouletteService.hasVotingRoulette(roulette.getChannelName())) {
-            chzzkChatService.disconnectChatRoom(roulette.getChannelName());
-        }
-
         return ResponseEntity.ok().build();
     }
 

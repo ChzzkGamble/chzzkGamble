@@ -3,13 +3,21 @@ package com.chzzkGamble.chzzk.chat.service;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.domain.Chat;
 import com.chzzkGamble.chzzk.chat.repository.ChatRepository;
+import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
+import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,18 +25,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChzzkChatService {
 
     private static final int MAX_CONNECTION_LIMIT = 10;
+    private static final int CHAT_ALIVE_MINUTES = 10;
+    private static final Logger logger = LoggerFactory.getLogger(ChzzkChatService.class);
 
     private final ChzzkApiService apiService;
     private final ChatRepository chatRepository;
     private final ApplicationEventPublisher publisher;
+    private final Clock clock;
     private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
+    private final Map<String, LocalDateTime> lastEventPublished = new ConcurrentHashMap<>();
 
     public ChzzkChatService(ChzzkApiService apiService,
                             ChatRepository chatRepository,
-                            ApplicationEventPublisher publisher) {
+                            ApplicationEventPublisher publisher, Clock clock) {
         this.apiService = apiService;
         this.chatRepository = chatRepository;
         this.publisher = publisher;
+        this.clock = clock;
     }
 
     @Transactional
@@ -53,6 +66,7 @@ public class ChzzkChatService {
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName);
         socketClient.connect();
         chatClients.put(channelName, socketClient);
+        lastEventPublished.put(channelName, LocalDateTime.now(clock));
 
         Chat chat = new Chat(channelName);
         chat.open();
@@ -60,7 +74,7 @@ public class ChzzkChatService {
     }
 
     @EventListener(AbnormalWebSocketClosedEvent.class)
-    public void reconnectChatRoom(AbnormalWebSocketClosedEvent event) {
+    void reconnectChatRoom(AbnormalWebSocketClosedEvent event) {
         String channelName = (String) event.getSource();
         try {
             chatClients.get(channelName).connect();
@@ -69,9 +83,16 @@ public class ChzzkChatService {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_RECONNECTION_ERROR);
         }
     }
-    // TODO : disconnect by time from no roulette exist
-    @Transactional
-    public void disconnectChatRoom(String channelName) {
+
+    @EventListener(DonationEvent.class)
+    void updateLastEventTime(DonationEvent donationEvent) {
+        DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
+        String channelName = donationMessage.getChannelName();
+
+        lastEventPublished.put(channelName, LocalDateTime.now(clock));
+    }
+
+    private void disconnectChatRoom(String channelName) {
         if (!chatClients.containsKey(channelName)) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED, "channelName : " + channelName);
         }
@@ -80,7 +101,23 @@ public class ChzzkChatService {
 
         chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                 .ifPresent(Chat::close);
+        logger.info("connection with {} is closed by timeout", channelName);
     }
+
+    @Transactional
+    @Scheduled(fixedDelayString = "${chat.close-interval}")
+    void disconnectChatRoom() {
+        List<String> channels = lastEventPublished.entrySet().stream()
+                .filter(entry -> entry.getValue().isBefore(LocalDateTime.now(clock).minusMinutes(CHAT_ALIVE_MINUTES)))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        channels.forEach(channel -> {
+                    disconnectChatRoom(channel);
+                    lastEventPublished.remove(channel);
+                });
+    }
+
 
     public boolean isConnected(String channelName) {
         return chatClients.containsKey(channelName) && chatClients.get(channelName).isConnected();
