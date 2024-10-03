@@ -57,14 +57,15 @@ public class RouletteController {
         rouletteService.startVote(UUID.fromString(cookie.getValue()));
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/check")
-    public ResponseEntity<Void> checkConnection(@CookieValue(name = "rouletteId") Cookie cookie) {
-        if (chzzkChatService.isConnected(UUID.fromString(cookie.getValue()))) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+    // TODO 1. check api 유지할 지 결정
+    // TODO 2. 유지한다면 request 내 channelName 함께 담도록 수정
+//    @GetMapping("/check")
+//    public ResponseEntity<Void> checkConnection(@CookieValue(name = "rouletteId") Cookie cookie) {
+//        if (chzzkChatService.isConnected(UUID.fromString(cookie.getValue()))) {
+//            return ResponseEntity.ok().build();
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
 
     @PostMapping("/end")
     public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {

@@ -11,10 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 public class ChzzkChatService {
@@ -24,9 +21,7 @@ public class ChzzkChatService {
     private final ChzzkApiService apiService;
     private final ChatRepository chatRepository;
     private final ApplicationEventPublisher publisher;
-    private final Map<UUID, ChzzkWebSocketClient> socketClientMap = new ConcurrentHashMap<>();
     private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
-    private final Set<UUID> tempGambleIds = new ConcurrentSkipListSet<>();
 
     public ChzzkChatService(ChzzkApiService apiService,
                             ChatRepository chatRepository,
@@ -34,26 +29,6 @@ public class ChzzkChatService {
         this.apiService = apiService;
         this.chatRepository = chatRepository;
         this.publisher = publisher;
-    }
-
-    // deprecated
-    public void connectChatRoom(String channelName, UUID gambleId) {
-        if (tempGambleIds.contains(gambleId)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTING);
-        }
-        tempGambleIds.add(gambleId);
-
-        if (socketClientMap.containsKey(gambleId)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_CONNECTED, "gambleId : " + gambleId);
-        }
-        if (socketClientMap.size() > MAX_CONNECTION_LIMIT) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
-        }
-
-        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName);
-        socketClient.connect();
-        socketClientMap.put(gambleId, socketClient);
-        tempGambleIds.remove(gambleId);
     }
 
     @Transactional
@@ -93,16 +68,7 @@ public class ChzzkChatService {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_RECONNECTION_ERROR);
         }
     }
-
-    // deprecated
-    public void disconnectChatRoom(UUID gambleId) {
-        if (!socketClientMap.containsKey(gambleId)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED, "gambleId : " + gambleId);
-        }
-        ChzzkWebSocketClient socketClient = socketClientMap.remove(gambleId);
-        socketClient.disconnect();
-    }
-
+    // TODO : disconnect by time from no roulette exist
     @Transactional
     public void disconnectChatRoom(String channelName) {
         if (!chatClients.containsKey(channelName)) {
@@ -113,11 +79,6 @@ public class ChzzkChatService {
 
         chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                 .ifPresent(Chat::close);
-    }
-
-    // deprecated
-    public boolean isConnected(UUID gambleId) {
-        return socketClientMap.containsKey(gambleId) && socketClientMap.get(gambleId).isConnected();
     }
 
     public boolean isConnected(String channelName) {
