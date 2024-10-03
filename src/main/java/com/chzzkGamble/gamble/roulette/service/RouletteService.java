@@ -14,6 +14,7 @@ import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
 import com.chzzkGamble.utils.StringParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public class RouletteService {
         return rouletteElementRepository.findByRouletteId(rouletteId);
     }
 
+    @Async
     @Transactional
     @EventListener(DonationEvent.class)
     public void handleDonation(DonationEvent donationEvent) {
@@ -61,7 +63,7 @@ public class RouletteService {
         } catch (IllegalArgumentException e) {
             return; // this is a donation not for vote
         }
-        
+
         List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(channelName);
         roulettes.forEach(roulette -> vote(roulette, elementName, cheese));
     }
