@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ChzzkChatService {
-    // TODO 새 method 테스트 추가
+
     private static final int MAX_CONNECTION_LIMIT = 10;
 
     private final ChzzkApiService apiService;
@@ -43,6 +43,7 @@ public class ChzzkChatService {
 
             // TODO 이 부분은 서버가 여러 대일 때, sticky fail로 인해 발생합니다.
             // TODO 각 서버가 현재 어느 채팅방과 연결 중인지 Redis 등을 통해 확인 후 해당 서버로 요청을 보내야 합니다.
+            // TODO 이를 제대로 만들기 위해서는 kafka와 같은 message queue를 만들어야 할 것으로 예상됨.
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, "channelName :" + channelName);
         }
 
