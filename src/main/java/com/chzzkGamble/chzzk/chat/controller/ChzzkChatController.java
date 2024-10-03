@@ -7,8 +7,11 @@ import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,5 +32,13 @@ public class ChzzkChatController {
         chzzkChatService.connectChatRoom(channelName);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<Void> checkConnection(@RequestParam String channelName) {
+        if (chzzkChatService.isConnected(channelName)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
