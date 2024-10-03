@@ -4,6 +4,7 @@ import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.dto.ChatConnectRequest;
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class ChzzkChatController {
     private final ChzzkApiService chzzkApiService;
 
     @PostMapping("/connect")
-    public ResponseEntity<?> connect(@RequestBody ChatConnectRequest request) {
+    public ResponseEntity<?> connect(@RequestBody @Valid ChatConnectRequest request) {
         String channelName = request.getChannelName();
         ChannelInfoApiResponse response = chzzkApiService.getChannelInfo(channelName);
 

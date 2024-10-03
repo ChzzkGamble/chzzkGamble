@@ -1,12 +1,13 @@
 package com.chzzkGamble.gamble.roulette.controller;
 
-import com.chzzkGamble.chzzk.chat.dto.ChatConnectRequest;
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
+import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class RouletteController {
     private final ChzzkChatService chzzkChatService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createRoulette(@RequestBody ChatConnectRequest request) {
+    public ResponseEntity<?> createRoulette(@RequestBody @Valid RouletteCreateRequest request) {
         Roulette roulette = rouletteService.createRoulette(request.getChannelName());
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
