@@ -1,11 +1,11 @@
 package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
-import com.chzzkGamble.chzzk.chat.ChzzkChatService;
+import com.chzzkGamble.chzzk.chat.dto.ChatConnectRequest;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
-import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
@@ -33,12 +33,11 @@ public class RouletteController {
     private final ChzzkChatService chzzkChatService;
 
     @PostMapping("/create")
-    public ResponseEntity<ChannelInfoApiResponse> createRoulette(@RequestBody RouletteCreateRequest request) {
-        String channelId = request.getChannelId();
-        ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(channelId);
+    public ResponseEntity<ChannelInfoApiResponse> createRoulette(@RequestBody ChatConnectRequest request) {
+        ChannelInfoApiResponse channelInfo = chzzkApiService.getChannelInfo(request.getChannelName());
         String channelName = channelInfo.getChannelName();
 
-        Roulette roulette = rouletteService.createRoulette(channelId, channelName);
+        Roulette roulette = rouletteService.createRoulette(null, channelName);
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
                 .httpOnly(true)
@@ -54,8 +53,8 @@ public class RouletteController {
 
     @PostMapping("/start")
     public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
-        Roulette roulette = rouletteService.startVote(UUID.fromString(cookie.getValue()));
-        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
+        // TODO : check connection is established
+        rouletteService.startVote(UUID.fromString(cookie.getValue()));
         return ResponseEntity.ok().build();
     }
 
@@ -71,8 +70,8 @@ public class RouletteController {
     public ResponseEntity<Void> end(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
         Roulette roulette = rouletteService.endVote(rouletteId);
-        if (rouletteService.hasVotingRoulette(roulette.getChannelName())) {
-            chzzkChatService.disconnectChatRoom(rouletteId);
+        if (!rouletteService.hasVotingRoulette(roulette.getChannelName())) {
+            chzzkChatService.disconnectChatRoom(roulette.getChannelName());
         }
 
         return ResponseEntity.ok().build();

@@ -1,12 +1,13 @@
 DROP TABLE IF EXISTS roulette_element CASCADE;
 DROP TABLE IF EXISTS roulette CASCADE;
 DROP TABLE IF EXISTS advertise CASCADE;
+DROP TABLE IF EXISTS chat CASCADE;
 
 CREATE TABLE roulette(
     id           uuid default random_uuid() PRIMARY KEY,
     channel_id   VARCHAR NOT NULL,
     channel_name VARCHAR NOT NULL,
-    voting     Boolean NOT NULL,
+    voting       Boolean NOT NULL,
     created_at   TIMESTAMP NOT NULL
 );
 
@@ -24,4 +25,11 @@ CREATE TABLE advertise(
     image_url    VARCHAR NOT NULL,
     cost         BIGINT NOT NULL,
     created_at   TIMESTAMP NOT NULL
+);
+
+CREATE TABLE chat(
+      id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+      channel_name VARCHAR NOT NULL,
+      opened       Boolean NOT NULL,
+      created_at   TIMESTAMP NOT NULL
 );

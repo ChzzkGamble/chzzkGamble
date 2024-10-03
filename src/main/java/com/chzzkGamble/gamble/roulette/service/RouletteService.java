@@ -92,6 +92,7 @@ public class RouletteService {
         return rouletteRepository.save(roulette);
     }
 
+    @Transactional(readOnly = true)
     public boolean hasVotingRoulette(String channelName) {
         return !rouletteRepository.findByChannelNameAndVotingIsTrue(channelName).isEmpty();
     }

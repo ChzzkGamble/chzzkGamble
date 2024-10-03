@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.HttpClientErrorException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -24,29 +23,30 @@ public class ChzzkApiServiceTest {
     @Test
     @DisplayName("채널 정보를 가져올 수 있다.")
     void getChannelInfo() {
-        String channelName = chzzkApiService.getChannelInfo(DdahyoniChannelId).getChannelName();
-        assertThat(channelName).isEqualTo("따효니");
+        String channelName = chzzkApiService.getChannelInfo("따효니").getChannelId();
+        assertThat(channelName).isEqualTo(DdahyoniChannelId);
     }
 
     @Test
-    @DisplayName("채널 정보를 가져올 수 없다: ChannelId가 잘못된 경우")
+    @DisplayName("채널 정보를 가져올 수 없다: 이름을 잘못된 경우")
     void getChannelInfo_InvalidChannelId() {
-        assertThatThrownBy(() -> chzzkApiService.getChannelInfo(DdahyoniChannelId + "777"))
+        assertThatThrownBy(() -> chzzkApiService.getChannelInfo("ANDOSNO239r9777"))
                 .isInstanceOf(ChzzkException.class)
-                .hasMessage(ChzzkExceptionCode.CHANNEL_ID_INVALID.getMessage());
+                .hasMessage(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND.getMessage());
     }
 
     @Test
     @DisplayName("채팅 정보를 가져올 수 있다.")
     void getChatInfo() {
-        assertThatCode(() -> chzzkApiService.getChatInfo(DdahyoniChannelId))
+        assertThatCode(() -> chzzkApiService.getChatInfo("따효니"))
                 .doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("채팅 정보를 가져올 수 없다.: ChannelId가 잘못된 경우")
+    @DisplayName("채팅 정보를 가져올 수 없다 : 이름이 잘못된 경우")
     void getChatInfo_InvalidChannelId_Exception() {
-        assertThatThrownBy(() -> chzzkApiService.getChatInfo(DdahyoniChannelId + "777"))
-                .isInstanceOf(HttpClientErrorException.NotFound.class);
+        assertThatThrownBy(() -> chzzkApiService.getChatInfo("f13i0hfe0ind777"))
+                .isInstanceOf(ChzzkException.class)
+                .hasMessage(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND.getMessage());
     }
 }
