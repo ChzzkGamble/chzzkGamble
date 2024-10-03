@@ -18,10 +18,14 @@ public class ChzzkChatController {
     private final ChzzkApiService chzzkApiService;
 
     @PostMapping("/connect")
-    public ResponseEntity<ChannelInfoApiResponse> connect(@RequestBody ChatConnectRequest request) {
+    public ResponseEntity<?> connect(@RequestBody ChatConnectRequest request) {
         String channelName = request.getChannelName();
-        chzzkChatService.connectChatRoom(channelName);
         ChannelInfoApiResponse response = chzzkApiService.getChannelInfo(channelName);
+
+        if (!response.isValid(channelName)) {
+            return ResponseEntity.badRequest().body("해당 채널과 연결할 수 없는 상태입니다.");
+        }
+        chzzkChatService.connectChatRoom(channelName);
 
         return ResponseEntity.ok(response);
     }
