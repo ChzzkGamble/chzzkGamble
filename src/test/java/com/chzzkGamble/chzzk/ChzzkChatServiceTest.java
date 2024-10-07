@@ -1,99 +1,89 @@
 package com.chzzkGamble.chzzk;
 
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
-import com.chzzkGamble.exception.ChzzkException;
-import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.chzzkGamble.gamble.roulette.domain.Roulette;
-import com.chzzkGamble.gamble.roulette.service.RouletteService;
-import org.junit.jupiter.api.BeforeEach;
+import com.chzzkGamble.chzzk.dto.DonationMessage;
+import com.chzzkGamble.event.DonationEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.doReturn;
 
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ChzzkChatServiceTest {
 
-    private static final String CHANNEL_ID = "0dad8baf12a436f722faa8e5001c5011";
     private static final String CHANNEL_NAME = "따효니";
+    private static final WebSocketMessage<?> message = new TextMessage("{\"svcid\":\"game\",\"ver\":\"1\",\"bdy\":[{\"svcid\":\"game\",\"cid\":\"N1Q-4g\",\"mbrCnt\":5548,\"uid\":\"anonymous\",\"profile\":null,\"msg\":\"<차렷자세>에서 손이 따봉으로 바뀔수는 있어도 크게 벗어나는 자세는 인싸다....\",\"msgTypeCode\":10,\"msgStatusType\":\"NORMAL\",\"extras\":\"{\\\"isAnonymous\\\":true,\\\"payType\\\":\\\"CURRENCY\\\",\\\"payAmount\\\":1000,\\\"donationId\\\":\\\"2wQtTN5iMhyeiRXLADF4GyUQ7hfmZ\\\",\\\"donationType\\\":\\\"CHAT\\\",\\\"weeklyRankList\\\":[]}\",\"ctime\":1727940364316,\"utime\":1727940364316,\"msgTid\":null,\"msgTime\":1727940364312}],\"cmd\":93102,\"tid\":null,\"cid\":\"N1Q-4g\"}");
+    private static final Clock PAST_CLOCK = Clock.fixed(Instant.parse("2024-08-24T11:00:00Z"), ZoneId.of("Asia/Seoul"));
+    private static final Clock FUTURE_CLOCK = Clock.fixed(Instant.parse("2024-08-24T11:20:00Z"), ZoneId.of("Asia/Seoul"));
 
-    private Roulette roulette;
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     @Autowired
     ChzzkChatService chzzkChatService;
 
-    @Autowired
-    RouletteService rouletteService;
-
-    @BeforeEach
-    void setUp() {
-        roulette = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-    }
+    @SpyBean
+    Clock clock;
 
     @Test
     @DisplayName("채팅방과 WebSocket 방식으로 연결할 수 있다.")
     void connectChatRoom() {
-        assertThatCode(() -> chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId()))
+        assertThatCode(() -> chzzkChatService.connectChatRoom(CHANNEL_NAME))
                 .doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("이미 연결된 룰렛은 채팅방과 연결할 수 없다.")
-    void connectChatRoom_alreadyConnected_exception() {
+    @DisplayName("마지막 도네이션으로부터 일정 시간이 지난 채널은 자동으로 연결을 끊는다.")
+    void disconnectChatRoom() throws InterruptedException {
         // given
-        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
-
-        // when & then
-        assertThatThrownBy(() -> chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId()))
-                .isInstanceOf(ChzzkException.class)
-                .hasMessage(ChzzkExceptionCode.CHAT_IS_CONNECTED.getMessage());
-    }
-
-    @Test
-    @DisplayName("연결된 채팅방과 연결을 끊을 수 있다.")
-    void disconnectChatRoom() {
-        // given
-        chzzkChatService.connectChatRoom(roulette.getChannelName(), roulette.getId());
-
-        // when & then
-        assertThatCode(() -> chzzkChatService.disconnectChatRoom(roulette.getId()))
-                .doesNotThrowAnyException();
-    }
-
-    @Test
-    @DisplayName("연결되지 않은 채팅방과 연결을 끊을 수 없다.")
-    void disconnectChatRoom_isNotConnected_exception() {
-        // given & when & then
-        assertThatCode(() -> chzzkChatService.disconnectChatRoom(roulette.getId()))
-                .isInstanceOf(ChzzkException.class)
-                .hasMessage(ChzzkExceptionCode.CHAT_IS_DISCONNECTED.getMessage());
-    }
-
-    @Test
-    @DisplayName("WebSocket으로 여러 룰렛과 동시에 연결할 수 있다.")
-    void connectChatRoom_concurrency() throws InterruptedException {
-        // given
-        Roulette roulette1 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        Roulette roulette2 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
-        Roulette roulette3 = rouletteService.createRoulette(CHANNEL_ID, CHANNEL_NAME);
+        doReturn(Instant.now(PAST_CLOCK))
+                .when(clock)
+                .instant();
+        chzzkChatService.connectChatRoom(CHANNEL_NAME);
 
         // when
-        chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette1.getId());
-        chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette2.getId());
-        chzzkChatService.connectChatRoom(CHANNEL_NAME, roulette3.getId());
+        doReturn(Instant.now(FUTURE_CLOCK))
+                .when(clock)
+                .instant();
         Thread.sleep(5000L);
 
         // then
-        assertAll(() -> {
-                    assertThat(chzzkChatService.isConnected(roulette1.getId())).isTrue();
-                    assertThat(chzzkChatService.isConnected(roulette2.getId())).isTrue();
-                    assertThat(chzzkChatService.isConnected(roulette3.getId())).isTrue();
-                    assertThat(chzzkChatService.isConnected(roulette.getId())).isFalse();
-                });
+        assertThat(chzzkChatService.isConnected(CHANNEL_NAME)).isFalse();
+    }
+
+    @Test
+    @DisplayName("마지막 도네이션으로부터 일정 시간이 지나지 않은 채널은 연결을 유지한다.")
+    void keepConnectChatRoom() throws InterruptedException {
+        // given
+        doReturn(Instant.now(PAST_CLOCK))
+                .when(clock)
+                .instant();
+        chzzkChatService.connectChatRoom(CHANNEL_NAME);
+
+        doReturn(Instant.now(FUTURE_CLOCK))
+                .when(clock)
+                .instant();
+        eventPublisher.publishEvent(new DonationEvent(new DonationMessage(CHANNEL_NAME, message)));
+
+        Thread.sleep(5000L);
+
+        // then
+        assertThat(chzzkChatService.isConnected(CHANNEL_NAME)).isTrue();
     }
 }

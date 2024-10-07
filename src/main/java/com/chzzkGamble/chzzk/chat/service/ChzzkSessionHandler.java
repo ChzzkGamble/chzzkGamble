@@ -7,6 +7,7 @@ import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.chzzk.dto.Message;
 import com.chzzkGamble.chzzk.dto.PongMessage;
 import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
+import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -62,7 +63,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
             DonationMessage donationMessage = new DonationMessage(channelName, message);
             if (!donationMessage.isDonation()) return;
             logger.info(donationMessage.toString());
-            publisher.publishEvent(donationMessage);
+            publisher.publishEvent(new DonationEvent(donationMessage));
         }
     }
 
