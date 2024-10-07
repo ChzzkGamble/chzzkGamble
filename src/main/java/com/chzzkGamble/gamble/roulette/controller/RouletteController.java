@@ -2,7 +2,6 @@ package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
-import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;

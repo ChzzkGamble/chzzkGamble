@@ -76,11 +76,11 @@ public class ChzzkChatServiceTest {
                 .instant();
         chzzkChatService.connectChatRoom(CHANNEL_NAME);
 
-        // when
         doReturn(Instant.now(FUTURE_CLOCK))
                 .when(clock)
                 .instant();
         eventPublisher.publishEvent(new DonationEvent(new DonationMessage(CHANNEL_NAME, message)));
+
         Thread.sleep(5000L);
 
         // then

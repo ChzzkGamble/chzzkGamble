@@ -118,7 +118,6 @@ public class ChzzkChatService {
                 });
     }
 
-
     public boolean isConnected(String channelName) {
         return chatClients.containsKey(channelName) && chatClients.get(channelName).isConnected();
     }
