@@ -8,6 +8,7 @@ import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@RequiredArgsConstructor
 public class ChzzkChatService {
 
     private static final int MAX_CONNECTION_LIMIT = 10;
@@ -34,15 +36,6 @@ public class ChzzkChatService {
     private final Clock clock;
     private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> lastEventPublished = new ConcurrentHashMap<>();
-
-    public ChzzkChatService(ChzzkApiService apiService,
-                            ChatRepository chatRepository,
-                            ApplicationEventPublisher publisher, Clock clock) {
-        this.apiService = apiService;
-        this.chatRepository = chatRepository;
-        this.publisher = publisher;
-        this.clock = clock;
-    }
 
     @Transactional
     public void connectChatRoom(String channelName) {
