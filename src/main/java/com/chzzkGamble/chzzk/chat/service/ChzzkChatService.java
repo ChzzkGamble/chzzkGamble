@@ -8,6 +8,11 @@ import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +21,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -39,26 +39,41 @@ public class ChzzkChatService {
 
     @Transactional
     public void connectChatRoom(String channelName) {
-        boolean existsChat = chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
-
-        if (existsChat) {
-            if (chatClients.containsKey(channelName)) {
-                // 이미 열려있는 채팅방으로 연결.
-                return;
-            }
-
-            // TODO 이 부분은 서버가 여러 대일 때, sticky fail로 인해 발생합니다.
-            // TODO 각 서버가 현재 어느 채팅방과 연결 중인지 Redis 등을 통해 확인 후 해당 서버로 요청을 보내야 합니다.
-            // TODO 이를 제대로 만들기 위해서는 kafka와 같은 message queue를 만들어야 할 것으로 예상됨.
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, "channelName :" + channelName);
+        if (isChatAlreadyOpen(channelName)) {
+            handleAlreadyOpenChat(channelName);
+            return;
         }
 
-        if (chatClients.size() > MAX_CONNECTION_LIMIT) {
+        if (isConnectLimitExceeded()) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
         }
 
         connectWebSocket(channelName);
 
+        createAndSaveNewChat(channelName);
+    }
+
+    private boolean isChatAlreadyOpen(String channelName) {
+        return chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
+    }
+
+    private void handleAlreadyOpenChat(String channelName) {
+        if (chatClients.containsKey(channelName)) {
+            // 이미 열려있는 채팅방으로 연결.
+            return;
+        }
+
+        // TODO 이 부분은 서버가 여러 대일 때, sticky fail로 인해 발생합니다.
+        // TODO 각 서버가 현재 어느 채팅방과 연결 중인지 Redis 등을 통해 확인 후 해당 서버로 요청을 보내야 합니다.
+        // TODO 이를 제대로 만들기 위해서는 kafka와 같은 message queue를 만들어야 할 것으로 예상됨.
+        throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, "channelName :" + channelName);
+    }
+
+    private boolean isConnectLimitExceeded() {
+        return chatClients.size() > MAX_CONNECTION_LIMIT;
+    }
+
+    private void createAndSaveNewChat(String channelName) {
         Chat chat = new Chat(channelName);
         chat.open();
         chatRepository.save(chat);
@@ -105,15 +120,19 @@ public class ChzzkChatService {
     @Transactional
     @Scheduled(fixedDelayString = "${chat.close-interval}")
     public void disconnectChatRoom() {
-        List<String> channels = lastEventPublished.entrySet().stream()
+        List<String> inactiveChannels = getInactiveChannels();
+
+        inactiveChannels.forEach(channel -> {
+            disconnectChatRoom(channel);
+            lastEventPublished.remove(channel);
+        });
+    }
+
+    private List<String> getInactiveChannels() {
+        return lastEventPublished.entrySet().stream()
                 .filter(entry -> entry.getValue().isBefore(LocalDateTime.now(clock).minusMinutes(CHAT_ALIVE_MINUTES)))
                 .map(Map.Entry::getKey)
                 .toList();
-
-        channels.forEach(channel -> {
-                    disconnectChatRoom(channel);
-                    lastEventPublished.remove(channel);
-                });
     }
 
     public boolean isConnected(String channelName) {
