@@ -56,14 +56,19 @@ public class ChzzkChatService {
         if (chatClients.size() > MAX_CONNECTION_LIMIT) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
         }
-        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName);
-        socketClient.connect();
-        chatClients.put(channelName, socketClient);
-        lastEventPublished.put(channelName, LocalDateTime.now(clock));
+
+        connectWebSocket(channelName);
 
         Chat chat = new Chat(channelName);
         chat.open();
         chatRepository.save(chat);
+    }
+
+    private void connectWebSocket(String channelName) {
+        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName);
+        socketClient.connect();
+        chatClients.put(channelName, socketClient);
+        lastEventPublished.put(channelName, LocalDateTime.now(clock));
     }
 
     @EventListener(AbnormalWebSocketClosedEvent.class)
