@@ -15,8 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -56,7 +54,9 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         // 2. if donation, send to gamble
         if (ChzzkChatCommand.DONATION.getNum() == cmd) {
             DonationMessage donationMessage = new DonationMessage(channelName, message);
-            if (!donationMessage.isDonation()) return;
+            if (!donationMessage.isDonation()) {
+                return;
+            }
             log.info(donationMessage.toString());
             publisher.publishEvent(new DonationEvent(donationMessage));
         }
