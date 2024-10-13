@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -23,12 +24,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ChzzkChatService {
 
     private static final int MAX_CONNECTION_LIMIT = 10;
     private static final int CHAT_ALIVE_MINUTES = 10;
-    private static final Logger logger = LoggerFactory.getLogger(ChzzkChatService.class);
 
     private final ChzzkApiService apiService;
     private final ChatRepository chatRepository;
@@ -114,7 +115,7 @@ public class ChzzkChatService {
 
         chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                 .ifPresent(Chat::close);
-        logger.info("connection with {} is closed by timeout", channelName);
+        log.info("connection with {} is closed by timeout", channelName);
     }
 
     @Transactional
