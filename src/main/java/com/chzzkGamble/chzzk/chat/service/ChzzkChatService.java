@@ -106,7 +106,7 @@ public class ChzzkChatService {
 
     @Transactional
     @Scheduled(fixedDelayString = "${chat.close-interval}")
-    void disconnectChatRoom() {
+    public void disconnectChatRoom() {
         List<String> channels = lastEventPublished.entrySet().stream()
                 .filter(entry -> entry.getValue().isBefore(LocalDateTime.now(clock).minusMinutes(CHAT_ALIVE_MINUTES)))
                 .map(Map.Entry::getKey)
