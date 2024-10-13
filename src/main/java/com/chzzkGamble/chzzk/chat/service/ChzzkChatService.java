@@ -46,7 +46,7 @@ public class ChzzkChatService {
 
     @Transactional
     public void connectChatRoom(String channelName) {
-        Boolean existsChat = chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
+        boolean existsChat = chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
 
         if (existsChat) {
             if (chatClients.containsKey(channelName)) {
