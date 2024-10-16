@@ -13,8 +13,8 @@ import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -22,21 +22,14 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+@Slf4j
+@RequiredArgsConstructor
 public class ChzzkSessionHandler implements WebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ChzzkApiService chzzkApiService;
     private final ApplicationEventPublisher publisher;
     private final String channelName;
-
-    public ChzzkSessionHandler(ChzzkApiService chzzkApiService,
-                               ApplicationEventPublisher publisher,
-                               String channelName) {
-        this.publisher = publisher;
-        this.chzzkApiService = chzzkApiService;
-        this.channelName = channelName;
-    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -45,7 +38,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
         ConnectionMessage message = new ConnectionMessage(chatAccessToken, chatChannelId);
         session.sendMessage(new TextMessage(writeAsString(message)));
-        logger.info("connection established : {}", channelName);
+        log.info("connection established : {}", channelName);
     }
 
     @Override
@@ -55,14 +48,16 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         // 1. if ping, send pong
         if (ChzzkChatCommand.PING.getNum() == cmd) {
             session.sendMessage(new TextMessage(writeAsString(new PongMessage())));
-            logger.info("PING-PONG with {}", channelName);
+            log.info("PING-PONG with {}", channelName);
         }
 
         // 2. if donation, send to gamble
         if (ChzzkChatCommand.DONATION.getNum() == cmd) {
             DonationMessage donationMessage = new DonationMessage(channelName, message);
-            if (!donationMessage.isDonation()) return;
-            logger.info(donationMessage.toString());
+            if (!donationMessage.isDonation()) {
+                return;
+            }
+            log.info(donationMessage.toString());
             publisher.publishEvent(new DonationEvent(donationMessage));
         }
     }
@@ -73,7 +68,7 @@ public class ChzzkSessionHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
-        logger.info("connection closed : {}, closeStatus : {}", channelName, closeStatus);
+        log.info("connection closed : {}, closeStatus : {}", channelName, closeStatus);
         if (closeStatus.equalsCode(CloseStatus.SERVER_ERROR)) {
             // 서버 측 연결 문제인 경우, 재연결해도 소용없을 확률이 높다.
             return;

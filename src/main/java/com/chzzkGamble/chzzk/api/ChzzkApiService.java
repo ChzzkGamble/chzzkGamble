@@ -8,19 +8,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
 @Service
+@RequiredArgsConstructor
 public class ChzzkApiService {
 
     private static final Gson gson = new Gson();
 
     private final ChzzkRestClient restClient;
-
-    public ChzzkApiService(ChzzkRestClient restClient) {
-        this.restClient = restClient;
-    }
 
     public ChatInfoApiResponse getChatInfo(String channelName) {
         ChannelInfoApiResponse response = getChannelInfo(channelName);
