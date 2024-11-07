@@ -1,8 +1,5 @@
 package com.chzzkGamble.gamble.roulette.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.GambleException;
@@ -12,6 +9,9 @@ import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
 import com.chzzkGamble.utils.StringParser;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -39,7 +39,8 @@ public class RouletteService {
     @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
         return rouletteRepository.findByIdAndCreatedAtAfter(rouletteId, LocalDateTime.now().minusHours(HOUR_LIMIT))
-                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND, "rouletteId : " + rouletteId));
+                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND,
+                        "rouletteId : " + rouletteId));
     }
 
     @Transactional(readOnly = true)
@@ -71,7 +72,7 @@ public class RouletteService {
     private void vote(Roulette roulette, String elementName, int cheese) {
         RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
                 .orElse(new RouletteElement(elementName, 0, roulette));
-        
+
         vote(element, cheese / CHEESE_UNIT);
     }
 
@@ -96,6 +97,6 @@ public class RouletteService {
 
     @Transactional(readOnly = true)
     public boolean hasVotingRoulette(String channelName) {
-        return !rouletteRepository.findByChannelNameAndVotingIsTrue(channelName).isEmpty();
+        return rouletteRepository.existsByChannelNameAndVotingIsTrue(channelName);
     }
 }
