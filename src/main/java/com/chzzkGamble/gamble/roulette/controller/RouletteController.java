@@ -7,6 +7,8 @@ import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,8 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/roulette")
@@ -30,7 +30,7 @@ public class RouletteController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoulette(@RequestBody @Valid RouletteCreateRequest request) {
-        Roulette roulette = rouletteService.createRoulette(request.getChannelName());
+        Roulette roulette = rouletteService.createRoulette(request.channelName());
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
                 .httpOnly(true)

@@ -1,14 +1,9 @@
 package com.chzzkGamble.gamble.roulette.dto;
 
-import lombok.Getter;
 import java.util.List;
 
-@Getter
-public class RouletteResponse {
+public record RouletteResponse(
+        List<RouletteElementResponse> elements
+) {
 
-    List<RouletteElementResponse> elements;
-
-    public RouletteResponse(List<RouletteElementResponse> elements) {
-        this.elements = elements;
-    }
 }
