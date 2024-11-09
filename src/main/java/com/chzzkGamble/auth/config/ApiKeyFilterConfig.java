@@ -11,7 +11,7 @@ public class ApiKeyFilterConfig {
     public FilterRegistrationBean<ApiKeyFilter> apiKeyFilter() {
         FilterRegistrationBean<ApiKeyFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new ApiKeyFilter());
-        registrationBean.addUrlPatterns("/advertise/*", "/auth/*");
+        registrationBean.addUrlPatterns("/advertise", "/auth/*");
         return registrationBean;
     }
 }
