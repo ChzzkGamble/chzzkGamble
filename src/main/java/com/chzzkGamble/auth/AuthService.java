@@ -17,7 +17,9 @@ public class AuthService {
     private final SsmClient ssmClient;
 
     public AuthService() {
-        this.ssmClient = SsmClient.builder().region(Region.AP_NORTHEAST_2).build();
+        this.ssmClient = SsmClient.builder()
+                .region(Region.AP_NORTHEAST_2)
+                .build();
     }
 
     @PostConstruct
@@ -26,8 +28,14 @@ public class AuthService {
     }
 
     public void updateApiKey() {
-        GetParameterRequest getParameterRequest = GetParameterRequest.builder().name(keyName).withDecryption(true).build();
-        String newApiKey = ssmClient.getParameter(getParameterRequest).parameter().value();
+        GetParameterRequest getParameterRequest = GetParameterRequest.builder()
+                .name(keyName)
+                .withDecryption(true)
+                .build();
+        String newApiKey = ssmClient.getParameter(getParameterRequest)
+                .parameter()
+                .value();
+
         ApiKeyHolder.setApiKey(newApiKey);
     }
 }
