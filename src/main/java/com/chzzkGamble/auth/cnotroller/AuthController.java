@@ -1,6 +1,7 @@
 package com.chzzkGamble.auth.cnotroller;
 
 import com.chzzkGamble.auth.AuthService;
+import com.chzzkGamble.auth.config.RequireApiKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,6 +13,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @RequireApiKey
     @PutMapping("/auth/update/key")
     public ResponseEntity<String> updateApiKey() {
         authService.updateApiKey();
