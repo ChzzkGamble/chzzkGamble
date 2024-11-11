@@ -1,6 +1,5 @@
 package com.chzzkGamble.chzzk.chat.service;
 
-import com.chzzkGamble.chzzk.api.WebSocketConnectionManager;
 import com.chzzkGamble.chzzk.chat.domain.Chat;
 import com.chzzkGamble.chzzk.chat.repository.ChatRepository;
 import com.chzzkGamble.chzzk.dto.DonationMessage;

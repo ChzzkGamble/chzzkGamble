@@ -1,6 +1,6 @@
-package com.chzzkGamble.chzzk.api;
+package com.chzzkGamble.chzzk.chat.service;
 
-import com.chzzkGamble.chzzk.chat.service.ChzzkWebSocketClient;
+import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import java.util.Map;
