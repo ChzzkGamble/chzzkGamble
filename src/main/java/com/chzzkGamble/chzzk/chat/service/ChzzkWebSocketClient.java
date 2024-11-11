@@ -58,6 +58,10 @@ public class ChzzkWebSocketClient {
         }
     }
 
+    public boolean isConnected() {
+        return session != null && session.isOpen();
+    }
+
     public void disconnect() {
         if (session == null) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED);
@@ -68,9 +72,5 @@ public class ChzzkWebSocketClient {
         } catch (IOException e) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_DISCONNECTION_ERROR);
         }
-    }
-
-    public boolean isConnected() {
-        return session != null && session.isOpen();
     }
 }
