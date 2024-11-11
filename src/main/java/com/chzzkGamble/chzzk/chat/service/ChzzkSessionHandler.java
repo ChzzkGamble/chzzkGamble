@@ -41,6 +41,14 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         log.info("connection established : {}", channelName);
     }
 
+    private String writeAsString(Message message) {
+        try {
+            return objectMapper.writeValueAsString(message);
+        } catch (JsonProcessingException e) {
+            throw new ChzzkException(ChzzkExceptionCode.JSON_CONVERT, "message : " + message);
+        }
+    }
+
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         int cmd = parseCmd(message);
@@ -49,6 +57,10 @@ public class ChzzkSessionHandler implements WebSocketHandler {
         if (ChzzkChatCommand.PING.getNum() == cmd) {
             session.sendMessage(new TextMessage(writeAsString(new PongMessage())));
             log.info("PING-PONG with {}", channelName);
+        }
+
+        if (ChzzkChatCommand.PONG.getNum() == cmd) {
+            log.info("PONG with {}", channelName);
         }
 
         // 2. if donation, send to gamble
@@ -60,6 +72,13 @@ public class ChzzkSessionHandler implements WebSocketHandler {
             log.info(donationMessage.toString());
             publisher.publishEvent(new DonationEvent(donationMessage));
         }
+    }
+
+    private int parseCmd(WebSocketMessage<?> message) {
+        return JsonParser.parseString((String) message.getPayload())
+                .getAsJsonObject()
+                .getAsJsonPrimitive("cmd")
+                .getAsInt();
     }
 
     @Override
@@ -83,20 +102,5 @@ public class ChzzkSessionHandler implements WebSocketHandler {
     @Override
     public boolean supportsPartialMessages() {
         return false;
-    }
-
-    private String writeAsString(Message message) {
-        try {
-            return objectMapper.writeValueAsString(message);
-        } catch (JsonProcessingException e) {
-            throw new ChzzkException(ChzzkExceptionCode.JSON_CONVERT, "message : " + message);
-        }
-    }
-
-    private int parseCmd(WebSocketMessage<?> message) {
-        return JsonParser.parseString((String) message.getPayload())
-                .getAsJsonObject()
-                .getAsJsonPrimitive("cmd")
-                .getAsInt();
     }
 }

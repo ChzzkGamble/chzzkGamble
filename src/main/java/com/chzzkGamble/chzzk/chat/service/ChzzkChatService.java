@@ -1,6 +1,6 @@
 package com.chzzkGamble.chzzk.chat.service;
 
-import com.chzzkGamble.chzzk.api.ChzzkApiService;
+import com.chzzkGamble.chzzk.api.WebSocketConnectionManager;
 import com.chzzkGamble.chzzk.chat.domain.Chat;
 import com.chzzkGamble.chzzk.chat.repository.ChatRepository;
 import com.chzzkGamble.chzzk.dto.DonationMessage;
@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,47 +28,37 @@ public class ChzzkChatService {
     private static final int MAX_CONNECTION_LIMIT = 10;
     private static final int CHAT_ALIVE_MINUTES = 10;
 
-    private final ChzzkApiService apiService;
     private final ChatRepository chatRepository;
-    private final ApplicationEventPublisher publisher;
     private final Clock clock;
-    private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
+    private final WebSocketConnectionManager connectionManager;
     private final Map<String, LocalDateTime> lastEventPublished = new ConcurrentHashMap<>();
 
+    // TODO : 동시성 제어 문제 해결
     @Transactional
     public void connectChatRoom(String channelName) {
         if (isChatAlreadyOpen(channelName)) {
-            handleAlreadyOpenChat(channelName);
+            connectionManager.reconnect(channelName);
             return;
         }
 
-        if (isConnectLimitExceeded()) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
-        }
-
-        connectWebSocket(channelName);
-
-        createAndSaveNewChat(channelName);
+        validateConnectionLimit();
+        initiateNewChatConnection(channelName);
     }
 
     private boolean isChatAlreadyOpen(String channelName) {
         return chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
     }
 
-    private void handleAlreadyOpenChat(String channelName) {
-        if (chatClients.containsKey(channelName)) {
-            // 이미 열려있는 채팅방으로 연결.
-            return;
+    private void validateConnectionLimit() {
+        if (connectionManager.getActiveConnections() >= MAX_CONNECTION_LIMIT) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_LIMIT);
         }
-
-        // TODO 이 부분은 서버가 여러 대일 때, sticky fail로 인해 발생합니다.
-        // TODO 각 서버가 현재 어느 채팅방과 연결 중인지 Redis 등을 통해 확인 후 해당 서버로 요청을 보내야 합니다.
-        // TODO 이를 제대로 만들기 위해서는 kafka와 같은 message queue를 만들어야 할 것으로 예상됨.
-        throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, "channelName :" + channelName);
     }
 
-    private boolean isConnectLimitExceeded() {
-        return chatClients.size() > MAX_CONNECTION_LIMIT;
+    private void initiateNewChatConnection(String channelName) {
+        connectionManager.connect(channelName);
+        lastEventPublished.put(channelName, LocalDateTime.now(clock));
+        createAndSaveNewChat(channelName);
     }
 
     private void createAndSaveNewChat(String channelName) {
@@ -78,22 +67,15 @@ public class ChzzkChatService {
         chatRepository.save(chat);
     }
 
-    private void connectWebSocket(String channelName) {
-        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName);
-        socketClient.connect();
-        chatClients.put(channelName, socketClient);
-        lastEventPublished.put(channelName, LocalDateTime.now(clock));
+    @Scheduled(fixedRateString = "${client.ping-interval:30000}")
+    public void sendPingToBroadcastServers() {
+        connectionManager.sendPingToAllConnections();
     }
 
     @EventListener(AbnormalWebSocketClosedEvent.class)
     void reconnectChatRoom(AbnormalWebSocketClosedEvent event) {
         String channelName = (String) event.getSource();
-        try {
-            chatClients.get(channelName).connect();
-        } catch (ChzzkException e) {
-            chatClients.remove(channelName);
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_RECONNECTION_ERROR);
-        }
+        connectionManager.reconnect(channelName);
     }
 
     @EventListener(DonationEvent.class)
@@ -102,18 +84,6 @@ public class ChzzkChatService {
         String channelName = donationMessage.getChannelName();
 
         lastEventPublished.put(channelName, LocalDateTime.now(clock));
-    }
-
-    private void disconnectChatRoom(String channelName) {
-        if (!chatClients.containsKey(channelName)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_IS_DISCONNECTED, "channelName : " + channelName);
-        }
-        ChzzkWebSocketClient socketClient = chatClients.remove(channelName);
-        socketClient.disconnect();
-
-        chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
-                .ifPresent(Chat::close);
-        log.info("connection with {} is closed by timeout", channelName);
     }
 
     @Transactional
@@ -134,7 +104,13 @@ public class ChzzkChatService {
                 .toList();
     }
 
+    private void disconnectChatRoom(String channelName) {
+        connectionManager.disconnect(channelName);
+        chatRepository.findByChannelNameAndOpenedIsTrue(channelName).ifPresent(Chat::close);
+        log.info("connection with {} is closed by timeout", channelName);
+    }
+
     public boolean isConnected(String channelName) {
-        return chatClients.containsKey(channelName) && chatClients.get(channelName).isConnected();
+        return connectionManager.isConnected(channelName);
     }
 }
