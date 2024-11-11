@@ -1,20 +1,15 @@
 package com.chzzkGamble.chzzk.chat.service;
 
-import com.chzzkGamble.chzzk.api.ChzzkApiService;
-import com.chzzkGamble.chzzk.dto.Message;
 import com.chzzkGamble.chzzk.dto.PingMessage;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.chzzkGamble.utils.MessageSender;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
@@ -31,15 +26,14 @@ public class ChzzkWebSocketClient {
     private final WebSocketClient client = new StandardWebSocketClient();
     private final WebSocketHandler handler;
     private final String channelName;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private WebSocketSession session;
 
     public ChzzkWebSocketClient(
-            ChzzkApiService apiService,
-            ApplicationEventPublisher publisher,
-            String channelName) {
-        this.handler = new ChzzkSessionHandler(apiService, publisher, channelName);
+            WebSocketHandler webSocketHandler,
+            String channelName
+    ) {
+        this.handler = webSocketHandler;
         this.channelName = channelName;
     }
 
@@ -49,29 +43,18 @@ public class ChzzkWebSocketClient {
             session = client.execute(handler, CHZZK_CHAT_SERVER + serverId + CHZZK_CHAT_SERVER2)
                     .get(TIMEOUT, TimeUnit.SECONDS);
             session.setTextMessageSizeLimit(MESSAGE_SIZE_LIMIT);
-        } catch (TimeoutException | ExecutionException | InterruptedException e) {
+        } catch (TimeoutException | ExecutionException e) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
         }
     }
 
     public void sendPingToBroadcastServer() {
         if (isConnected()) {
-            try {
-                Message message = new PingMessage();
-                session.sendMessage(new TextMessage(writeAsString(message)));
-                log.info("Sent Ping to broadcast server for channelName = {}", channelName);
-            } catch (IOException e) {
-                log.error("Error sending Ping to broadcast server", e);
-                throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, "Failed to send Ping");
-            }
-        }
-    }
-
-    private String writeAsString(Message message) {
-        try {
-            return objectMapper.writeValueAsString(message);
-        } catch (JsonProcessingException e) {
-            throw new ChzzkException(ChzzkExceptionCode.JSON_CONVERT, "message : " + message);
+            MessageSender.sendTextMessage(session, new PingMessage());
+            log.info("Sent Ping to broadcast server for channelName = {}", channelName);
         }
     }
 

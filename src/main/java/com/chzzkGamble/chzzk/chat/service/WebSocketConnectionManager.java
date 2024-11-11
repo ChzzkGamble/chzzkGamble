@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
 
 @Component
 @Slf4j
@@ -20,7 +21,8 @@ public class WebSocketConnectionManager {
     private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
 
     public void connect(String channelName) {
-        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(apiService, publisher, channelName);
+        WebSocketHandler handler = new ChzzkSessionHandler(apiService, publisher, channelName);
+        ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(handler, channelName);
         socketClient.connect();
         chatClients.put(channelName, socketClient);
         log.info("WebSocket connection established for channel '{}'", channelName);
