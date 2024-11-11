@@ -25,6 +25,8 @@ public class ChzzkWebSocketClient {
 
     private static final String CHZZK_CHAT_SERVER = "wss://kr-ss";
     private static final String CHZZK_CHAT_SERVER2 = ".chat.naver.com/chat";
+    private static final int TIMEOUT = 30;
+    private static final int MESSAGE_SIZE_LIMIT = 64 * 1024; // 64 KB
 
     private final WebSocketClient client = new StandardWebSocketClient();
     private final WebSocketHandler handler;
@@ -45,8 +47,8 @@ public class ChzzkWebSocketClient {
         int serverId = ThreadLocalRandom.current().nextInt(1, 6);
         try {
             session = client.execute(handler, CHZZK_CHAT_SERVER + serverId + CHZZK_CHAT_SERVER2)
-                    .get(30, TimeUnit.SECONDS);
-            session.setTextMessageSizeLimit(64 * 1024); // 64 KB
+                    .get(TIMEOUT, TimeUnit.SECONDS);
+            session.setTextMessageSizeLimit(MESSAGE_SIZE_LIMIT);
         } catch (TimeoutException | ExecutionException | InterruptedException e) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
         }
