@@ -1,22 +1,22 @@
 package com.chzzkGamble.gamble;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -61,8 +61,8 @@ public class RouletteServiceTest {
     void readElements() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
-        RouletteElement element1 = rouletteElementRepository.save(new RouletteElement("요소1", 0 ,roulette));
-        RouletteElement element2 = rouletteElementRepository.save(new RouletteElement("요소2", 0 ,roulette));
+        RouletteElement element1 = rouletteElementRepository.save(new RouletteElement("요소1", 0, roulette));
+        RouletteElement element2 = rouletteElementRepository.save(new RouletteElement("요소2", 0, roulette));
 
         // when & then
         assertThat(rouletteService.readRouletteElements(roulette.getId()))
@@ -74,7 +74,7 @@ public class RouletteServiceTest {
     void vote() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
-        RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
+        RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0, roulette));
 
         // when
         rouletteService.startVote(roulette.getId());
@@ -102,11 +102,29 @@ public class RouletteServiceTest {
     }
 
     @Test
+    @DisplayName("이미 존재하는 요소에 투표하면 count가 증가한다.")
+    void vote_alreadyExists() {
+        // given
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
+
+        // when
+        rouletteService.startVote(roulette.getId());
+        rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
+        rouletteService.vote(CHANNEL_NAME, "<요소>", 4_000);
+
+        // then
+        List<RouletteElement> votedElements = rouletteElementRepository.findByRouletteId(roulette.getId());
+
+        assertThat(votedElements).hasSize(1);
+        assertThat(votedElements.get(0).getCount()).isEqualTo(7);
+    }
+
+    @Test
     @DisplayName("룰렛 요소에 음수 개수만큼 투표할 수 없다.")
     void vote_minusVote_Exception() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
-        rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
+        rouletteElementRepository.save(new RouletteElement("요소", 0, roulette));
 
         // when & then
         rouletteService.startVote(roulette.getId());
@@ -120,14 +138,14 @@ public class RouletteServiceTest {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
         rouletteService.startVote(roulette.getId());
-        RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0 ,roulette));
+        RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0, roulette));
 
         // when
         int threadsCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
         for (int i = 0; i < threadsCount; i++) {
             executorService.submit(() ->
-                rouletteService.vote(CHANNEL_NAME, "<요소>", 1_000)
+                    rouletteService.vote(CHANNEL_NAME, "<요소>", 1_000)
             );
         }
         executorService.shutdown();
