@@ -6,12 +6,14 @@ import com.chzzkGamble.advertise.dto.AdvertiseProbabilityResponses;
 import com.chzzkGamble.advertise.dto.AdvertiseRequest;
 import com.chzzkGamble.advertise.dto.AdvertiseResponse;
 import com.chzzkGamble.advertise.service.AdvertiseService;
+import com.chzzkGamble.auth.config.RequireApiKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.net.URI;
 import java.util.Comparator;
 import java.util.Map;
@@ -22,7 +24,7 @@ public class AdvertiseController {
 
     private final AdvertiseService advertiseService;
 
-    // TODO : Authentication 구현
+    @RequireApiKey
     @PostMapping("/advertise")
     public ResponseEntity<Void> createAdvertise(@RequestBody AdvertiseRequest request) {
         Advertise advertise = advertiseService.createAdvertise(request.toEntity());
