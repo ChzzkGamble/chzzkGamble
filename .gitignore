@@ -38,3 +38,6 @@ out/
 
 ### log ###
 logs/
+
+### DS Store
+.DS_Store

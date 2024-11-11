@@ -36,6 +36,14 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// AWS SDK for Java 2.x BOM 추가
+	implementation platform('software.amazon.awssdk:bom:2.20.0')
+
+	// 필요한 AWS 서비스 클라이언트 추가 (예: S3, SSM)
+	implementation 'software.amazon.awssdk:s3'
+	implementation 'software.amazon.awssdk:ssm'
+	implementation 'com.coveo:spring-boot-parameter-store-integration:2.0.0'
 }
 
 tasks.named('test') {
