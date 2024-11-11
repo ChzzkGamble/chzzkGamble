@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RouletteService {
 
-    private static final int CHEESE_UNIT = 1_000;
     private static final long HOUR_LIMIT = 5L;
     private static final char LEFT_DELIMITER = '<';
     private static final char RIGHT_DELIMITER = '>';
@@ -71,13 +70,9 @@ public class RouletteService {
 
     private void vote(Roulette roulette, String elementName, int cheese) {
         RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
-                .orElse(new RouletteElement(elementName, 0, roulette));
+                .orElse(RouletteElement.getFirstElement(elementName, roulette));
 
-        vote(element, cheese / CHEESE_UNIT);
-    }
-
-    private void vote(RouletteElement element, int voteCount) {
-        element.increaseCount(voteCount);
+        element.increaseCount(cheese);
         rouletteElementRepository.save(element);
     }
 
