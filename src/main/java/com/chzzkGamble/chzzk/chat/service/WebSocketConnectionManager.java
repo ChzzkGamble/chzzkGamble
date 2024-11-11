@@ -57,3 +57,4 @@ public class WebSocketConnectionManager {
         return chatClients.containsKey(channelName) && chatClients.get(channelName).isConnected();
     }
 }
+
