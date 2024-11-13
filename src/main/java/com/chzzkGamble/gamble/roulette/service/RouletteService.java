@@ -38,7 +38,8 @@ public class RouletteService {
     @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
         return rouletteRepository.findByIdAndCreatedAtAfter(rouletteId, LocalDateTime.now().minusHours(HOUR_LIMIT))
-                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND,
+                .orElseThrow(() -> new GambleException(
+                        GambleExceptionCode.ROULETTE_NOT_FOUND,
                         "rouletteId : " + rouletteId));
     }
 
@@ -52,28 +53,31 @@ public class RouletteService {
     @EventListener(DonationEvent.class)
     public void handleDonation(DonationEvent donationEvent) {
         DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
-        vote(donationMessage.getChannelName(), donationMessage.getMsg(), donationMessage.getCheese());
+        String elementName = getElementName(donationMessage.getMsg());
+        if (elementName == null) {
+            return; //룰렛용 도네가 아님
+        }
+        vote(donationMessage.getChannelName(), elementName, donationMessage.getCheese());
+    }
+
+    private String getElementName(String msg) {
+        try {
+            return StringParser.parseFromTo(msg, LEFT_DELIMITER, RIGHT_DELIMITER);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     @Transactional
-    public void vote(String channelName, String msg, int cheese) {
-        String elementName;
-        try {
-            elementName = StringParser.parseFromTo(msg, LEFT_DELIMITER, RIGHT_DELIMITER);
-        } catch (IllegalArgumentException e) {
-            return; // this is a donation not for vote
-        }
-
+    public void vote(String channelName, String elementName, int cheese) {
         List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(channelName);
-        roulettes.forEach(roulette -> vote(roulette, elementName, cheese));
-    }
+        for (Roulette roulette : roulettes) {
+            RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
+                    .orElse(RouletteElement.getFirstElement(elementName, roulette));
 
-    private void vote(Roulette roulette, String elementName, int cheese) {
-        RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
-                .orElse(RouletteElement.getFirstElement(elementName, roulette));
-
-        element.increaseCount(cheese);
-        rouletteElementRepository.save(element);
+            element.increaseCount(cheese);
+            rouletteElementRepository.save(element);
+        }
     }
 
     @Transactional

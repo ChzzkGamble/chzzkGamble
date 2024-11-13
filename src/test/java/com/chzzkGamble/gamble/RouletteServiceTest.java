@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
+import com.chzzkGamble.support.StubDonationEvent;
+import com.chzzkGamble.support.TestAsyncMethodConfig;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -17,8 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = TestAsyncMethodConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class RouletteServiceTest {
 
@@ -75,10 +80,10 @@ public class RouletteServiceTest {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
         RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0, roulette));
-
+        DonationEvent donationEvent = new StubDonationEvent(CHANNEL_NAME, "<요소>", 3000);
         // when
         rouletteService.startVote(roulette.getId());
-        rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
+        rouletteService.handleDonation(donationEvent);
 
         // then
         RouletteElement votedElement = rouletteElementRepository.findById(element.getId()).orElseThrow();
@@ -90,10 +95,10 @@ public class RouletteServiceTest {
     void vote_notInRoulette() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
-
+        DonationEvent donationEvent = new StubDonationEvent(CHANNEL_NAME, "<요소>", 3_000);
         // when
         rouletteService.startVote(roulette.getId());
-        rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
+        rouletteService.handleDonation(donationEvent);
 
         // then
         List<RouletteElement> votedElements = rouletteElementRepository.findByRouletteId(roulette.getId());
@@ -106,11 +111,12 @@ public class RouletteServiceTest {
     void vote_alreadyExists() {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
-
+        DonationEvent donationEvent1 = new StubDonationEvent(CHANNEL_NAME, "<요소>", 3_000);
+        DonationEvent donationEvent2 = new StubDonationEvent(CHANNEL_NAME, "<요소>", 4_000);
         // when
         rouletteService.startVote(roulette.getId());
-        rouletteService.vote(CHANNEL_NAME, "<요소>", 3_000);
-        rouletteService.vote(CHANNEL_NAME, "<요소>", 4_000);
+        rouletteService.handleDonation(donationEvent1);
+        rouletteService.handleDonation(donationEvent2);
 
         // then
         List<RouletteElement> votedElements = rouletteElementRepository.findByRouletteId(roulette.getId());
@@ -125,10 +131,9 @@ public class RouletteServiceTest {
         // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
         rouletteElementRepository.save(new RouletteElement("요소", 0, roulette));
-
         // when & then
         rouletteService.startVote(roulette.getId());
-        assertThatThrownBy(() -> rouletteService.vote(CHANNEL_NAME, "<요소>", -1_000))
+        assertThatThrownBy(() -> rouletteService.vote(CHANNEL_NAME, "요소", -1_000))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -139,13 +144,13 @@ public class RouletteServiceTest {
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME);
         rouletteService.startVote(roulette.getId());
         RouletteElement element = rouletteElementRepository.save(new RouletteElement("요소", 0, roulette));
-
+        DonationEvent donationEvent = new StubDonationEvent(CHANNEL_NAME, "<요소>", 1_000);
         // when
         int threadsCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
         for (int i = 0; i < threadsCount; i++) {
             executorService.submit(() ->
-                    rouletteService.vote(CHANNEL_NAME, "<요소>", 1_000)
+                    rouletteService.handleDonation(donationEvent)
             );
         }
         executorService.shutdown();
