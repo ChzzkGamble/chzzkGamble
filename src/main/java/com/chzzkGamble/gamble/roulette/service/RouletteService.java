@@ -1,31 +1,29 @@
 package com.chzzkGamble.gamble.roulette.service;
 
-import com.chzzkGamble.chzzk.dto.DonationMessage;
-import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.GambleException;
 import com.chzzkGamble.exception.GambleExceptionCode;
+import com.chzzkGamble.gamble.GambleService;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
-import com.chzzkGamble.utils.StringParser;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 
 @Service
 @RequiredArgsConstructor
-public class RouletteService {
+public class RouletteService implements GambleService {
 
-    private static final int CHEESE_UNIT = 1_000;
+    private static final Logger log = LoggerFactory.getLogger(RouletteService.class);
     private static final long HOUR_LIMIT = 5L;
-    private static final char LEFT_DELIMITER = '<';
-    private static final char RIGHT_DELIMITER = '>';
 
     private final RouletteRepository rouletteRepository;
     private final RouletteElementRepository rouletteElementRepository;
@@ -39,7 +37,8 @@ public class RouletteService {
     @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
         return rouletteRepository.findByIdAndCreatedAtAfter(rouletteId, LocalDateTime.now().minusHours(HOUR_LIMIT))
-                .orElseThrow(() -> new GambleException(GambleExceptionCode.ROULETTE_NOT_FOUND,
+                .orElseThrow(() -> new GambleException(
+                        GambleExceptionCode.ROULETTE_NOT_FOUND,
                         "rouletteId : " + rouletteId));
     }
 
@@ -48,37 +47,19 @@ public class RouletteService {
         return rouletteElementRepository.findByRouletteId(rouletteId);
     }
 
-    @Async
+    @Override
     @Transactional
-    @EventListener(DonationEvent.class)
-    public void handleDonation(DonationEvent donationEvent) {
-        DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
-        vote(donationMessage.getChannelName(), donationMessage.getMsg(), donationMessage.getCheese());
-    }
-
-    @Transactional
-    public void vote(String channelName, String msg, int cheese) {
-        String elementName;
-        try {
-            elementName = StringParser.parseFromTo(msg, LEFT_DELIMITER, RIGHT_DELIMITER);
-        } catch (IllegalArgumentException e) {
-            return; // this is a donation not for vote
-        }
-
+    public void vote(String channelName, String elementName, int cheese) {
         List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(channelName);
-        roulettes.forEach(roulette -> vote(roulette, elementName, cheese));
-    }
+        for (Roulette roulette : roulettes) {
+            RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
+                    .orElse(RouletteElement.getFirstElement(elementName, roulette));
 
-    private void vote(Roulette roulette, String elementName, int cheese) {
-        RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
-                .orElse(new RouletteElement(elementName, 0, roulette));
-
-        vote(element, cheese / CHEESE_UNIT);
-    }
-
-    private void vote(RouletteElement element, int voteCount) {
-        element.increaseCount(voteCount);
-        rouletteElementRepository.save(element);
+            element.increaseCount(cheese);
+            rouletteElementRepository.save(element);
+        }
+        log.info("Transaction Name = {}", TransactionSynchronizationManager.getCurrentTransactionName());
+        log.info("isActive Transaction = {}", TransactionSynchronizationManager.isActualTransactionActive());
     }
 
     @Transactional
