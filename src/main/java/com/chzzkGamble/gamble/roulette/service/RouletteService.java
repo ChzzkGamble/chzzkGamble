@@ -11,13 +11,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 
 @Service
 @RequiredArgsConstructor
 public class RouletteService implements GambleService {
 
+    private static final Logger log = LoggerFactory.getLogger(RouletteService.class);
     private static final long HOUR_LIMIT = 5L;
 
     private final RouletteRepository rouletteRepository;
@@ -53,6 +58,8 @@ public class RouletteService implements GambleService {
             element.increaseCount(cheese);
             rouletteElementRepository.save(element);
         }
+        log.info("Transaction Name = {}", TransactionSynchronizationManager.getCurrentTransactionName());
+        log.info("isActive Transaction = {}", TransactionSynchronizationManager.isActualTransactionActive());
     }
 
     @Transactional

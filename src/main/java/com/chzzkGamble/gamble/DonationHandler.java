@@ -3,6 +3,7 @@ package com.chzzkGamble.gamble;
 import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.utils.StringParser;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -19,13 +20,14 @@ public class DonationHandler {
 
     @Async
     @EventListener(DonationEvent.class)
-    public void voteGamble(DonationEvent donationEvent) {
+    public CompletableFuture<Boolean> voteGamble(DonationEvent donationEvent) {
         DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
         String elementName = getElementName(donationMessage.getMsg());
         if (elementName == null) {
-            return; //룰렛용 도네가 아님
+            return CompletableFuture.completedFuture(false); //투표용 도네가아니다.
         }
         gambleService.vote(donationMessage.getChannelName(), elementName, donationMessage.getCheese());
+        return CompletableFuture.completedFuture(true);
     }
 
     private String getElementName(String msg) {
