@@ -37,7 +37,7 @@ public class RouletteElement {
         this.roulette = roulette;
     }
 
-    public static RouletteElement getFirstElement(String name, Roulette roulette) {
+    public static RouletteElement newInstance(String name, Roulette roulette) {
         return new RouletteElement(name, 0, roulette);
     }
 

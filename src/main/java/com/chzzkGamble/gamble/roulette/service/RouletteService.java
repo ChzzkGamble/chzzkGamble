@@ -47,7 +47,7 @@ public class RouletteService {
         List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(channelName);
         for (Roulette roulette : roulettes) {
             RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
-                    .orElse(RouletteElement.getFirstElement(elementName, roulette));
+                    .orElse(RouletteElement.newInstance(elementName, roulette));
 
             element.increaseCount(cheese);
             rouletteElementRepository.save(element);
