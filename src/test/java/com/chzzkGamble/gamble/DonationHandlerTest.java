@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.support.StubDonationEvent;
 import java.util.concurrent.ExecutionException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,6 @@ class DonationHandlerTest {
 
     @Autowired
     private DonationHandler donationHandler;
-
-    @Test
-    @Disabled
-    @DisplayName("트랜잭션 테스트")
-    void transactionLogCheck() {
-        DonationEvent donationEvent = new StubDonationEvent("CN_NAME", "<마라탕>", 1_000);
-        donationHandler.voteGamble(donationEvent);
-    }
 
     @Test
     @DisplayName("룰렛용 도네가 아니라면 투표가 진행되지 않는다.")

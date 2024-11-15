@@ -2,6 +2,7 @@ package com.chzzkGamble.gamble;
 
 import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.event.DonationEvent;
+import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import com.chzzkGamble.utils.StringParser;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class DonationHandler {
     private static final char LEFT_DELIMITER = '<';
     private static final char RIGHT_DELIMITER = '>';
 
-    private final GambleService gambleService;
+    private final RouletteService rouletteService;
 
     @Async
     @EventListener(DonationEvent.class)
@@ -26,7 +27,7 @@ public class DonationHandler {
         if (elementName == null) {
             return CompletableFuture.completedFuture(false); //투표용 도네가아니다.
         }
-        gambleService.vote(donationMessage.getChannelName(), elementName, donationMessage.getCheese());
+        rouletteService.vote(donationMessage.getChannelName(), elementName, donationMessage.getCheese());
         return CompletableFuture.completedFuture(true);
     }
 

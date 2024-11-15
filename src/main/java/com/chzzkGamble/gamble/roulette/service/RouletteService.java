@@ -2,7 +2,6 @@ package com.chzzkGamble.gamble.roulette.service;
 
 import com.chzzkGamble.exception.GambleException;
 import com.chzzkGamble.exception.GambleExceptionCode;
-import com.chzzkGamble.gamble.GambleService;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
@@ -11,18 +10,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 
 @Service
 @RequiredArgsConstructor
-public class RouletteService implements GambleService {
+public class RouletteService {
 
-    private static final Logger log = LoggerFactory.getLogger(RouletteService.class);
     private static final long HOUR_LIMIT = 5L;
 
     private final RouletteRepository rouletteRepository;
@@ -47,7 +42,6 @@ public class RouletteService implements GambleService {
         return rouletteElementRepository.findByRouletteId(rouletteId);
     }
 
-    @Override
     @Transactional
     public void vote(String channelName, String elementName, int cheese) {
         List<Roulette> roulettes = rouletteRepository.findByChannelNameAndVotingIsTrue(channelName);
@@ -58,8 +52,6 @@ public class RouletteService implements GambleService {
             element.increaseCount(cheese);
             rouletteElementRepository.save(element);
         }
-        log.info("Transaction Name = {}", TransactionSynchronizationManager.getCurrentTransactionName());
-        log.info("isActive Transaction = {}", TransactionSynchronizationManager.isActualTransactionActive());
     }
 
     @Transactional
