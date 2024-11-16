@@ -43,8 +43,9 @@ public class Roulette {
         this.cheeseUnit = DEFAULT_CHEESE_UNIT;
     }
 
-    public Roulette(String channelName, Integer cheeseUnit) {
+    public Roulette(String channelName, int cheeseUnit) {
         this.channelName = channelName;
+        validateCheeseUnit(cheeseUnit);
         this.cheeseUnit = cheeseUnit;
     }
 
@@ -54,5 +55,16 @@ public class Roulette {
 
     public void endVote() {
         voting = false;
+    }
+
+    public void updateCheeseUnit(int cheeseUnit) {
+        validateCheeseUnit(cheeseUnit);
+        this.cheeseUnit = cheeseUnit;
+    }
+
+    private void validateCheeseUnit(int cheeseUnit) {
+        if (cheeseUnit <= 0) {
+            throw new IllegalArgumentException("룰렛 단위는 0 이상입니다.");
+        }
     }
 }

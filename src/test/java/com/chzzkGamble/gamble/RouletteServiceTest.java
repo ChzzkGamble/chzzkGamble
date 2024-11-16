@@ -39,6 +39,14 @@ public class RouletteServiceTest {
     }
 
     @Test
+    @DisplayName("룰렛 단위 0 이하로 생성하면 예외가 발생한다.")
+    void createRoulette_el0_Exception() {
+        // given & when & then
+        assertThatThrownBy(() -> rouletteService.createRoulette(CHANNEL_NAME, 0))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("룰렛을 불러올 수 있다.")
     void readRoulette() {
         // given
@@ -163,5 +171,30 @@ public class RouletteServiceTest {
         assertThat(rouletteService.hasVotingRoulette(CHANNEL_NAME)).isFalse();
         rouletteService.startVote(roulette.getId());
         assertThat(rouletteService.hasVotingRoulette(CHANNEL_NAME)).isTrue();
+    }
+
+    @Test
+    @DisplayName("룰렛 단위를 업데이트할 수 있다.")
+    void updateRouletteUnit() {
+        // given
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME, CHEESE_UNIT);
+
+        // when
+        rouletteService.updateRouletteUnit(roulette.getId(), 2000);
+
+        //then
+        Roulette actual = rouletteService.readRoulette(roulette.getId());
+        assertThat(actual.getCheeseUnit()).isEqualTo(2000);
+    }
+
+    @Test
+    @DisplayName("업데이트되는 룰렛 단위가 0이하면 예외가 발생한다.")
+    void updateRouletteUnit_el0_Exception() {
+        // given
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME, CHEESE_UNIT);
+
+        // when & then
+        assertThatThrownBy(() -> rouletteService.updateRouletteUnit(roulette.getId(), 0))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

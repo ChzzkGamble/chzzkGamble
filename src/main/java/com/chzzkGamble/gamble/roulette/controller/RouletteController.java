@@ -2,6 +2,7 @@ package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
+import com.chzzkGamble.gamble.roulette.dto.RouletteCheeseUnitUpdateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,5 +68,14 @@ public class RouletteController {
                 .stream()
                 .map(element -> RouletteElementResponse.of(element, roulette.getCheeseUnit(), totalVote))
                 .toList();
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> updateUnit(@CookieValue(name = "rouletteId") Cookie cookie,
+                                           RouletteCheeseUnitUpdateRequest request) {
+        UUID rouletteId = UUID.fromString(cookie.getValue());
+        rouletteService.updateRouletteUnit(rouletteId, request.rouletteUnit());
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -74,4 +74,13 @@ public class RouletteService {
     public boolean hasVotingRoulette(String channelName) {
         return rouletteRepository.existsByChannelNameAndVotingIsTrue(channelName);
     }
+
+    @Transactional
+    public void updateRouletteUnit(UUID rouletteId, int cheeseUnit) {
+        Roulette roulette = rouletteRepository.findById(rouletteId).orElseThrow(() -> new GambleException(
+                GambleExceptionCode.ROULETTE_NOT_FOUND,
+                "rouletteId : " + rouletteId));
+
+        roulette.updateCheeseUnit(cheeseUnit);
+    }
 }
