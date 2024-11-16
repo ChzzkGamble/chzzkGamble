@@ -18,22 +18,20 @@ import lombok.ToString;
 @ToString
 public class RouletteElement {
 
-    private static final int CHEESE_UNIT = 1_000;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    private Integer count;
+    private int cheese;
 
     @ManyToOne
     private Roulette roulette;
 
-    public RouletteElement(String name, Integer count, Roulette roulette) {
+    public RouletteElement(String name, int cheese, Roulette roulette) {
         this.name = name;
-        this.count = count;
+        this.cheese = cheese;
         this.roulette = roulette;
     }
 
@@ -41,11 +39,10 @@ public class RouletteElement {
         return new RouletteElement(name, 0, roulette);
     }
 
-    public void increaseCount(int cheese) {
-        int increaseCount = cheese / CHEESE_UNIT;
-        if (increaseCount <= 0 || count + increaseCount < 0) {
-            throw new IllegalArgumentException("잘못된 상승 수치입니다. amount : " + increaseCount);
+    public void increaseCheese(int cheese) {
+        if (cheese <= 0 || this.cheese + cheese < 0) {
+            throw new IllegalArgumentException("잘못된 상승 수치입니다. amount : " + cheese);
         }
-        count += increaseCount;
+        this.cheese += cheese;
     }
 }

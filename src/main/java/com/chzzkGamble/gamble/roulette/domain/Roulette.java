@@ -23,6 +23,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 public class Roulette {
 
+    private static final int DEFAULT_CHEESE_UNIT = 1000;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -31,11 +33,19 @@ public class Roulette {
 
     private boolean voting = false;
 
+    private int cheeseUnit;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
     public Roulette(String channelName) {
         this.channelName = channelName;
+        this.cheeseUnit = DEFAULT_CHEESE_UNIT;
+    }
+
+    public Roulette(String channelName, Integer cheeseUnit) {
+        this.channelName = channelName;
+        this.cheeseUnit = cheeseUnit;
     }
 
     public void startVote() {

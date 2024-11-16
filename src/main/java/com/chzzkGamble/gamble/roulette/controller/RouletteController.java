@@ -30,7 +30,7 @@ public class RouletteController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoulette(@RequestBody @Valid RouletteCreateRequest request) {
-        Roulette roulette = rouletteService.createRoulette(request.channelName());
+        Roulette roulette = rouletteService.createRoulette(request.channelName(), request.rouletteUnit());
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
                 .httpOnly(true)
@@ -54,15 +54,17 @@ public class RouletteController {
     @GetMapping
     public List<RouletteElementResponse> readRoulette(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
+        // TODO : 제안 - dto 변환을 서비스에서 하면 어떨까요, 이 부분 로직이 들어가는데 검증을 못해요.
+        Roulette roulette = rouletteService.readRoulette(rouletteId);
         List<RouletteElement> rouletteElements = rouletteService.readRouletteElements(rouletteId);
 
         int totalVote = rouletteElements.stream()
-                .mapToInt(RouletteElement::getCount)
+                .mapToInt(rouletteElement -> (rouletteElement.getCheese() / roulette.getCheeseUnit()))
                 .sum();
 
         return rouletteElements
                 .stream()
-                .map(element -> RouletteElementResponse.of(element, totalVote))
+                .map(element -> RouletteElementResponse.of(element, roulette.getCheeseUnit(), totalVote))
                 .toList();
     }
 }

@@ -24,9 +24,11 @@ public class RouletteService {
     private final RouletteElementRepository rouletteElementRepository;
 
     @Transactional
-    public Roulette createRoulette(String channelName) {
-        Roulette roulette = new Roulette(channelName);
-        return rouletteRepository.save(roulette);
+    public Roulette createRoulette(String channelName, Integer rouletteUnit) {
+        if (rouletteUnit == null) {
+            return rouletteRepository.save(new Roulette(channelName));
+        }
+        return rouletteRepository.save(new Roulette(channelName, rouletteUnit));
     }
 
     @Transactional(readOnly = true)
@@ -49,7 +51,7 @@ public class RouletteService {
             RouletteElement element = rouletteElementRepository.findByNameAndRouletteId(elementName, roulette.getId())
                     .orElse(RouletteElement.newInstance(elementName, roulette));
 
-            element.increaseCount(cheese);
+            element.increaseCheese(cheese);
             rouletteElementRepository.save(element);
         }
     }
