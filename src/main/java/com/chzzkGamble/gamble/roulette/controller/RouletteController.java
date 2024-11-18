@@ -2,9 +2,9 @@ package com.chzzkGamble.gamble.roulette.controller;
 
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
-import com.chzzkGamble.gamble.roulette.dto.RouletteCheeseUnitUpdateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
+import com.chzzkGamble.gamble.roulette.dto.RouletteUnitUpdateRequest;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
@@ -61,18 +61,18 @@ public class RouletteController {
         List<RouletteElement> rouletteElements = rouletteService.readRouletteElements(rouletteId);
 
         int totalVote = rouletteElements.stream()
-                .mapToInt(rouletteElement -> (rouletteElement.getCheese() / roulette.getCheeseUnit()))
+                .mapToInt(rouletteElement -> (rouletteElement.getCheese() / roulette.getRouletteUnit()))
                 .sum();
 
         return rouletteElements
                 .stream()
-                .map(element -> RouletteElementResponse.of(element, roulette.getCheeseUnit(), totalVote))
+                .map(element -> RouletteElementResponse.of(element, roulette.getRouletteUnit(), totalVote))
                 .toList();
     }
 
     @PatchMapping
     public ResponseEntity<Void> updateUnit(@CookieValue(name = "rouletteId") Cookie cookie,
-                                           RouletteCheeseUnitUpdateRequest request) {
+                                           RouletteUnitUpdateRequest request) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
         rouletteService.updateRouletteUnit(rouletteId, request.rouletteUnit());
 

@@ -23,8 +23,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 public class Roulette {
 
-    private static final int DEFAULT_CHEESE_UNIT = 1000;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -33,20 +31,15 @@ public class Roulette {
 
     private boolean voting = false;
 
-    private int cheeseUnit;
+    private int rouletteUnit;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Roulette(String channelName) {
+    public Roulette(String channelName, int rouletteUnit) {
         this.channelName = channelName;
-        this.cheeseUnit = DEFAULT_CHEESE_UNIT;
-    }
-
-    public Roulette(String channelName, int cheeseUnit) {
-        this.channelName = channelName;
-        validateCheeseUnit(cheeseUnit);
-        this.cheeseUnit = cheeseUnit;
+        validateRouletteUnit(rouletteUnit);
+        this.rouletteUnit = rouletteUnit;
     }
 
     public void startVote() {
@@ -57,13 +50,13 @@ public class Roulette {
         voting = false;
     }
 
-    public void updateCheeseUnit(int cheeseUnit) {
-        validateCheeseUnit(cheeseUnit);
-        this.cheeseUnit = cheeseUnit;
+    public void updateRouletteUnit(int rouletteUnit) {
+        validateRouletteUnit(rouletteUnit);
+        this.rouletteUnit = rouletteUnit;
     }
 
-    private void validateCheeseUnit(int cheeseUnit) {
-        if (cheeseUnit <= 0) {
+    private void validateRouletteUnit(int rouletteUnit) {
+        if (rouletteUnit <= 0) {
             throw new IllegalArgumentException("룰렛 단위는 0 이상입니다.");
         }
     }

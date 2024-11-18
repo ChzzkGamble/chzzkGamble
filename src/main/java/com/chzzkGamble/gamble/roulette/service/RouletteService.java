@@ -24,10 +24,7 @@ public class RouletteService {
     private final RouletteElementRepository rouletteElementRepository;
 
     @Transactional
-    public Roulette createRoulette(String channelName, Integer rouletteUnit) {
-        if (rouletteUnit == null) {
-            return rouletteRepository.save(new Roulette(channelName));
-        }
+    public Roulette createRoulette(String channelName, int rouletteUnit) {
         return rouletteRepository.save(new Roulette(channelName, rouletteUnit));
     }
 
@@ -76,11 +73,11 @@ public class RouletteService {
     }
 
     @Transactional
-    public void updateRouletteUnit(UUID rouletteId, int cheeseUnit) {
+    public void updateRouletteUnit(UUID rouletteId, int newRouletteUnit) {
         Roulette roulette = rouletteRepository.findById(rouletteId).orElseThrow(() -> new GambleException(
                 GambleExceptionCode.ROULETTE_NOT_FOUND,
                 "rouletteId : " + rouletteId));
 
-        roulette.updateCheeseUnit(cheeseUnit);
+        roulette.updateRouletteUnit(newRouletteUnit);
     }
 }

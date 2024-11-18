@@ -8,12 +8,12 @@ public record RouletteElementResponse(
         Integer vote,
         String percentage
 ) {
-    public static RouletteElementResponse of(RouletteElement element, int cheeseUnit, Integer totalVote) {
+    public static RouletteElementResponse of(RouletteElement element, int rouletteUnit, Integer totalVote) {
         return new RouletteElementResponse(
                 element.getId(),
                 element.getName(),
-                element.getCheese() / cheeseUnit,
-                String.format("%.2f%%", (double) (element.getCheese() / cheeseUnit) / totalVote * 100)
+                element.getCheese() / rouletteUnit,
+                String.format("%.2f%%", (double) (element.getCheese() / rouletteUnit) / totalVote * 100)
         );
     }
 }
