@@ -31,11 +31,15 @@ public class Roulette {
 
     private boolean voting = false;
 
+    private int rouletteUnit;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Roulette(String channelName) {
+    public Roulette(String channelName, int rouletteUnit) {
         this.channelName = channelName;
+        validateRouletteUnit(rouletteUnit);
+        this.rouletteUnit = rouletteUnit;
     }
 
     public void startVote() {
@@ -44,5 +48,16 @@ public class Roulette {
 
     public void endVote() {
         voting = false;
+    }
+
+    public void updateRouletteUnit(int rouletteUnit) {
+        validateRouletteUnit(rouletteUnit);
+        this.rouletteUnit = rouletteUnit;
+    }
+
+    private void validateRouletteUnit(int rouletteUnit) {
+        if (rouletteUnit <= 0) {
+            throw new IllegalArgumentException("룰렛 단위는 0 이상입니다.");
+        }
     }
 }

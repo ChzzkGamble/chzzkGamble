@@ -24,21 +24,25 @@ public class RouletteElement {
 
     private String name;
 
-    private Integer count;
+    private int cheese;
 
     @ManyToOne
     private Roulette roulette;
 
-    public RouletteElement(String name, Integer count, Roulette roulette) {
+    public RouletteElement(String name, int cheese, Roulette roulette) {
         this.name = name;
-        this.count = count;
+        this.cheese = cheese;
         this.roulette = roulette;
     }
 
-    public void increaseCount(int amount) {
-        if (amount <= 0 || count + amount < 0) {
-            throw new IllegalArgumentException("잘못된 상승 수치입니다. amount : " + amount);
+    public static RouletteElement newInstance(String name, Roulette roulette) {
+        return new RouletteElement(name, 0, roulette);
+    }
+
+    public void increaseCheese(int cheese) {
+        if (cheese <= 0 || this.cheese + cheese < 0) {
+            throw new IllegalArgumentException("잘못된 상승 수치입니다. amount : " + cheese);
         }
-        count += amount;
+        this.cheese += cheese;
     }
 }

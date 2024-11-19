@@ -4,6 +4,7 @@ import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
 import com.chzzkGamble.gamble.roulette.dto.RouletteElementResponse;
+import com.chzzkGamble.gamble.roulette.dto.RouletteUnitUpdateRequest;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +32,7 @@ public class RouletteController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoulette(@RequestBody @Valid RouletteCreateRequest request) {
-        Roulette roulette = rouletteService.createRoulette(request.channelName());
+        Roulette roulette = rouletteService.createRoulette(request.channelName(), request.rouletteUnit());
         ResponseCookie cookie = ResponseCookie.from("rouletteId", roulette.getId().toString())
                 .path("/")
                 .httpOnly(true)
@@ -54,15 +56,26 @@ public class RouletteController {
     @GetMapping
     public List<RouletteElementResponse> readRoulette(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
+        // TODO : 제안 - dto 변환을 서비스에서 하면 어떨까요, 이 부분 로직이 들어가는데 검증을 못해요.
+        Roulette roulette = rouletteService.readRoulette(rouletteId);
         List<RouletteElement> rouletteElements = rouletteService.readRouletteElements(rouletteId);
 
         int totalVote = rouletteElements.stream()
-                .mapToInt(RouletteElement::getCount)
+                .mapToInt(rouletteElement -> (rouletteElement.getCheese() / roulette.getRouletteUnit()))
                 .sum();
 
         return rouletteElements
                 .stream()
-                .map(element -> RouletteElementResponse.of(element, totalVote))
+                .map(element -> RouletteElementResponse.of(element, roulette.getRouletteUnit(), totalVote))
                 .toList();
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> updateUnit(@CookieValue(name = "rouletteId") Cookie cookie,
+                                           RouletteUnitUpdateRequest request) {
+        UUID rouletteId = UUID.fromString(cookie.getValue());
+        rouletteService.updateRouletteUnit(rouletteId, request.rouletteUnit());
+
+        return ResponseEntity.ok().build();
     }
 }
