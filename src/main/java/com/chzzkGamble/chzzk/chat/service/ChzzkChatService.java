@@ -57,10 +57,10 @@ public class ChzzkChatService {
     private void initiateNewChatConnection(String channelName) {
         connectionManager.connect(channelName);
         lastEventPublished.put(channelName, LocalDateTime.now(clock));
-        createAndSaveNewChat(channelName);
+        createNewChat(channelName);
     }
 
-    private void createAndSaveNewChat(String channelName) {
+    private void createNewChat(String channelName) {
         Chat chat = new Chat(channelName);
         chat.open();
         chatRepository.save(chat);
