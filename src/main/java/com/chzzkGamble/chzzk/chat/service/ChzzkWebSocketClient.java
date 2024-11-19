@@ -20,8 +20,10 @@ public class ChzzkWebSocketClient {
 
     private static final String CHZZK_CHAT_SERVER = "wss://kr-ss";
     private static final String CHZZK_CHAT_SERVER2 = ".chat.naver.com/chat";
-    private static final int TIMEOUT = 30;
+    private static final int TIMEOUT_SECONDS = 30;
     private static final int MESSAGE_SIZE_LIMIT = 64 * 1024; // 64 KB
+    private static final PingMessage PING_MESSAGE = new PingMessage();
+
 
     private final WebSocketClient client = new StandardWebSocketClient();
     private final WebSocketHandler handler;
@@ -41,7 +43,7 @@ public class ChzzkWebSocketClient {
         int serverId = ThreadLocalRandom.current().nextInt(1, 6);
         try {
             session = client.execute(handler, CHZZK_CHAT_SERVER + serverId + CHZZK_CHAT_SERVER2)
-                    .get(TIMEOUT, TimeUnit.SECONDS);
+                    .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             session.setTextMessageSizeLimit(MESSAGE_SIZE_LIMIT);
         } catch (TimeoutException | ExecutionException e) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
@@ -53,7 +55,7 @@ public class ChzzkWebSocketClient {
 
     public void sendPingToBroadcastServer() {
         if (isConnected()) {
-            MessageSender.sendTextMessage(session, new PingMessage());
+            MessageSender.sendTextMessage(session, PING_MESSAGE);
             log.info("Sent Ping to broadcast server for channelName = {}", channelName);
         }
     }
