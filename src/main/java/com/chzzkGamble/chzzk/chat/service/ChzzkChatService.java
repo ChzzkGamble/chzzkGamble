@@ -19,9 +19,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class ChzzkChatService {
 
     private static final int MAX_CONNECTION_LIMIT = 10;
@@ -32,11 +32,11 @@ public class ChzzkChatService {
     private final WebSocketConnectionManager connectionManager;
     private final Map<String, LocalDateTime> lastEventPublished = new ConcurrentHashMap<>();
 
-    // TODO : 동시성 제어 문제 해결
+    // TODO : 동시성 제어 문제 해결 -> channelName 네임드락
     @Transactional
     public void connectChatRoom(String channelName) {
-        if (isChatAlreadyOpen(channelName)) {
-            connectionManager.reconnect(channelName);
+        if (isChatAlreadyOpen(channelName) && connectionManager.isConnected(channelName)) {
+            lastEventPublished.put(channelName, LocalDateTime.now(clock));
             return;
         }
 
