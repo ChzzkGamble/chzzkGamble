@@ -32,7 +32,6 @@ public class ChzzkChatService {
     private final WebSocketConnectionManager connectionManager;
     private final Map<String, LocalDateTime> lastEventPublished = new ConcurrentHashMap<>();
 
-    // TODO : 동시성 제어 문제 해결 -> channelName 네임드락
     @Transactional
     public void connectChatRoom(String channelName) {
         if (isChatAlreadyOpen(channelName) && connectionManager.isConnected(channelName)) {

@@ -2,6 +2,7 @@ package com.chzzkGamble.chzzk.chat.controller;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.dto.ChatConnectRequest;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatFacade;
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChzzkChatController {
 
+    private final ChzzkChatFacade chzzkChatFacade;
     private final ChzzkChatService chzzkChatService;
     private final ChzzkApiService chzzkApiService;
 
@@ -28,7 +30,7 @@ public class ChzzkChatController {
         if (!response.isValid(channelName)) {
             return ResponseEntity.badRequest().body("해당 채널과 연결할 수 없는 상태입니다.");
         }
-        chzzkChatService.connectChatRoom(channelName);
+        chzzkChatFacade.connectChatRoom(channelName);
 
         return ResponseEntity.ok(response);
     }
