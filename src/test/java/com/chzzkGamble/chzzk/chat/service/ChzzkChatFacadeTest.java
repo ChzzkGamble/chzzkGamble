@@ -1,6 +1,12 @@
 package com.chzzkGamble.chzzk.chat.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.chzzkGamble.chzzk.chat.domain.Chat;
 import com.chzzkGamble.chzzk.chat.repository.ChatRepository;
@@ -10,11 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -49,20 +53,20 @@ class ChzzkChatFacadeTest {
 
         Map<String, Boolean> connectionStates = new ConcurrentHashMap<>();
 
-        Mockito.doAnswer(invocation -> {
+        doAnswer(invocation -> {
             String mockChannelName = invocation.getArgument(0, String.class);
             connectionStates.put(mockChannelName, true);
             return null;
-        }).when(connectionManager).connect(Mockito.anyString());
+        }).when(connectionManager).connect(anyString());
 
-        Mockito.when(connectionManager.isConnected(Mockito.anyString()))
+        when(connectionManager.isConnected(anyString()))
                 .thenAnswer(invocation -> {
                     String mockChannelName = invocation.getArgument(0, String.class);
                     return connectionStates.getOrDefault(mockChannelName, false);
                 });
 
         // when
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         for (int i = 0; i < numberOfThreads; i++) {
             executorService.execute(() -> {
                 try {
@@ -81,11 +85,11 @@ class ChzzkChatFacadeTest {
 
         // then
         List<Chat> chats = chatRepository.findAll();
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(chats).hasSize(1),
                 () -> assertThat(chats.get(0).getChannelName()).isEqualTo(channelName)
         );
 
-        Mockito.verify(connectionManager, Mockito.times(1)).connect(channelName);
+        verify(connectionManager, times(1)).connect(channelName);
     }
 }
