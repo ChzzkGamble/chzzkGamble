@@ -38,4 +38,17 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(exceptionCode.getHttpStatus()).body(response);
     }
+
+    @ExceptionHandler(AdvertiseException.class)
+    public ResponseEntity<ExceptionResponse> handleAdvertiseException(AdvertiseException e) {
+        logger.error(e.getMessage());
+        logger.error(e.getSupplementaryMessage());
+        AdvertiseExceptionCode exceptionCode = e.getExceptionCode();
+
+        ExceptionResponse response = new ExceptionResponse(
+                exceptionCode.getCode(),
+                exceptionCode.getMessage()
+        );
+        return ResponseEntity.status(exceptionCode.getHttpStatus()).body(response);
+    }
 }
