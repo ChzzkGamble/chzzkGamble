@@ -48,6 +48,12 @@ public class Advertise {
 
     public void approval() {
         this.active = true;
+        startDate = LocalDateTime.now();
+        endDate = LocalDateTime.now().plusDays(10);
+    }
+
+    public void rejection() {
+        this.active = false;
     }
 
     @Override
