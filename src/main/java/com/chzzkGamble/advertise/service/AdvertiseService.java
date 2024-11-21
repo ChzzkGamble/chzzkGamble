@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -18,7 +19,6 @@ import java.util.Map;
 public class AdvertiseService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdvertiseService.class);
-    private static final long ADVERTISE_DURATION_DAYS = 10L; // 10 days
 
     private final AdvertiseRepository advertiseRepository;
     private final Clock clock;
@@ -45,8 +45,7 @@ public class AdvertiseService {
     @Transactional(readOnly = true)
     @Scheduled(fixedDelayString = "${advertise.update-interval}")
     public void updateAdvertiseMap() {
-        List<Advertise> validAdvertise = advertiseRepository.findByCreatedAtAfter(
-                LocalDateTime.now(clock).minusDays(ADVERTISE_DURATION_DAYS));
+        List<Advertise> validAdvertise = advertiseRepository.findActiveAdvertisesWithinDate(LocalDateTime.now(clock));
         advertiseMap = AdvertiseMap.from(validAdvertise, clock);
 
         logger.info("updated : {}", advertiseMap);

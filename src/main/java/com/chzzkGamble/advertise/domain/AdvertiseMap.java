@@ -41,7 +41,7 @@ public class AdvertiseMap {
     }
 
     private static Long getAdjustedCost(Advertise advertise, Clock clock) {
-        Duration duration = Duration.between(advertise.getCreatedAt(), LocalDateTime.now(clock));
+        Duration duration = Duration.between(advertise.getStartDate(), LocalDateTime.now(clock));
         long pastDays = duration.getSeconds() / 86400;
         return advertise.getCost() * (ADVERTISE_DURATION_DAYS - pastDays) / ADVERTISE_DURATION_DAYS;
     }

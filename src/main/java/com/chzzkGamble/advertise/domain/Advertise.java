@@ -1,15 +1,11 @@
 package com.chzzkGamble.advertise.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,13 +24,27 @@ public class Advertise {
 
     private Long cost;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    private boolean active;
+
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
 
     public Advertise(String name, String imageUrl, Long cost) {
+        this(name, imageUrl, cost, LocalDateTime.now());
+    }
+
+    public Advertise(String name, String imageUrl, Long cost, LocalDateTime startDate) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
+        this.active = false;
+        this.startDate = startDate;
+        this.endDate = startDate.plusDays(10);
+    }
+
+    public void approval() {
+        this.active = true;
     }
 
     @Override
@@ -44,7 +54,9 @@ public class Advertise {
                 ", name='" + name + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", cost=" + cost +
-                ", createdAt=" + createdAt +
+                ", active=" + active +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 '}';
     }
 }

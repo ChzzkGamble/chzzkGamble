@@ -1,11 +1,7 @@
 package com.chzzkGamble.advertise.domain;
 
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockitoAnnotations;
@@ -15,18 +11,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.auditing.DateTimeProvider;
+
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -97,18 +92,10 @@ public class AdvertiseMapTest {
         AutoCloseable autoCloseable = MockitoAnnotations.openMocks(this);
         auditingHandler.setDateTimeProvider(dateTimeProvider);
 
-        // save past advertise
-        when(dateTimeProvider.getNow())
-                .thenReturn(Optional.of(pastDay));
-
-        Advertise pastAd = new Advertise("name", "url", 1000L);
+        Advertise pastAd = new Advertise("name", "url", 1000L, pastDay);
         advertiseRepository.save(pastAd);
 
-        // save today advertise
-        when(dateTimeProvider.getNow())
-                .thenReturn(Optional.of(today));
-
-        Advertise todayAd = new Advertise("name", "url", 2000L);
+        Advertise todayAd = new Advertise("name", "url", 2000L, today);
         advertiseRepository.save(todayAd);
 
         // when
