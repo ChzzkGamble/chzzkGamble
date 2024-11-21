@@ -38,6 +38,12 @@ public class AdvertiseService {
         return advertiseMap.getRandom();
     }
 
+    @Transactional
+    public void approvalAdvertise(Long advertiseId) {
+        Advertise advertise = advertiseRepository.findById(advertiseId).orElseThrow();
+        advertise.approval();
+    }
+
     public Map<Advertise, Double> getAdvertiseProbabilities() {
         return advertiseMap.getProbabilities();
     }

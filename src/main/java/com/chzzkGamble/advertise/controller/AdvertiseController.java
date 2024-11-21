@@ -9,10 +9,7 @@ import com.chzzkGamble.advertise.service.AdvertiseService;
 import com.chzzkGamble.auth.config.RequireApiKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -35,6 +32,13 @@ public class AdvertiseController {
     public ResponseEntity<AdvertiseResponse> getAdvertise() {
         Advertise advertise = advertiseService.getAdvertise();
         return ResponseEntity.ok(AdvertiseResponse.from(advertise));
+    }
+
+    @RequireApiKey
+    @PutMapping("/advertise/approval")
+    public ResponseEntity<Void> approvalAdvertise(@RequestBody Long advertiseId) {
+        advertiseService.approvalAdvertise(advertiseId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/advertise/probabilities")
