@@ -85,4 +85,21 @@ public class AdvertiseServiceTest {
         // then
         assertThat(advertiseService.getAdvertiseProbabilities()).hasSize(1);
     }
+
+    @Test
+    @DisplayName("승인된 광고들만 AdvertiseMap에 저장된다.")
+    void approvalAdvertise() {
+        // given
+        Advertise advertise1 = new Advertise("따효니1", "image1", 1000L, LocalDateTime.now());
+        advertise1.approval();
+        advertiseRepository.save(advertise1);
+        Advertise advertise2 = new Advertise("따효니2", "image2", 1000L, LocalDateTime.now());
+        advertiseRepository.save(advertise2);
+
+        // when
+        advertiseService.updateAdvertiseMap();
+
+        // then
+        assertThat(advertiseService.getAdvertiseProbabilities()).hasSize(1);
+    }
 }
