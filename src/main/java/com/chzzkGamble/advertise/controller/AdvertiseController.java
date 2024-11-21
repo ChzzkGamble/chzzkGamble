@@ -1,10 +1,7 @@
 package com.chzzkGamble.advertise.controller;
 
 import com.chzzkGamble.advertise.domain.Advertise;
-import com.chzzkGamble.advertise.dto.AdvertiseProbabilityResponse;
-import com.chzzkGamble.advertise.dto.AdvertiseProbabilityResponses;
-import com.chzzkGamble.advertise.dto.AdvertiseRequest;
-import com.chzzkGamble.advertise.dto.AdvertiseResponse;
+import com.chzzkGamble.advertise.dto.*;
 import com.chzzkGamble.advertise.service.AdvertiseService;
 import com.chzzkGamble.auth.config.RequireApiKey;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +20,11 @@ public class AdvertiseController {
 
     @RequireApiKey
     @PostMapping("/advertise")
-    public ResponseEntity<Void> createAdvertise(@RequestBody AdvertiseRequest request) {
-        Advertise advertise = advertiseService.createAdvertise(request.toEntity());
-        return ResponseEntity.created(URI.create("advertise/" + advertise.getId())).build();
+    public ResponseEntity<AdvertiseCreateResponse> createAdvertise(@RequestBody AdvertiseCreateRequest request) {
+        AdvertiseCreateResponse response = advertiseService.createAdvertise(request.toEntity());
+        return ResponseEntity
+                .created(URI.create("advertise/" + response.id()))
+                .body(response);
     }
 
     @GetMapping("/advertise")
@@ -36,8 +35,8 @@ public class AdvertiseController {
 
     @RequireApiKey
     @PutMapping("/advertise/approval")
-    public ResponseEntity<Void> approvalAdvertise(@RequestBody Long advertiseId) {
-        advertiseService.approvalAdvertise(advertiseId);
+    public ResponseEntity<Void> approvalAdvertise(@RequestBody ApprovalRequest approvalRequest) {
+        advertiseService.approvalAdvertise(approvalRequest.advertiseId());
         return ResponseEntity.ok().build();
     }
 

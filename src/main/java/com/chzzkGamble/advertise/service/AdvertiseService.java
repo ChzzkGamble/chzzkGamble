@@ -2,7 +2,10 @@ package com.chzzkGamble.advertise.service;
 
 import com.chzzkGamble.advertise.domain.Advertise;
 import com.chzzkGamble.advertise.domain.AdvertiseMap;
+import com.chzzkGamble.advertise.dto.AdvertiseCreateResponse;
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
+import com.chzzkGamble.exception.AdvertiseException;
+import com.chzzkGamble.exception.AdvertiseExceptionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,8 +33,9 @@ public class AdvertiseService {
         this.advertiseMap = AdvertiseMap.from(Collections.emptyList(), clock);
     }
 
-    public Advertise createAdvertise(Advertise advertise) {
-        return advertiseRepository.save(advertise);
+    public AdvertiseCreateResponse createAdvertise(Advertise advertise) {
+        Advertise savedAdvertise = advertiseRepository.save(advertise);
+        return new AdvertiseCreateResponse(savedAdvertise.getId());
     }
 
     public Advertise getAdvertise() {
@@ -40,7 +44,11 @@ public class AdvertiseService {
 
     @Transactional
     public void approvalAdvertise(Long advertiseId) {
-        Advertise advertise = advertiseRepository.findById(advertiseId).orElseThrow();
+        Advertise advertise = advertiseRepository.findById(advertiseId)
+                .orElseThrow(() -> new AdvertiseException(
+                        AdvertiseExceptionCode.ADVERTISE_NOT_FOUND,
+                        "advertiseId : " + advertiseId
+                ));
         advertise.approval();
     }
 
