@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AdvertiseMapTest {
 
-    private final Advertise ad1 = new Advertise("ad1","url1", 1000L);
-    private final Advertise ad2 = new Advertise("ad2","url2", 3000L);
-    private final Advertise ad3 = new Advertise("ad3","url3", 5000L);
+    private final Advertise ad1 = new Advertise("ad1","url1", 1000L, LocalDateTime.now());
+    private final Advertise ad2 = new Advertise("ad2","url2", 3000L, LocalDateTime.now());
+    private final Advertise ad3 = new Advertise("ad3","url3", 5000L, LocalDateTime.now());
     private final Clock clock = Clock.system(ZoneId.of("Asia/Seoul"));
 
     @Autowired

@@ -31,7 +31,10 @@ public class Advertise {
     private LocalDateTime endDate;
 
     public Advertise(String name, String imageUrl, Long cost) {
-        this(name, imageUrl, cost, LocalDateTime.now());
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.cost = cost;
+        this.active = false;
     }
 
     public Advertise(String name, String imageUrl, Long cost, LocalDateTime startDate) {

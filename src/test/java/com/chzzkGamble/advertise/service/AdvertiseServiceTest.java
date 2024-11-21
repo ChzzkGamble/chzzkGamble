@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +41,7 @@ public class AdvertiseServiceTest {
     @DisplayName("광고 목록을 업데이트할 수 있다.")
     void updateAdvertiseMap() {
         // given
-        Advertise advertise = new Advertise("따효니", "image1", 1000L);
+        Advertise advertise = new Advertise("따효니", "image1", 1000L, LocalDateTime.now());
         advertise.approval();
         advertiseRepository.save(advertise);
 
@@ -55,7 +56,7 @@ public class AdvertiseServiceTest {
     @DisplayName("10일이 지난 광고는 업데이트되지 않는다.")
     void updateAdvertiseMap_after10Days() {
         // given
-        Advertise advertise = new Advertise("따효니", "image1", 1000L);
+        Advertise advertise = new Advertise("따효니", "image1", 1000L, LocalDateTime.now());
         advertise.approval();
         advertiseRepository.save(advertise);
         doReturn(Instant.now(after10Days))
@@ -76,7 +77,7 @@ public class AdvertiseServiceTest {
         assertThat(advertiseService.getAdvertiseProbabilities()).isEmpty();
 
         // when
-        Advertise advertise = new Advertise("따효니", "image1", 1000L);
+        Advertise advertise = new Advertise("따효니", "image1", 1000L, LocalDateTime.now());
         advertise.approval();
         advertiseRepository.save(advertise);
         Thread.sleep(4 * 1000L);
