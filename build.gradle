@@ -36,6 +36,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'com.opencsv:opencsv:5.9'
 
 	// AWS SDK for Java 2.x BOM 추가
 	implementation platform('software.amazon.awssdk:bom:2.20.0')
