@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 @Getter
 public class Advertise extends BaseEntity {
 
+    private static final int MIN_AD_PERIOD = 1;
+    private static final int MAX_AD_PERIOD = 30;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,8 +37,8 @@ public class Advertise extends BaseEntity {
 
     private LocalDateTime endDate;
 
-    @Min(value = 1)
-    @Max(value = 30)
+    @Min(value = MIN_AD_PERIOD)
+    @Max(value = MAX_AD_PERIOD)
     private Integer adPeriod;
 
     public Advertise(String name, String imageUrl, Long cost, Integer adPeriod) {
