@@ -15,6 +15,7 @@ import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -31,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @Sql("classpath:advertise.sql")
 public class AdvertiseMapTest {
 
-    private final Advertise ad1 = new Advertise("ad1","url1", 1000L, LocalDateTime.now(), 10);
-    private final Advertise ad2 = new Advertise("ad2","url2", 3000L, LocalDateTime.now(), 10);
-    private final Advertise ad3 = new Advertise("ad3","url3", 5000L, LocalDateTime.now(), 10);
+    private final Advertise ad1 = new Advertise("ad1","url1", 1000L, 10);
+    private final Advertise ad2 = new Advertise("ad2","url2", 3000L, 10);
+    private final Advertise ad3 = new Advertise("ad3","url3", 5000L, 10);
     private final Clock clock = Clock.system(ZoneId.of("Asia/Seoul"));
 
     @Autowired
@@ -56,8 +57,11 @@ public class AdvertiseMapTest {
 
     @BeforeAll
     void saveAds() {
+        ad1.approval(clock);
         advertiseRepository.save(ad1);
+        ad2.approval(clock);
         advertiseRepository.save(ad2);
+        ad3.approval(clock);
         advertiseRepository.save(ad3);
     }
 
@@ -99,16 +103,19 @@ public class AdvertiseMapTest {
     @DisplayName("생성 일자로부터 1일이 지날 때마다 10%씩 감소된 cost로 적용된다.")
     void applyCostByCreatedAt(long pastDays) throws Exception {
         // given
-        LocalDateTime today = LocalDateTime.now(clock);
-        LocalDateTime pastDay = today.minusDays(pastDays);
+        long epochSecond = Clock.system(ZoneId.of("Asia/Seoul")).instant().getEpochSecond();
+        epochSecond += -1 * pastDays * 24 * 60 * 60L;
+        Clock pastDay = Clock.fixed(Instant.ofEpochSecond(epochSecond), ZoneId.of("Asia/Seoul"));
 
         AutoCloseable autoCloseable = MockitoAnnotations.openMocks(this);
         auditingHandler.setDateTimeProvider(dateTimeProvider);
 
-        Advertise pastAd = new Advertise("name", "url", 1000L, pastDay, 10);
+        Advertise pastAd = new Advertise("name", "url", 1000L, 10);
+        pastAd.approval(pastDay);
         advertiseRepository.save(pastAd);
 
-        Advertise todayAd = new Advertise("name", "url", 2000L, today, 10);
+        Advertise todayAd = new Advertise("name", "url", 2000L, 10);
+        todayAd.approval(clock);
         advertiseRepository.save(todayAd);
 
         // when
