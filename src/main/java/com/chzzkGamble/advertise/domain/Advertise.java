@@ -2,6 +2,8 @@ package com.chzzkGamble.advertise.domain;
 
 import com.chzzkGamble.config.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,14 +33,12 @@ public class Advertise extends BaseEntity {
 
     private LocalDateTime endDate;
 
+    @Min(value = 1)
+    @Max(value = 30)
     private Integer adPeriod;
 
     public Advertise(String name, String imageUrl, Long cost, Integer adPeriod) {
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.cost = cost;
-        this.active = false;
-        this.adPeriod = adPeriod;
+        this(name, imageUrl, cost, null, adPeriod);
     }
 
     public Advertise(String name, String imageUrl, Long cost, LocalDateTime startDate, Integer adPeriod) {
