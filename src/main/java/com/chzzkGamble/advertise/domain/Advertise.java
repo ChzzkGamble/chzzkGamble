@@ -31,20 +31,24 @@ public class Advertise extends BaseEntity {
 
     private LocalDateTime endDate;
 
-    public Advertise(String name, String imageUrl, Long cost) {
+    private Integer adPeriod;
+
+    public Advertise(String name, String imageUrl, Long cost, Integer adPeriod) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
         this.active = false;
+        this.adPeriod = adPeriod;
     }
 
-    public Advertise(String name, String imageUrl, Long cost, LocalDateTime startDate) {
+    public Advertise(String name, String imageUrl, Long cost, LocalDateTime startDate, Integer adPeriod) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
         this.active = false;
         this.startDate = startDate;
-        this.endDate = startDate.plusDays(10);
+        this.endDate = startDate.plusDays(adPeriod);
+        this.adPeriod = adPeriod;
     }
 
     public void approval() {

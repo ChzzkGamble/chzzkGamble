@@ -4,6 +4,7 @@ import com.chzzkGamble.advertise.repository.AdvertiseRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -25,11 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql("classpath:advertise.sql")
 public class AdvertiseMapTest {
 
-    private final Advertise ad1 = new Advertise("ad1","url1", 1000L, LocalDateTime.now());
-    private final Advertise ad2 = new Advertise("ad2","url2", 3000L, LocalDateTime.now());
-    private final Advertise ad3 = new Advertise("ad3","url3", 5000L, LocalDateTime.now());
+    private final Advertise ad1 = new Advertise("ad1","url1", 1000L, LocalDateTime.now(), 10);
+    private final Advertise ad2 = new Advertise("ad2","url2", 3000L, LocalDateTime.now(), 10);
+    private final Advertise ad3 = new Advertise("ad3","url3", 5000L, LocalDateTime.now(), 10);
     private final Clock clock = Clock.system(ZoneId.of("Asia/Seoul"));
 
     @Autowired
@@ -40,6 +44,15 @@ public class AdvertiseMapTest {
 
     @SpyBean
     AuditingHandler auditingHandler;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        auditingHandler.setDateTimeProvider(dateTimeProvider);
+
+        Mockito.when(dateTimeProvider.getNow())
+                .thenReturn(Optional.of(LocalDateTime.now(clock)));
+    }
 
     @BeforeAll
     void saveAds() {
@@ -92,10 +105,10 @@ public class AdvertiseMapTest {
         AutoCloseable autoCloseable = MockitoAnnotations.openMocks(this);
         auditingHandler.setDateTimeProvider(dateTimeProvider);
 
-        Advertise pastAd = new Advertise("name", "url", 1000L, pastDay);
+        Advertise pastAd = new Advertise("name", "url", 1000L, pastDay, 10);
         advertiseRepository.save(pastAd);
 
-        Advertise todayAd = new Advertise("name", "url", 2000L, today);
+        Advertise todayAd = new Advertise("name", "url", 2000L, today, 10);
         advertiseRepository.save(todayAd);
 
         // when
