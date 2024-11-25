@@ -43,7 +43,7 @@ public class AdvertiseServiceTest {
     void updateAdvertiseMap() {
         // given
         Advertise advertise = new Advertise("따효니", "image1", 1000L, 10);
-        advertise.approval();
+        advertise.approval(clock);
         advertiseRepository.save(advertise);
 
         // when
@@ -58,7 +58,7 @@ public class AdvertiseServiceTest {
     void updateAdvertiseMap_after10Days() {
         // given
         Advertise advertise = new Advertise("따효니", "image1", 1000L, 10);
-        advertise.approval();
+        advertise.approval(clock);
         advertiseRepository.save(advertise);
         doReturn(Instant.now(after10Days))
                 .when(clock)
@@ -79,7 +79,7 @@ public class AdvertiseServiceTest {
 
         // when
         Advertise advertise = new Advertise("따효니", "image1", 1000L, 10);
-        advertise.approval();
+        advertise.approval(clock);
         advertiseRepository.save(advertise);
         Thread.sleep(4 * 1000L);
 
@@ -92,7 +92,7 @@ public class AdvertiseServiceTest {
     void approvalAdvertise() {
         // given
         Advertise advertise1 = new Advertise("따효니1", "image1", 1000L, 10);
-        advertise1.approval();
+        advertise1.approval(clock);
         advertiseRepository.save(advertise1);
         Advertise advertise2 = new Advertise("따효니2", "image2", 1000L, 10);
         advertiseRepository.save(advertise2);

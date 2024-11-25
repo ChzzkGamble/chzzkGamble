@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Entity
@@ -51,10 +52,10 @@ public class Advertise extends BaseEntity {
         this.adPeriod = adPeriod;
     }
 
-    public void approval() {
+    public void approval(Clock clock) {
         this.active = true;
-        startDate = LocalDateTime.now();
-        endDate = LocalDateTime.now().plusDays(10);
+        this.startDate = LocalDateTime.now(clock);
+        this.endDate = startDate.plusDays(adPeriod);
     }
 
     public void rejection() {

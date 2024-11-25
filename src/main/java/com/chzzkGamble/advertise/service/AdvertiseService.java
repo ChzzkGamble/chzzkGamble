@@ -49,7 +49,7 @@ public class AdvertiseService {
                         AdvertiseExceptionCode.ADVERTISE_NOT_FOUND,
                         "advertiseId : " + advertiseId
                 ));
-        advertise.approval();
+        advertise.approval(clock);
     }
 
     public Map<Advertise, Double> getAdvertiseProbabilities() {
