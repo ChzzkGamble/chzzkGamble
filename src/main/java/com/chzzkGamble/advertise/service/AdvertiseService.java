@@ -56,6 +56,16 @@ public class AdvertiseService {
         return advertiseMap.getProbabilities();
     }
 
+    @Transactional
+    public void rejectionAdvertise(Long advertiseId) {
+        Advertise advertise = advertiseRepository.findById(advertiseId)
+                .orElseThrow(() -> new AdvertiseException(
+                        AdvertiseExceptionCode.ADVERTISE_NOT_FOUND,
+                        "advertiseId : " + advertiseId
+                ));
+        advertise.rejection();
+    }
+
     @Transactional(readOnly = true)
     @Scheduled(fixedDelayString = "${advertise.update-interval}")
     public void updateAdvertiseMap() {

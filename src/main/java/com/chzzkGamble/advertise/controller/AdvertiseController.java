@@ -35,8 +35,15 @@ public class AdvertiseController {
 
     @RequireApiKey
     @PutMapping("/advertise/approval")
-    public ResponseEntity<Void> approvalAdvertise(@RequestBody ApprovalRequest approvalRequest) {
-        advertiseService.approvalAdvertise(approvalRequest.advertiseId());
+    public ResponseEntity<Void> approvalAdvertise(@RequestBody ApprovalRequest request) {
+        advertiseService.approvalAdvertise(request.id());
+        return ResponseEntity.ok().build();
+    }
+
+    @RequireApiKey
+    @PutMapping("/advertise/rejection")
+    public ResponseEntity<Void> rejectionAdvertise(@RequestBody RejectionRequest request) {
+        advertiseService.rejectionAdvertise(request.id());
         return ResponseEntity.ok().build();
     }
 

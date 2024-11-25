@@ -1,4 +1,4 @@
 package com.chzzkGamble.advertise.dto;
 
-public record ApprovalRequest(Long id) {
+public record RejectionRequest(Long id) {
 }
