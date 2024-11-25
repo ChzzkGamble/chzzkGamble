@@ -47,7 +47,7 @@ public class Advertise extends BaseEntity {
         this.cost = cost;
         this.active = false;
         this.startDate = startDate;
-        this.endDate = startDate.plusDays(adPeriod);
+        this.endDate = startDate != null ? startDate.plusDays(adPeriod) : null;
         this.adPeriod = adPeriod;
     }
 
