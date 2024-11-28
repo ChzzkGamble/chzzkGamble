@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdvertiseMap {
 
-    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0L);
+    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0L, 10);
     private static final long ADVERTISE_DURATION_DAYS = 10L;
 
     private final Map<Advertise, Long> adCumulativeCosts;
@@ -41,7 +41,7 @@ public class AdvertiseMap {
     }
 
     private static Long getAdjustedCost(Advertise advertise, Clock clock) {
-        Duration duration = Duration.between(advertise.getCreatedAt(), LocalDateTime.now(clock));
+        Duration duration = Duration.between(advertise.getStartDate(), LocalDateTime.now(clock));
         long pastDays = duration.getSeconds() / 86400;
         return advertise.getCost() * (ADVERTISE_DURATION_DAYS - pastDays) / ADVERTISE_DURATION_DAYS;
     }
