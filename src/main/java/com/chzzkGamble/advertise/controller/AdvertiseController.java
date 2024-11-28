@@ -35,12 +35,13 @@ public class AdvertiseController {
     }
 
     @RequireApiKey
-    @GetMapping
+    @GetMapping("advertises/not-approval")
     public ResponseEntity<List<NotApprovalAdvertiseResponse>> getNotApprovalAdvertises() {
         List<NotApprovalAdvertiseResponse> responses = advertiseService.getNotApprovalAdvertise();
         return ResponseEntity.ok(responses);
     }
-    @GetMapping
+
+    @GetMapping("advertises/approval")
     public ResponseEntity<List<ApprovalAdvertiseResponse>> getApprovalAdvertises() {
         List<ApprovalAdvertiseResponse> responses = advertiseService.getApprovalAdvertise();
         return ResponseEntity.ok(responses);

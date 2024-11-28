@@ -1,6 +1,8 @@
 package com.chzzkGamble.advertise.service;
 
 import com.chzzkGamble.advertise.domain.Advertise;
+import com.chzzkGamble.advertise.dto.ApprovalAdvertiseResponse;
+import com.chzzkGamble.advertise.dto.NotApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -102,5 +105,26 @@ public class AdvertiseServiceTest {
 
         // then
         assertThat(advertiseService.getAdvertiseProbabilities()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("승인된 광고들만 AdvertiseMap에 저장된다.")
+    void getAdvertise() {
+        // given
+        Advertise advertise1 = new Advertise("따효니1", "image1", 1000L, 10);
+        advertise1.approval(clock);
+        advertiseRepository.save(advertise1);
+        Advertise advertise2 = new Advertise("따효니2", "image2", 1000L, 10);
+        advertiseRepository.save(advertise2);
+        Advertise advertise3 = new Advertise("따효니2", "image2", 1000L, 10);
+        advertiseRepository.save(advertise3);
+
+        // when
+        List<ApprovalAdvertiseResponse> approvalAdvertise = advertiseService.getApprovalAdvertise();
+        List<NotApprovalAdvertiseResponse> notApprovalAdvertise = advertiseService.getNotApprovalAdvertise();
+
+        // then
+        assertThat(approvalAdvertise).hasSize(1);
+        assertThat(notApprovalAdvertise).hasSize(2);
     }
 }
