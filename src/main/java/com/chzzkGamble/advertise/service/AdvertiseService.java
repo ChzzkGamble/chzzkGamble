@@ -3,6 +3,8 @@ package com.chzzkGamble.advertise.service;
 import com.chzzkGamble.advertise.domain.Advertise;
 import com.chzzkGamble.advertise.domain.AdvertiseMap;
 import com.chzzkGamble.advertise.dto.AdvertiseCreateResponse;
+import com.chzzkGamble.advertise.dto.ApprovalAdvertiseResponse;
+import com.chzzkGamble.advertise.dto.NotApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
 import com.chzzkGamble.exception.AdvertiseException;
 import com.chzzkGamble.exception.AdvertiseExceptionCode;
@@ -64,6 +66,19 @@ public class AdvertiseService {
                         "advertiseId : " + advertiseId
                 ));
         advertise.rejection();
+    }
+
+    public List<NotApprovalAdvertiseResponse> getNotApprovalAdvertise() {
+        List<Advertise> advertises = advertiseRepository.findByActiveFalse();
+        return advertises.stream()
+                .map(NotApprovalAdvertiseResponse::of)
+                .toList();
+    }
+    public List<ApprovalAdvertiseResponse> getApprovalAdvertise() {
+        List<Advertise> advertises = advertiseRepository.findActiveAdvertisesWithinDate(LocalDateTime.now(clock));
+        return advertises.stream()
+                .map(ApprovalAdvertiseResponse::of)
+                .toList();
     }
 
     @Transactional(readOnly = true)

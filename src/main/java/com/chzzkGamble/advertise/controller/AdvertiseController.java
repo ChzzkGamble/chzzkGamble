@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,9 +29,21 @@ public class AdvertiseController {
     }
 
     @GetMapping("/advertise")
-    public ResponseEntity<AdvertiseResponse> getAdvertise() {
+    public ResponseEntity<AdvertiseImageResponse> getAdvertise() {
         Advertise advertise = advertiseService.getAdvertise();
-        return ResponseEntity.ok(AdvertiseResponse.from(advertise));
+        return ResponseEntity.ok(AdvertiseImageResponse.from(advertise));
+    }
+
+    @RequireApiKey
+    @GetMapping
+    public ResponseEntity<List<NotApprovalAdvertiseResponse>> getNotApprovalAdvertises() {
+        List<NotApprovalAdvertiseResponse> responses = advertiseService.getNotApprovalAdvertise();
+        return ResponseEntity.ok(responses);
+    }
+    @GetMapping
+    public ResponseEntity<List<ApprovalAdvertiseResponse>> getApprovalAdvertises() {
+        List<ApprovalAdvertiseResponse> responses = advertiseService.getApprovalAdvertise();
+        return ResponseEntity.ok(responses);
     }
 
     @RequireApiKey
