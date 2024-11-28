@@ -1,6 +1,8 @@
 package com.chzzkGamble.advertise.domain;
 
 import com.chzzkGamble.config.BaseEntity;
+import com.chzzkGamble.exception.AdvertiseException;
+import com.chzzkGamble.exception.AdvertiseExceptionCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -42,11 +44,18 @@ public class Advertise extends BaseEntity {
     private Integer adPeriod;
 
     public Advertise(String name, String imageUrl, Long cost, Integer adPeriod) {
+        validateAdPeriod(adPeriod);
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
         this.active = false;
         this.adPeriod = adPeriod;
+    }
+
+    private void validateAdPeriod(Integer adPeriod) {
+        if (adPeriod < MIN_AD_PERIOD || adPeriod > MAX_AD_PERIOD) {
+            throw new AdvertiseException(AdvertiseExceptionCode.INVALID_AD_PERIOD);
+        }
     }
 
     public void approval(Clock clock) {
