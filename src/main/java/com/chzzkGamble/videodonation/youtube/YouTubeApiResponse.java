@@ -1,4 +1,4 @@
-package com.chzzkGamble.videodonation;
+package com.chzzkGamble.videodonation.youtube;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

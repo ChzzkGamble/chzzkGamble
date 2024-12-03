@@ -1,4 +1,4 @@
-package com.chzzkGamble.videodonation;
+package com.chzzkGamble.videodonation.youtube;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

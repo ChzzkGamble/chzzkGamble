@@ -1,5 +1,6 @@
 package com.chzzkGamble.videodonation;
 
+import com.chzzkGamble.videodonation.youtube.YoutubeClient;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;

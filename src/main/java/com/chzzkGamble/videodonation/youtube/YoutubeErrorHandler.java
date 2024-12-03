@@ -1,4 +1,4 @@
-package com.chzzkGamble.videodonation;
+package com.chzzkGamble.videodonation.youtube;
 
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
