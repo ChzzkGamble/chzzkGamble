@@ -13,5 +13,5 @@ public interface AdvertiseRepository extends JpaRepository<Advertise, Long> {
     @Query("SELECT a FROM Advertise a WHERE a.active = true AND a.startDate <= :validDateTime AND a.endDate >= :validDateTime")
     List<Advertise> findActiveAdvertisesWithinDate(@Param("validDateTime") LocalDateTime validDateTime);
 
-    List<Advertise> findByActiveFalse();
+    List<Advertise> findByStartDateIsNullAndEndDateIsNull();
 }

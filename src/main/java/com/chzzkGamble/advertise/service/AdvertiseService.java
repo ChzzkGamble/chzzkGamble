@@ -69,7 +69,7 @@ public class AdvertiseService {
     }
 
     public List<NotApprovalAdvertiseResponse> getNotApprovalAdvertise() {
-        List<Advertise> advertises = advertiseRepository.findByActiveFalse();
+        List<Advertise> advertises = advertiseRepository.findByStartDateIsNullAndEndDateIsNull();
         return advertises.stream()
                 .map(NotApprovalAdvertiseResponse::of)
                 .toList();

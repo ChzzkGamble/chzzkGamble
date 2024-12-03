@@ -4,6 +4,7 @@ import com.chzzkGamble.advertise.domain.Advertise;
 import com.chzzkGamble.advertise.dto.ApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.dto.NotApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class AdvertiseServiceTest {
 
     @SpyBean
     Clock clock;
+
+    @BeforeEach
+    void setUp() {
+        advertiseService.updateAdvertiseMap();
+    }
 
     @Test
     @DisplayName("광고 목록을 업데이트할 수 있다.")
@@ -109,7 +115,7 @@ public class AdvertiseServiceTest {
 
     @Test
     @DisplayName("승인된 광고들만 AdvertiseMap에 저장된다.")
-    void getAdvertise() {
+    void getAdvertise() throws InterruptedException {
         // given
         Advertise advertise1 = new Advertise("따효니1", "image1", 1000L, 10);
         advertise1.approval(clock);
@@ -118,6 +124,7 @@ public class AdvertiseServiceTest {
         advertiseRepository.save(advertise2);
         Advertise advertise3 = new Advertise("따효니2", "image2", 1000L, 10);
         advertiseRepository.save(advertise3);
+        Thread.sleep(4 * 1000L);
 
         // when
         List<ApprovalAdvertiseResponse> approvalAdvertise = advertiseService.getApprovalAdvertise();
