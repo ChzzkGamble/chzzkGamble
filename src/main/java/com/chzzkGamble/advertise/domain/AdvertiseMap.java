@@ -61,10 +61,6 @@ public class AdvertiseMap {
         return Map.copyOf(adProbabilities);
     }
 
-    public Double getProbability(Advertise advertise) {
-        return adProbabilities.get(advertise);
-    }
-
     @Override
     public String toString() {
         return "AdvertiseMap{" +
