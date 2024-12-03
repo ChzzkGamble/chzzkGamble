@@ -1,4 +1,4 @@
-package com.chzzkGamble.auth.cnotroller;
+package com.chzzkGamble.auth.controller;
 
 import com.chzzkGamble.auth.AuthService;
 import com.chzzkGamble.auth.config.RequireApiKey;
