@@ -74,10 +74,11 @@ public class AdvertiseService {
                 .map(NotApprovalAdvertiseResponse::of)
                 .toList();
     }
+
     public List<ApprovalAdvertiseResponse> getApprovalAdvertise() {
         List<Advertise> advertises = advertiseRepository.findActiveAdvertisesWithinDate(LocalDateTime.now(clock));
         return advertises.stream()
-                .map(ApprovalAdvertiseResponse::of)
+                .map(advertise -> ApprovalAdvertiseResponse.of(advertise, advertiseMap.getProbability(advertise)))
                 .toList();
     }
 
