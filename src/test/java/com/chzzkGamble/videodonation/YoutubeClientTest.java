@@ -22,14 +22,14 @@ class YoutubeClientTest {
             + "실수로라도 커밋하시면 안됩니다. API Key 있어요.")
     @Test
     @DisplayName("제목을 통해 영상 url을 추출한다.")
-    void getURLByTitle() {
+    void getVideoIdByTitle() {
         //given
         String title = "[10분 테코톡] 우주의 낙관적인 락, 비관적인 락";
 
         //when
-        String actual = client.getURLByTitle(title);
+        String actual = client.getVideoIdByTitle(title);
 
         //then
-        Assertions.assertThat(actual).isEqualTo("https://www.youtube.com/watch?v=era8W7q3CeQ");
+        Assertions.assertThat(actual).isEqualTo("era8W7q3CeQ");
     }
 }

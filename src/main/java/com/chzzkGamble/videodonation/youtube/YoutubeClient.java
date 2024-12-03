@@ -16,12 +16,11 @@ public class YoutubeClient {
     private static final RestClient CLIENT = RestClient.create();
     private static final String API_URL_FORMAT =
             "https://www.googleapis.com/youtube/v3/search?part=%s&chart=%s&maxResults=%d&q=%s&type=%s&key=%s";
-    private static final String VIDEO_WATCH_URL_FORMAT = "https://www.youtube.com/watch?v=%s";
 
     private final YoutubeClientConfig config;
     private final YoutubeErrorHandler errorHandler;
 
-    public String getURLByTitle(String title) {
+    public String getVideoIdByTitle(String title) {
         //TODO: 타임아웃 설정을 해줘야 될 것 같은데, RestClient 전역으로 설정하는게 어떨까요?
         YouTubeApiResponse response = CLIENT.get()
                 .uri(String.format(API_URL_FORMAT,
@@ -35,8 +34,7 @@ public class YoutubeClient {
                 .onStatus(errorHandler)
                 .body(YouTubeApiResponse.class);
 
-        String videoId = extractedVideoId(response, title);
-        return String.format(VIDEO_WATCH_URL_FORMAT, videoId);
+        return extractedVideoId(response, title);
     }
 
     private String extractedVideoId(YouTubeApiResponse response, String title) {
