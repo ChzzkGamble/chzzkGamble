@@ -20,8 +20,8 @@ import java.time.LocalDateTime;
 @Getter
 public class Advertise extends BaseEntity {
 
-    private static final int MIN_AD_PERIOD = 1;
-    private static final int MAX_AD_PERIOD = 30;
+    public static final int MIN_AD_PERIOD = 1;
+    public static final int MAX_AD_PERIOD = 30;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,13 +59,19 @@ public class Advertise extends BaseEntity {
     }
 
     public void approval(Clock clock) {
-        this.active = true;
-        this.startDate = LocalDateTime.now(clock);
-        this.endDate = startDate.plusDays(adPeriod);
+        if (active) {
+            throw new AdvertiseException(AdvertiseExceptionCode.ALREADY_APPROVED_AD);
+        }
+        active = true;
+        startDate = LocalDateTime.now(clock);
+        endDate = startDate.plusDays(adPeriod);
     }
 
     public void rejection() {
-        this.active = false;
+        if (!active) {
+            throw new AdvertiseException(AdvertiseExceptionCode.AD_NOT_APPROVED);
+        }
+        active = false;
     }
 
     @Override
