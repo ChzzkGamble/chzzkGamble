@@ -6,6 +6,7 @@ import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class RouletteService {
 
     private final RouletteRepository rouletteRepository;
     private final RouletteElementRepository rouletteElementRepository;
+    private final Clock clock;
 
     @Transactional
     public Roulette createRoulette(String channelName, int rouletteUnit) {
@@ -30,7 +32,7 @@ public class RouletteService {
 
     @Transactional(readOnly = true)
     public Roulette readRoulette(UUID rouletteId) {
-        return rouletteRepository.findByIdAndCreatedAtAfter(rouletteId, LocalDateTime.now().minusHours(HOUR_LIMIT))
+        return rouletteRepository.findByIdAndCreatedAtAfter(rouletteId, LocalDateTime.now(clock).minusHours(HOUR_LIMIT))
                 .orElseThrow(() -> new GambleException(
                         GambleExceptionCode.ROULETTE_NOT_FOUND,
                         "rouletteId : " + rouletteId));
