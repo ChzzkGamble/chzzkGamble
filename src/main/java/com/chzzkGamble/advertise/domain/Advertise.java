@@ -1,6 +1,8 @@
 package com.chzzkGamble.advertise.domain;
 
 import com.chzzkGamble.config.BaseEntity;
+import com.chzzkGamble.exception.AdvertiseException;
+import com.chzzkGamble.exception.AdvertiseExceptionCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -11,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -18,8 +21,8 @@ import java.time.LocalDateTime;
 @Getter
 public class Advertise extends BaseEntity {
 
-    private static final int MIN_AD_PERIOD = 1;
-    private static final int MAX_AD_PERIOD = 30;
+    public static final int MIN_AD_PERIOD = 1;
+    public static final int MAX_AD_PERIOD = 30;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +45,7 @@ public class Advertise extends BaseEntity {
     private Integer adPeriod;
 
     public Advertise(String name, String imageUrl, Long cost, Integer adPeriod) {
+        validateAdPeriod(adPeriod);
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
@@ -49,14 +53,39 @@ public class Advertise extends BaseEntity {
         this.adPeriod = adPeriod;
     }
 
+    private void validateAdPeriod(Integer adPeriod) {
+        if (adPeriod < MIN_AD_PERIOD || adPeriod > MAX_AD_PERIOD) {
+            throw new AdvertiseException(AdvertiseExceptionCode.INVALID_AD_PERIOD);
+        }
+    }
+
     public void approval(Clock clock) {
-        this.active = true;
-        this.startDate = LocalDateTime.now(clock);
-        this.endDate = startDate.plusDays(adPeriod);
+        if (active) {
+            throw new AdvertiseException(AdvertiseExceptionCode.ALREADY_APPROVED_AD);
+        }
+        active = true;
+        startDate = LocalDateTime.now(clock);
+        endDate = startDate.plusDays(adPeriod);
     }
 
     public void rejection() {
-        this.active = false;
+        if (!active) {
+            throw new AdvertiseException(AdvertiseExceptionCode.AD_NOT_APPROVED);
+        }
+        active = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Advertise advertise = (Advertise) o;
+        return Objects.equals(id, advertise.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override
