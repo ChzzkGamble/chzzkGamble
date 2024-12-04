@@ -15,7 +15,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ChzzkException.class)
     public ResponseEntity<ExceptionResponse> handleChzzkException(ChzzkException e) {
         logger.error(e.getMessage());
-        logger.error(e.getSupplementaryMessage());
         ChzzkExceptionCode exceptionCode = e.getExceptionCode();
 
         ExceptionResponse response = new ExceptionResponse(
@@ -28,8 +27,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GambleException.class)
     public ResponseEntity<ExceptionResponse> handleGambleException(GambleException e) {
         logger.error(e.getMessage());
-        logger.error(e.getSupplementaryMessage());
-
         GambleExceptionCode exceptionCode = e.getExceptionCode();
 
         ExceptionResponse response = new ExceptionResponse(
@@ -42,7 +39,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AdvertiseException.class)
     public ResponseEntity<ExceptionResponse> handleAdvertiseException(AdvertiseException e) {
         logger.error(e.getMessage());
-        logger.error(e.getSupplementaryMessage());
         AdvertiseExceptionCode exceptionCode = e.getExceptionCode();
 
         ExceptionResponse response = new ExceptionResponse(
