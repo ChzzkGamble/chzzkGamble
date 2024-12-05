@@ -10,19 +10,23 @@ import org.springframework.web.client.RestClient;
 
 @Component
 @EnableConfigurationProperties(YoutubeClientConfig.class)
-@AllArgsConstructor
 public class YoutubeClient {
 
-    private static final RestClient CLIENT = RestClient.create();
     private static final String API_URL_FORMAT =
             "https://www.googleapis.com/youtube/v3/search?part=%s&chart=%s&maxResults=%d&q=%s&type=%s&key=%s";
 
+    private final RestClient restClient;
     private final YoutubeClientConfig config;
     private final YoutubeErrorHandler errorHandler;
 
+    public YoutubeClient(RestClient.Builder builder, YoutubeClientConfig config, YoutubeErrorHandler errorHandler) {
+        this.restClient = builder.build();
+        this.config = config;
+        this.errorHandler = errorHandler;
+    }
+
     public String getVideoIdByTitle(String title) {
-        //TODO: 타임아웃 설정을 해줘야 될 것 같은데, RestClient 전역으로 설정하는게 어떨까요?
-        YouTubeApiResponse response = CLIENT.get()
+        YouTubeApiResponse response = restClient.get()
                 .uri(String.format(API_URL_FORMAT,
                         config.part(),
                         config.chart(),

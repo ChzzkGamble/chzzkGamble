@@ -21,7 +21,7 @@ class YoutubeClientTest {
             + "테스트할 때, 프로덕션 코드 youtube 관련 설정 test 쪽에 추가하고 하세요"
             + "실수로라도 커밋하시면 안됩니다. API Key 있어요.")
     @Test
-    @DisplayName("제목을 통해 영상 url을 추출한다.")
+    @DisplayName("제목을 통해 영상 id을 추출한다.")
     void getVideoIdByTitle() {
         //given
         String title = "[10분 테코톡] 우주의 낙관적인 락, 비관적인 락";
