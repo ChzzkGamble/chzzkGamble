@@ -6,16 +6,24 @@ import org.springframework.web.socket.TextMessage;
 
 public class StubDonationEvent extends DonationEvent {
 
-    public StubDonationEvent(String channelName, String msg, int cheese) {
+    private StubDonationEvent(String channelName, String msg, int cheese, String type) {
         super(new DonationMessage(channelName, new TextMessage(
                 "{\n" +
                         "  \"bdy\": [\n" +
                         "    {\n" +
                         "      \"msg\": \"" + msg + "\",\n" +
-                        "      \"extras\": \"payAmount:" + cheese + ",donationType:CHAT\"\n" +
+                        "      \"extras\": \"payAmount:" + cheese + ",donationType:" + type + "\"\n" +
                         "    }\n" +
                         "  ]\n" +
                         "}"
         )));
+    }
+
+    public static StubDonationEvent ofChat(String channelName, String msg, int cheese){
+        return new StubDonationEvent(channelName,msg,cheese,"CHAT");
+    }
+
+    public static StubDonationEvent ofVideo(String channelName, String msg, int cheese){
+        return new StubDonationEvent(channelName,msg,cheese,"VIDEO");
     }
 }
