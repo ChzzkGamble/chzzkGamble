@@ -35,7 +35,7 @@ public class VideoDonation {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public VideoDonation(String channelName, int cheese, String videoId){
+    public VideoDonation(String channelName, int cheese, String videoId) {
         this.channelName = channelName;
         this.cheese = cheese;
         this.videoId = videoId;

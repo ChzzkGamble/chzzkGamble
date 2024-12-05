@@ -16,12 +16,13 @@ public class VideoDonationHandler {
 
     @Async
     @EventListener(DonationEvent.class)
-    public CompletableFuture<Boolean> handleVideoDonation(DonationEvent donationEvent){
+    public CompletableFuture<Boolean> handleVideoDonation(DonationEvent donationEvent) {
         DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
-        if(!donationMessage.isVideoDonation()){
+        if (!donationMessage.isVideoDonation()) {
             return CompletableFuture.completedFuture(false);
         }
-        videoDonationService.save(donationMessage.getChannelName(),donationMessage.getCheese(), donationMessage.getMsg());
+        videoDonationService.save(donationMessage.getChannelName(), donationMessage.getCheese(),
+                donationMessage.getMsg());
         return CompletableFuture.completedFuture(true);
     }
 }

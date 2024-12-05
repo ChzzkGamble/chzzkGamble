@@ -3,7 +3,6 @@ package com.chzzkGamble.videodonation.youtube;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
-import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
