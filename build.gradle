@@ -1,50 +1,50 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.chzzkGamble'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.data:spring-data-jpa:3.3.2'
-	implementation 'org.springframework:spring-webflux:6.1.12'
-	implementation 'com.google.code.gson:gson'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'com.opencsv:opencsv:5.9'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.data:spring-data-jpa:3.3.2'
+    implementation 'org.springframework:spring-webflux:6.1.12'
+    implementation 'com.google.code.gson:gson'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.opencsv:opencsv:5.9'
 
-	// AWS SDK for Java 2.x BOM 추가
-	implementation platform('software.amazon.awssdk:bom:2.20.0')
+    // AWS SDK for Java 2.x BOM 추가
+    implementation platform('software.amazon.awssdk:bom:2.20.0')
 
-	// 필요한 AWS 서비스 클라이언트 추가 (예: S3, SSM)
-	implementation 'software.amazon.awssdk:s3'
-	implementation 'software.amazon.awssdk:ssm'
-	implementation 'com.coveo:spring-boot-parameter-store-integration:2.0.0'
+    // 필요한 AWS 서비스 클라이언트 추가 (예: S3, SSM)
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:ssm'
+    implementation 'com.coveo:spring-boot-parameter-store-integration:2.0.0'
 
     // 유튜브 관련 의존성
     implementation 'com.google.api-client:google-api-client:1.23.0'
@@ -53,5 +53,5 @@ dependencies {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
