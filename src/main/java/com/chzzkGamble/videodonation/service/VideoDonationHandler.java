@@ -2,6 +2,7 @@ package com.chzzkGamble.videodonation.service;
 
 import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.event.DonationEvent;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -15,11 +16,12 @@ public class VideoDonationHandler {
 
     @Async
     @EventListener(DonationEvent.class)
-    public void handleVideoDonation(DonationEvent donationEvent){
+    public CompletableFuture<Boolean> handleVideoDonation(DonationEvent donationEvent){
         DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
         if(!donationMessage.isVideoDonation()){
-            return ;
+            return CompletableFuture.completedFuture(false);
         }
         videoDonationService.save(donationMessage.getChannelName(),donationMessage.getCheese(), donationMessage.getMsg());
+        return CompletableFuture.completedFuture(true);
     }
 }
