@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface VideoDonationRepository extends JpaRepository<VideoDonation, Long> {
 
     List<VideoDonation> findByChannelNameAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(String channelName,
-                                                                               LocalDateTime recent);
+                                                                                          LocalDateTime recent);
 }

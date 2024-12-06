@@ -32,6 +32,7 @@ public class VideoDonationService {
 
         LocalDateTime recent = chat.getCreatedAt();
         System.out.println(recent);
-        return videoDonationRepository.findByChannelNameAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(channelName, recent);
+        return videoDonationRepository.findByChannelNameAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(channelName,
+                recent);
     }
 }
