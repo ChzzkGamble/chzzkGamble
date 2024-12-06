@@ -115,23 +115,58 @@ public class AdvertiseServiceTest {
 
     @Test
     @DisplayName("승인된 광고들만 AdvertiseMap에 저장된다.")
-    void getAdvertise() throws InterruptedException {
+    void getAdvertise() {
         // given
         Advertise advertise1 = new Advertise("따효니1", "image1", 1000L, 10);
-        advertise1.approval(clock);
-        advertiseRepository.save(advertise1);
+        Advertise savedAdvertise1 = advertiseRepository.save(advertise1);
         Advertise advertise2 = new Advertise("따효니2", "image2", 1000L, 10);
-        advertiseRepository.save(advertise2);
+        Advertise savedAdvertise2 = advertiseRepository.save(advertise2);
         Advertise advertise3 = new Advertise("따효니2", "image2", 1000L, 10);
         advertiseRepository.save(advertise3);
-        Thread.sleep(4 * 1000L);
 
-        // when
-        List<ApprovalAdvertiseResponse> approvalAdvertise = advertiseService.getApprovalAdvertise();
-        List<NotApprovalAdvertiseResponse> notApprovalAdvertise = advertiseService.getNotApprovalAdvertise();
+        advertiseService.updateAdvertiseMap();
+        List<ApprovalAdvertiseResponse> approvalAdvertise1 = advertiseService.getApprovalAdvertise();
+        List<NotApprovalAdvertiseResponse> notApprovalAdvertise1 = advertiseService.getNotApprovalAdvertise();
 
-        // then
-        assertThat(approvalAdvertise).hasSize(1);
-        assertThat(notApprovalAdvertise).hasSize(2);
+        assertThat(approvalAdvertise1).hasSize(0);
+        assertThat(notApprovalAdvertise1).hasSize(3);
+
+        advertiseService.approvalAdvertise(savedAdvertise1.getId());
+        advertiseService.approvalAdvertise(savedAdvertise2.getId());
+        advertiseService.updateAdvertiseMap();
+        List<ApprovalAdvertiseResponse> approvalAdvertise2 = advertiseService.getApprovalAdvertise();
+        List<NotApprovalAdvertiseResponse> notApprovalAdvertise2 = advertiseService.getNotApprovalAdvertise();
+
+        assertThat(approvalAdvertise2).hasSize(2);
+        assertThat(notApprovalAdvertise2).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("승인 취소된 광고는 비승인광고에 포함되지 않는다.")
+    void rejectionAdvertise() {
+        // given
+        Advertise advertise1 = new Advertise("따효니1", "image1", 1000L, 10);
+        Advertise savedAdvertise1 = advertiseRepository.save(advertise1);
+        Advertise advertise2 = new Advertise("따효니2", "image2", 1000L, 10);
+        Advertise savedAdvertise2 = advertiseRepository.save(advertise2);
+        Advertise advertise3 = new Advertise("따효니2", "image2", 1000L, 10);
+        advertiseRepository.save(advertise3);
+
+        advertiseService.approvalAdvertise(savedAdvertise1.getId());
+        advertiseService.approvalAdvertise(savedAdvertise2.getId());
+        advertiseService.updateAdvertiseMap();
+        List<ApprovalAdvertiseResponse> approvalAdvertise1 = advertiseService.getApprovalAdvertise();
+        List<NotApprovalAdvertiseResponse> notApprovalAdvertise1 = advertiseService.getNotApprovalAdvertise();
+
+        assertThat(approvalAdvertise1).hasSize(2);
+        assertThat(notApprovalAdvertise1).hasSize(1);
+
+        advertiseService.rejectionAdvertise(savedAdvertise1.getId());
+        advertiseService.updateAdvertiseMap();
+        List<ApprovalAdvertiseResponse> approvalAdvertise2 = advertiseService.getApprovalAdvertise();
+        List<NotApprovalAdvertiseResponse> notApprovalAdvertise2 = advertiseService.getNotApprovalAdvertise();
+
+        assertThat(approvalAdvertise2).hasSize(1);
+        assertThat(notApprovalAdvertise2).hasSize(1);
     }
 }
