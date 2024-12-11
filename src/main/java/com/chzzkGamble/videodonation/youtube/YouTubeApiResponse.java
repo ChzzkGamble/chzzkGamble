@@ -1,6 +1,7 @@
 package com.chzzkGamble.videodonation.youtube;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.text.StringEscapeUtils;
 import java.util.List;
 
 public record YouTubeApiResponse(
@@ -40,6 +41,11 @@ public record YouTubeApiResponse(
                 String liveBroadcastContent,
                 @JsonProperty("publishTime") String publishTime
         ) {
+
+            public Snippet {
+                title = StringEscapeUtils.unescapeHtml4(title);
+            }
+
             public record Thumbnails(
                     Thumbnail defaultThumbnail,
                     Thumbnail medium,
