@@ -14,8 +14,4 @@ public class ChannelInfoApiResponse {
     private String channelImageUrl;
     private boolean verifiedMark;
     private boolean openLive;
-
-    public boolean isValid(String requestChannelName) {
-        return channelName.equals(requestChannelName) && verifiedMark && openLive;
-    }
 }

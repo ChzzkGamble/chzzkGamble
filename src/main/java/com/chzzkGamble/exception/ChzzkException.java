@@ -1,25 +1,14 @@
 package com.chzzkGamble.exception;
 
-import lombok.Getter;
+import com.chzzkGamble.exception.handler.ChzOnMeException;
 
-@Getter
-public class ChzzkException extends RuntimeException {
-
-    private final ChzzkExceptionCode exceptionCode;
-    private final String supplementaryMessage;
+public class ChzzkException extends ChzOnMeException {
 
     public ChzzkException(ChzzkExceptionCode exceptionCode) {
         this(exceptionCode, "");
     }
 
     public ChzzkException(ChzzkExceptionCode exceptionCode, String supplementaryMessage) {
-        super();
-        this.exceptionCode = exceptionCode;
-        this.supplementaryMessage = supplementaryMessage;
-    }
-
-    @Override
-    public String getMessage() {
-        return exceptionCode.getMessage();
+        super(exceptionCode, supplementaryMessage);
     }
 }

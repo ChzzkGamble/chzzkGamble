@@ -21,7 +21,7 @@ class DonationHandlerTest {
     @Test
     @DisplayName("룰렛용 도네가 아니라면 투표가 진행되지 않는다.")
     void isNotDonationForVote() throws ExecutionException, InterruptedException {
-        DonationEvent donationEvent = new StubDonationEvent("CN_NAME", "마라탕맛없음", 1_000);
+        DonationEvent donationEvent = StubDonationEvent.ofChat("CN_NAME", "마라탕맛없음", 1_000);
 
         boolean isVoted = donationHandler.voteGamble(donationEvent).get();
 
@@ -31,7 +31,7 @@ class DonationHandlerTest {
     @Test
     @DisplayName("룰렛용 도네라면 투표가 진행된다.")
     void isDonationForVote() throws ExecutionException, InterruptedException {
-        DonationEvent donationEvent = new StubDonationEvent("CN_NAME", "<마라탕>", 1_000);
+        DonationEvent donationEvent = StubDonationEvent.ofChat("CN_NAME", "<마라탕>", 1_000);
 
         boolean isVoted = donationHandler.voteGamble(donationEvent).get();
 
