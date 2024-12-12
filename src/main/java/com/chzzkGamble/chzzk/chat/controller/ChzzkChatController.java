@@ -32,7 +32,7 @@ public class ChzzkChatController {
         if (!response.isOpenLive()) {
             throw new ChzzkException(ChzzkExceptionCode.CHANNEL_LIVE_CLOSED);
         }
-        if (!request.getChannelName().equals(channelName)) {
+        if (!response.getChannelName().equals(channelName)) {
             throw new ChzzkException(ChzzkExceptionCode.CHANNEL_NAME_INVALID);
         }
         chzzkChatFacade.connectChatRoom(channelName);
