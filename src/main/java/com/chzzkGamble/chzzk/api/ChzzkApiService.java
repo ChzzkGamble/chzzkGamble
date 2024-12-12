@@ -6,9 +6,11 @@ import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -42,13 +44,17 @@ public class ChzzkApiService {
                 .getAsJsonObject("content")
                 .getAsJsonArray("data");
 
-        if (data.isEmpty()) {
-            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND);
-        }
+        JsonObject channelInfo = data.asList()
+                .stream()
+                .map(je -> je.getAsJsonObject().getAsJsonObject("channel"))
+                .filter(jsonObject -> {
+                    String responseChannelName = jsonObject.getAsJsonPrimitive("channelName").getAsString();
+                    return responseChannelName.equals(channelName);
+                })
+                .findAny()
+                .orElseThrow(() -> new ChzzkException(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND));
 
-        return gson.fromJson(data.get(0)
-                .getAsJsonObject()
-                .getAsJsonObject("channel"), ChannelInfoApiResponse.class);
+        return gson.fromJson(channelInfo, ChannelInfoApiResponse.class);
     }
 
     public String getChatAccessToken(String chatChannelId) {
