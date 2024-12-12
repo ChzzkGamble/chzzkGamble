@@ -6,11 +6,9 @@ import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
