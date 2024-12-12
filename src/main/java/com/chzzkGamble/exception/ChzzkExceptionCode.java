@@ -4,11 +4,12 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
+import com.chzzkGamble.exception.handler.ChzOnMeExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum ChzzkExceptionCode {
+public enum ChzzkExceptionCode implements ChzOnMeExceptionCode {
 
     // api 1_xxx
     CHANNEL_ID_INVALID(BAD_REQUEST, 1_001, "유효하지 않은 채널 ID 입니다."),

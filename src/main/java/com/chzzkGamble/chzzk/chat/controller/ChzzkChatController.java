@@ -30,10 +30,10 @@ public class ChzzkChatController {
         ChannelInfoApiResponse response = chzzkApiService.getChannelInfo(channelName);
 
         if (!response.isOpenLive()) {
-            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_LIVE_CLOSED);
+            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_LIVE_CLOSED, "channel : " + response.getChannelName());
         }
         if (!response.getChannelName().equals(channelName)) {
-            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_NAME_INVALID);
+            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_NAME_INVALID, "channel : " + response.getChannelName());
         }
         chzzkChatFacade.connectChatRoom(channelName);
 

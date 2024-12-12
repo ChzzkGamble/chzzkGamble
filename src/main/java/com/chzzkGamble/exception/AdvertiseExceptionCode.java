@@ -1,11 +1,12 @@
 package com.chzzkGamble.exception;
 
 import com.chzzkGamble.advertise.domain.Advertise;
+import com.chzzkGamble.exception.handler.ChzOnMeExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum AdvertiseExceptionCode {
+public enum AdvertiseExceptionCode implements ChzOnMeExceptionCode {
 
     ADVERTISE_NOT_FOUND(HttpStatus.NOT_FOUND, 1_001, "광고를 찾을 수 없습니다."),
 
