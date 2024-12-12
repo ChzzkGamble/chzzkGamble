@@ -14,10 +14,10 @@ public enum ChzzkExceptionCode {
     CHANNEL_ID_INVALID(BAD_REQUEST, 1_001, "유효하지 않은 채널 ID 입니다."),
     STREAM_URI_INVALID(BAD_REQUEST, 1_002, "잘못된 채널 주소 입니다."),
     CHANNEL_INFO_NOT_FOUND(BAD_REQUEST, 1_003, "채널 정보를 찾아오지 못했습니다."),
-    YOUTUBE_TITLE_INVALID(BAD_REQUEST, 1_004, "제목과 일치하는 유튜브 영상을 찾아오지 못했습니다."),
+    YOUTUBE_TITLE_INVALID(INTERNAL_SERVER_ERROR, 1_004, "제목과 일치하는 유튜브 영상을 찾아오지 못했습니다."),
     YOUTUBE_API_INVALID(INTERNAL_SERVER_ERROR, 1_005, "유튜브 서버에서 정보를 찾아올 수 없습니다."),
-    CHANNEL_NAME_INVALID(INTERNAL_SERVER_ERROR, 1_006, "유효하지 않은 채널명입니다."),
-    CHANNEL_LIVE_CLOSED(INTERNAL_SERVER_ERROR, 1_006, "현재 방송중이 아닌 채널입니다."),
+    CHANNEL_NAME_INVALID(BAD_REQUEST, 1_006, "유효하지 않은 채널명입니다."),
+    CHANNEL_LIVE_CLOSED(BAD_REQUEST, 1_007, "현재 방송중이 아닌 채널입니다."),
 
     // chat 2_xxx
     CHAT_IS_CONNECTED(BAD_REQUEST, 2_001, "채팅방과 이미 연결되어 있습니다."),
