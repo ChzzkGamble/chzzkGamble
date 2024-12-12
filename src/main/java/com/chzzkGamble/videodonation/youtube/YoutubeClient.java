@@ -43,7 +43,7 @@ public class YoutubeClient {
                     config.part(),
                     config.chart(),
                     config.maxResults(),
-                    AsciiEncoder.encode(title).substring(0, Math.min(MAX_TITLE_LENGTH, title.length())),
+                    AsciiEncoder.encode(title, MAX_TITLE_LENGTH),
                     config.type(),
                     config.key())
         );
