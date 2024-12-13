@@ -22,6 +22,10 @@ public class YoutubeErrorHandler implements ResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
         String errorMessage = extractErrorMessage(response);
+        if (errorMessage.contains("\"reason\": \"quotaExceeded\"")) {
+            throw new YoutubeException(YoutubeExceptionCode.YOUTUBE_QUOTA_EXCEEDED);
+        }
+
         throw new YoutubeException(YoutubeExceptionCode.YOUTUBE_API_INVALID, errorMessage);
     }
 

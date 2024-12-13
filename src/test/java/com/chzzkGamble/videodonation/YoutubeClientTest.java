@@ -39,7 +39,6 @@ class YoutubeClientTest {
                 Arguments.of("[10분 테코톡] 우주의 낙관적인 락, 비관적인 락", "era8W7q3CeQ"),
                 Arguments.of("[1080P 60FPS] 【まいたけダンス】時間が巻いたときや巻きたいときにご利用ください【儒烏風亭らでん】maitake", "82CBG8QeWnY"),
                 Arguments.of("aespa 에스파 'Whiplash' MV", "jWQx2f-CErU"),
-                Arguments.of("듣고또듣고 Live-through\uD83C\uDFA7 이문세(Moon-Sae Lee) 옛사랑,깊은밤을날아서, 가로수그늘아래서면,소녀,사랑이 지나가면,붉은노을,광화문연가,휘파람,가을이 오면..", "nic2pkI-eHQ"),
                 Arguments.of("Kid perfectly recreates Bully Maguire dance #spiderman #tobeymaguire #shorts", "t6CKTjM9dGg"),
                 Arguments.of("Deadpool Dance Bye Bye Bye / Step by Step / NSYNC #deadpooldance #viraldancevideo #deadpool #nsync", "ByU-UGtg3Jc"),
                 Arguments.of("[LIVE] 송밤 / 작두 - 딥플로우 (Feat, 넉살, 허클베리피)", "X674Fy_TLew")

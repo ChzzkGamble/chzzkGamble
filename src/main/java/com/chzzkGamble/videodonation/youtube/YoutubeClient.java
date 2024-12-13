@@ -5,13 +5,12 @@ import com.chzzkGamble.exception.YoutubeExceptionCode;
 import com.chzzkGamble.utils.AsciiEncoder;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import java.net.URI;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Component
-@EnableConfigurationProperties(YoutubeClientConfig.class)
 @Slf4j
 public class YoutubeClient {
 
@@ -22,6 +21,7 @@ public class YoutubeClient {
     private final RestClient restClient;
     private final YoutubeClientConfig config;
     private final YoutubeErrorHandler errorHandler;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public YoutubeClient(RestClient.Builder builder, YoutubeClientConfig config, YoutubeErrorHandler errorHandler) {
         this.restClient = builder.build();
@@ -30,12 +30,21 @@ public class YoutubeClient {
     }
 
     public String getVideoIdByTitleOrNull(String title) {
+        lock.lock();
         try {
             return getVideoIdByTitle(title);
         } catch (YoutubeException e) {
+            if (e.getExceptionCode() == YoutubeExceptionCode.YOUTUBE_QUOTA_EXCEEDED) {
+                config.changeKey();
+                return getVideoIdByTitleOrNull(title);
+            }
+
             log.error(e.getMessage());
-            return null;
+            log.error(e.getSupplementaryMessage());
+        } finally {
+            lock.unlock();
         }
+        return null;
     }
 
     private String getVideoIdByTitle(String title) {
