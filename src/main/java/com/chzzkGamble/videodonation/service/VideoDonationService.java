@@ -21,7 +21,7 @@ public class VideoDonationService {
 
     @Transactional
     public void save(String channelName, int cheese, String msg) {
-        String videoId = youtubeClient.getVideoIdByTitle(msg);
+        String videoId = youtubeClient.getVideoIdByTitleOrNull(msg);
         videoDonationRepository.save(new VideoDonation(channelName, cheese, videoId, msg));
     }
 

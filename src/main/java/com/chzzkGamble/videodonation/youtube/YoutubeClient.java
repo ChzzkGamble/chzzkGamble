@@ -4,6 +4,7 @@ import com.chzzkGamble.exception.YoutubeException;
 import com.chzzkGamble.exception.YoutubeExceptionCode;
 import com.chzzkGamble.utils.AsciiEncoder;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -11,6 +12,7 @@ import java.net.URI;
 
 @Component
 @EnableConfigurationProperties(YoutubeClientConfig.class)
+@Slf4j
 public class YoutubeClient {
 
     private static final String API_URL_FORMAT =
@@ -27,7 +29,16 @@ public class YoutubeClient {
         this.errorHandler = errorHandler;
     }
 
-    public String getVideoIdByTitle(String title) {
+    public String getVideoIdByTitleOrNull(String title) {
+        try {
+            return getVideoIdByTitle(title);
+        } catch (YoutubeException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    private String getVideoIdByTitle(String title) {
         YouTubeApiResponse response = restClient.get()
                 .uri(getUri(title))
                 .retrieve()

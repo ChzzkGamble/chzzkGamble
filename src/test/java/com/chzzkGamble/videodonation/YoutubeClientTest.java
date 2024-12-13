@@ -1,9 +1,9 @@
 package com.chzzkGamble.videodonation;
 
 import com.chzzkGamble.videodonation.youtube.YoutubeClient;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -24,12 +26,12 @@ class YoutubeClientTest {
     @ParameterizedTest
     @MethodSource("titleAndVideoId")
     @DisplayName("제목을 통해 영상 id을 추출한다.")
-    void getVideoIdByTitle(String title, String videoId) {
+    void getVideoIdByTitleOrNull(String title, String videoId) {
         //when
-        String actual = client.getVideoIdByTitle(title);
+        String actual = client.getVideoIdByTitleOrNull(title);
 
         //then
-        Assertions.assertThat(actual).isEqualTo(videoId);
+        assertThat(actual).isEqualTo(videoId);
     }
 
     private static Stream<Arguments> titleAndVideoId() {
@@ -42,5 +44,16 @@ class YoutubeClientTest {
                 Arguments.of("Deadpool Dance Bye Bye Bye / Step by Step / NSYNC #deadpooldance #viraldancevideo #deadpool #nsync", "ByU-UGtg3Jc"),
                 Arguments.of("[LIVE] 송밤 / 작두 - 딥플로우 (Feat, 넉살, 허클베리피)", "X674Fy_TLew")
         );
+    }
+
+    @Disabled("실제 Youtube api를 날리는 요청이므로 할당량 소모에 주의할 것")
+    @Test
+    @DisplayName("제목과 일치하는 영상을 찾지 못하면 null을 반환한다.")
+    void getVideoIdByTitleOrNull_noResult() {
+        //when
+        String actual = client.getVideoIdByTitleOrNull("ejlvfbvbfwkvbfewovbfewcbfwoecbowebocweubfouebvoB");
+
+        //then
+        assertThat(actual).isNull();
     }
 }
