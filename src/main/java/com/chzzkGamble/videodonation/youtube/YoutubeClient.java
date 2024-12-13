@@ -1,7 +1,7 @@
 package com.chzzkGamble.videodonation.youtube;
 
-import com.chzzkGamble.exception.ChzzkException;
-import com.chzzkGamble.exception.ChzzkExceptionCode;
+import com.chzzkGamble.exception.YoutubeException;
+import com.chzzkGamble.exception.YoutubeExceptionCode;
 import com.chzzkGamble.utils.AsciiEncoder;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,12 +51,12 @@ public class YoutubeClient {
 
     private String extractedVideoId(YouTubeApiResponse response, String title) {
         if (response == null) {
-            throw new ChzzkException(ChzzkExceptionCode.YOUTUBE_API_INVALID, "유튜브 API 응답 결과가 존재하지 않습니다.");
+            throw new YoutubeException(YoutubeExceptionCode.YOUTUBE_API_INVALID, "유튜브 API 응답 결과가 존재하지 않습니다.");
         }
         Item videoItem = response.items().stream()
                 .filter(item -> item.snippet().title().equals(title))
                 .findFirst()
-                .orElseThrow(() -> new ChzzkException(ChzzkExceptionCode.YOUTUBE_TITLE_INVALID));
+                .orElseThrow(() -> new YoutubeException(YoutubeExceptionCode.YOUTUBE_TITLE_INVALID));
         return videoItem.id().videoId();
     }
 }
