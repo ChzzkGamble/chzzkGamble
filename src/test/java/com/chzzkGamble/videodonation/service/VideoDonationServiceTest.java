@@ -33,8 +33,8 @@ class VideoDonationServiceTest {
         Chat chat = new Chat(CHANNEL_NAME);
         chat.open();
         chatRepository.save(chat);
-        videoDonationRepository.save(new VideoDonation(CHANNEL_NAME, 1000, "1번영상"));
-        videoDonationRepository.save(new VideoDonation(CHANNEL_NAME, 1000, "2번영상"));
+        videoDonationRepository.save(new VideoDonation(CHANNEL_NAME, 1000, "vid-1", "1번영상"));
+        videoDonationRepository.save(new VideoDonation(CHANNEL_NAME, 1000, "vid-2", "2번영상"));
 
         //when
         List<VideoDonation> actual = videoDonationService.getRecentlyVideoDonation(CHANNEL_NAME);

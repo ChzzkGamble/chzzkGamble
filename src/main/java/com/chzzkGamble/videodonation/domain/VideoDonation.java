@@ -32,12 +32,15 @@ public class VideoDonation {
 
     private String videoId;
 
+    private String videoName;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public VideoDonation(String channelName, int cheese, String videoId) {
+    public VideoDonation(String channelName, int cheese, String videoId, String videoName) {
         this.channelName = channelName;
         this.cheese = cheese;
         this.videoId = videoId;
+        this.videoName = videoName;
     }
 }
