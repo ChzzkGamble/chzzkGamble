@@ -25,7 +25,9 @@ public class AsciiEncoder {
         ASCII_ENCODINGS.put('-', "%2D");
         ASCII_ENCODINGS.put('.', "%2E");
         ASCII_ENCODINGS.put('/', "%2F");
+        ASCII_ENCODINGS.put('{', "%7B");
         ASCII_ENCODINGS.put('|', "%7C");
+        ASCII_ENCODINGS.put('}', "%7D");
     }
 
     public static String encodeWithoutEmoji(String s, int limit) {
