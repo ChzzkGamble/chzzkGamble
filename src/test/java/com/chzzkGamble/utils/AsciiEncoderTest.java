@@ -34,4 +34,13 @@ class AsciiEncoderTest {
 
         assertThat(encoded).isEqualTo("01234");
     }
+
+    @Test
+    @DisplayName("맨 처음 '-'는 제거한다.")
+    void encode_removeFirstBar() {
+        String original = "-롤 애니메이션";
+        String encoded = AsciiEncoder.encode(original, 10);
+
+        assertThat(encoded).isEqualTo("롤%20애니메이션");
+    }
 }

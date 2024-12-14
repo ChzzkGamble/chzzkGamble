@@ -1,6 +1,5 @@
 package com.chzzkGamble.utils;
 
-import com.vdurmont.emoji.EmojiParser;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +33,9 @@ public class AsciiEncoder {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < Math.min(s.length(), limit); i++) {
             char c = s.charAt(i);
+            if (i == 0 && c == '-') {
+                continue;
+            }
             if (ASCII_ENCODINGS.containsKey(c)) {
                 sb.append(ASCII_ENCODINGS.get(c));
                 continue;
