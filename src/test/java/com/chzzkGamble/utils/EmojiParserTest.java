@@ -21,7 +21,8 @@ public class EmojiParserTest {
         return Stream.of(
                 Arguments.of("매지컬★슬레이어", "매지컬슬레이어"),
                 Arguments.of("사탄맛 캐롤😈", "사탄맛 캐롤"),
-                Arguments.of("Hello 🌍! How are you? 😀🚗⚡", "Hello ! How are you? ")
+                Arguments.of("Hello 🌍! How are you? 😀🚗⚡", "Hello ! How are you? "),
+                Arguments.of("-롤 애니메이션- 조이는♂ Boy♥~(원피스 조이는보이 패러디)", "-롤 애니메이션- 조이는 Boy~(원피스 조이는보이 패러디)")
         );
     }
 }
