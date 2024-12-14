@@ -15,8 +15,8 @@ class AsciiEncoderTest {
     @ParameterizedTest
     @MethodSource("testCase")
     @DisplayName("ascii code에 맞게 인코딩한다.")
-    void encode(String original, String encoded) {
-        assertThat(AsciiEncoder.encode(original, 150)).isEqualTo(encoded);
+    void encodeWithoutEmoji(String original, String encoded) {
+        assertThat(AsciiEncoder.encodeWithoutEmoji(original, 150)).isEqualTo(encoded);
     }
 
     static Stream<Arguments> testCase() {
@@ -28,10 +28,19 @@ class AsciiEncoderTest {
 
     @Test
     @DisplayName("인코딩 할 길이를 미리 지정할 수 있다.")
-    void encodeLimit() {
+    void encodeWithoutEmoji_limit() {
         String original = "0123456789";
-        String encoded = AsciiEncoder.encode(original, 5);
+        String encoded = AsciiEncoder.encodeWithoutEmoji(original, 5);
 
         assertThat(encoded).isEqualTo("01234");
+    }
+
+    @Test
+    @DisplayName("이모지를 제거할 수 있다.")
+    void encodeWithoutEmoji() {
+        String original = "산타도 도망갈… 사탄맛 캐롤\uD83D\uDE08 : From Ashes to New";
+        String encoded = AsciiEncoder.encodeWithoutEmoji(original, 100);
+
+        assertThat(encoded).isEqualTo("산타도%20도망갈…%20사탄맛%20캐롤%20:%20From%20Ashes%20to%20New");
     }
 }
