@@ -30,12 +30,10 @@ public class AsciiEncoder {
         ASCII_ENCODINGS.put('}', "%7D");
     }
 
-    public static String encodeWithoutEmoji(String s, int limit) {
-        String emojiParsed = EmojiParser.removeAllEmojis(s);
-
+    public static String encode(String s, int limit) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < Math.min(emojiParsed.length(), limit); i++) {
-            char c = emojiParsed.charAt(i);
+        for (int i = 0; i < Math.min(s.length(), limit); i++) {
+            char c = s.charAt(i);
             if (ASCII_ENCODINGS.containsKey(c)) {
                 sb.append(ASCII_ENCODINGS.get(c));
                 continue;
