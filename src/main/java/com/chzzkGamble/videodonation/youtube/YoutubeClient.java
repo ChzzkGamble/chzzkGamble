@@ -17,7 +17,7 @@ public class YoutubeClient {
 
     private static final String API_URL_FORMAT =
             "https://www.googleapis.com/youtube/v3/search?part=%s&chart=%s&maxResults=%d&q=%s&type=%s&key=%s";
-    private static final int MAX_TITLE_LENGTH = 150;
+    private static final int MAX_TITLE_LENGTH = 30;
 
     private final RestClient restClient;
     private final YoutubeClientConfig config;
