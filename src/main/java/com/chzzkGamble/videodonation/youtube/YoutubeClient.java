@@ -3,7 +3,7 @@ package com.chzzkGamble.videodonation.youtube;
 import com.chzzkGamble.exception.YoutubeException;
 import com.chzzkGamble.exception.YoutubeExceptionCode;
 import com.chzzkGamble.utils.AsciiEncoder;
-import com.chzzkGamble.utils.EmojiParser;
+import com.chzzkGamble.utils.KJENParser;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -64,7 +64,7 @@ public class YoutubeClient {
                     config.part(),
                     config.chart(),
                     config.maxResults(),
-                    AsciiEncoder.encode(EmojiParser.removeEmojis(title), MAX_TITLE_LENGTH),
+                    AsciiEncoder.encode(KJENParser.extractKJEN(title), MAX_TITLE_LENGTH),
                     config.type(),
                     config.key())
         );
