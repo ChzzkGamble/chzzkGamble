@@ -21,7 +21,7 @@ public class AsciiEncoder {
         ASCII_ENCODINGS.put('*', "%2A");
         ASCII_ENCODINGS.put('+', "%2B");
         ASCII_ENCODINGS.put(',', "%2C");
-        ASCII_ENCODINGS.put('-', "%2D");
+        ASCII_ENCODINGS.put('-', "%20");  // because google does not search "-[keyword]"
         ASCII_ENCODINGS.put('.', "%2E");
         ASCII_ENCODINGS.put('/', "%2F");
         ASCII_ENCODINGS.put('{', "%7B");
@@ -33,9 +33,6 @@ public class AsciiEncoder {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < Math.min(s.length(), limit); i++) {
             char c = s.charAt(i);
-            if (i == 0 && c == '-') {
-                continue;
-            }
             if (ASCII_ENCODINGS.containsKey(c)) {
                 sb.append(ASCII_ENCODINGS.get(c));
                 continue;
