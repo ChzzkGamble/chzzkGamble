@@ -1,4 +1,4 @@
-package com.chzzkGamble.videodonation;
+package com.chzzkGamble.videodonation.controller;
 
 import com.chzzkGamble.videodonation.domain.VideoDonation;
 import com.chzzkGamble.videodonation.dto.VideoDonationResponse;
