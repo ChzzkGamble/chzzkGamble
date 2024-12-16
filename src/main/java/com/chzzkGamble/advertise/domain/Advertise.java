@@ -90,8 +90,8 @@ public class Advertise extends BaseEntity {
         active = false;
     }
 
-    public Double getAdjustedCost() {
-        return 1.0 * cost / adPeriod;
+    public long getAdjustedCost() {
+        return cost / adPeriod;
     }
 
     @Override
