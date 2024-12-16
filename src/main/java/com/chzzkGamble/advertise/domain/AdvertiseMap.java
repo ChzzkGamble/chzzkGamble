@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdvertiseMap {
 
-    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 0L, 10);
+    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 1000L, 10);
 
     private final Map<Advertise, Long> adCumulativeCosts;
     private final Map<Advertise, Double> adProbabilities;
