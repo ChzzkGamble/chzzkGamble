@@ -20,7 +20,8 @@ public class KJENParser {
     private static final String CJK_IDEOGRAPHS_EXTENSION_B = "[\uD842\uDC00-\uD87F\uDFFF]";
     private static final String CJK_IDEOGRAPHS_EXTENSION_C = "[\uD88F\uDC00-\uD89F\uDFFF]";
     private static final String CJK_IDEOGRAPHS_EXTENSION_D = "[\uD89F\uDC00-\uD8AF\uDFFF]";
-    private static final String FULL_WIDTH_DIGITS = "[０-９]";
+    private static final String CJK_IDEOGRAPHS_BRACKET = "[\u3008-\u3011\u3016-\u3017]";
+    private static final String FULL_WIDTH_AND_HALF_WIDTH = "[\uFF01-\uFF9F]";
 
     private static final Pattern KJEN_REGEX = Pattern.compile(ENGLISH_UPPERCASE +
             "|" + ENGLISH_LOWERCASE +
@@ -37,7 +38,8 @@ public class KJENParser {
             "|" + CJK_IDEOGRAPHS_EXTENSION_B +
             "|" + CJK_IDEOGRAPHS_EXTENSION_C +
             "|" + CJK_IDEOGRAPHS_EXTENSION_D +
-            "|" + FULL_WIDTH_DIGITS
+            "|" + CJK_IDEOGRAPHS_BRACKET +
+            "|" + FULL_WIDTH_AND_HALF_WIDTH
     );
 
     public static String extractKJEN(String input) {

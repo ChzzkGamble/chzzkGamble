@@ -23,7 +23,10 @@ public class KJENParserTest {
                 Arguments.of("사탄맛 캐롤😈", "사탄맛 캐롤"),
                 Arguments.of("Hello 🌍! How are you? 😀🚗⚡", "Hello ! How are you? "),
                 Arguments.of("-롤 애니메이션- 조이는♂ Boy♥~(원피스 조이는보이 패러디)", "-롤 애니메이션- 조이는 Boy~(원피스 조이는보이 패러디)"),
-                Arguments.of("캐롤 군대버전\uD83C\uDF85\uD83D\uDC80\uD83C\uDFB9", "캐롤 군대버전")
+                Arguments.of("캐롤 군대버전\uD83C\uDF85\uD83D\uDC80\uD83C\uDFB9", "캐롤 군대버전"),
+                Arguments.of("\uD83D\uDD25 버니스!! 난 네가 좋다!! 올해 수능 금지곡 여기 하나 추가요!", " 버니스!! 난 네가 좋다!! 올해 수능 금지곡 여기 하나 추가요!"),
+                Arguments.of("【Blue Archive】Shiroko ＆ Nonomi 「Worth It」【ブルアカ MMD シロコ ノノミ】", "【Blue Archive】Shiroko ＆ Nonomi 「Worth It」【ブルアカ MMD シロコ ノノミ】"),
+                Arguments.of("역사상 가장 어려운 카드 기술 TOP 5 \uD83C\uDCCF feat. 다니엘 로이", "역사상 가장 어려운 카드 기술 TOP 5  feat. 다니엘 로이")
         );
     }
 }
