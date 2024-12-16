@@ -55,6 +55,10 @@ public class DonationMessage {
         return cheese != 0;
     }
 
+    public boolean isVideoDonation() {
+        return this.isDonation() && this.type == DonationType.VIDEO;
+    }
+
     @Override
     public String toString() {
         return "DonationMessage{" +

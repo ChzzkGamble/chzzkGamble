@@ -42,13 +42,17 @@ public class ChzzkApiService {
                 .getAsJsonObject("content")
                 .getAsJsonArray("data");
 
-        if (data.isEmpty()) {
-            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND);
-        }
+        JsonObject channelInfo = data.asList()
+                .stream()
+                .map(je -> je.getAsJsonObject().getAsJsonObject("channel"))
+                .filter(jsonObject -> {
+                    String responseChannelName = jsonObject.getAsJsonPrimitive("channelName").getAsString();
+                    return responseChannelName.equals(channelName);
+                })
+                .findAny()
+                .orElseThrow(() -> new ChzzkException(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND));
 
-        return gson.fromJson(data.get(0)
-                .getAsJsonObject()
-                .getAsJsonObject("channel"), ChannelInfoApiResponse.class);
+        return gson.fromJson(channelInfo, ChannelInfoApiResponse.class);
     }
 
     public String getChatAccessToken(String chatChannelId) {

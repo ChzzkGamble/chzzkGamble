@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ChzzkChatService {
 
-    private static final int MAX_CONNECTION_LIMIT = 10;
-    private static final int CHAT_ALIVE_MINUTES = 10;
+    private static final int MAX_CONNECTION_LIMIT = 100;
+    private static final int CHAT_ALIVE_MINUTES = 60;
 
     private final ChatRepository chatRepository;
     private final Clock clock;

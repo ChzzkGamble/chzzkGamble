@@ -1,10 +1,11 @@
 package com.chzzkGamble.exception;
 
+import com.chzzkGamble.exception.handler.ChzOnMeExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum GambleExceptionCode {
+public enum GambleExceptionCode implements ChzOnMeExceptionCode {
 
     // roulette 1_xxx
     ROULETTE_NOT_FOUND(HttpStatus.NOT_FOUND,1_001, "룰렛을 찾을 수 없습니다."),
