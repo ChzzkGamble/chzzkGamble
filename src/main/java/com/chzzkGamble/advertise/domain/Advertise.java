@@ -75,6 +75,10 @@ public class Advertise extends BaseEntity {
         active = false;
     }
 
+    public Double getAdjustedCost() {
+        return 1.0 * cost / adPeriod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
