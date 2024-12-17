@@ -12,9 +12,9 @@ public class AdvertiseMap {
 
     private final Map<Advertise, Long> adCumulativeCosts;
     private final Map<Advertise, Double> adProbabilities;
-    private final double totalAmount;
+    private final long totalAmount;
 
-    private AdvertiseMap(Map<Advertise, Long> adCumulativeCosts, Map<Advertise, Double> adProbabilities, double totalAmount) {
+    private AdvertiseMap(Map<Advertise, Long> adCumulativeCosts, Map<Advertise, Double> adProbabilities, long totalAmount) {
         this.adCumulativeCosts = adCumulativeCosts;
         this.adProbabilities = adProbabilities;
         this.totalAmount = totalAmount;
@@ -39,7 +39,7 @@ public class AdvertiseMap {
     public Advertise getRandom() {
         if (totalAmount == 0) return DEFAULT_ADVERTISE;
 
-        double threshold = ThreadLocalRandom.current().nextDouble(totalAmount);
+        long threshold = ThreadLocalRandom.current().nextLong(totalAmount);
         return adCumulativeCosts.entrySet().stream()
                 .filter(entry -> threshold <= entry.getValue())
                 .findFirst()
