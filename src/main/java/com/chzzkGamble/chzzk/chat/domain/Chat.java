@@ -1,5 +1,6 @@
 package com.chzzkGamble.chzzk.chat.domain;
 
+import com.chzzkGamble.config.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -9,9 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -19,7 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-public class Chat {
+public class Chat extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +27,6 @@ public class Chat {
     private String channelName;
 
     private Boolean opened;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
 
     public Chat(String channelName) {
         this.channelName = channelName;
