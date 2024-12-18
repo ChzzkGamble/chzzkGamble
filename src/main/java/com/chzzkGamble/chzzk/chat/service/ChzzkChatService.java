@@ -92,6 +92,7 @@ public class ChzzkChatService {
         lastEventPublished.put(channelName, LocalDateTime.now(clock));
     }
 
+    @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
     @Transactional
     @Scheduled(fixedDelayString = "${chat.close-interval}")
     public void disconnectChatRoom() {
@@ -113,6 +114,7 @@ public class ChzzkChatService {
     private void disconnectChatRoom(String channelName) {
         connectionManager.disconnect(channelName);
         chatRepository.findByChannelNameAndOpenedIsTrue(channelName).ifPresent(Chat::close);
+        redissonClient.getBucket(channelName).delete();
         log.info("connection with {} is closed by timeout", channelName);
     }
 
