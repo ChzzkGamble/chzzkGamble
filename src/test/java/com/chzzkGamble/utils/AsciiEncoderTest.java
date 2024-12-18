@@ -21,8 +21,8 @@ class AsciiEncoderTest {
 
     static Stream<Arguments> testCase() {
         return Stream.of(
-                Arguments.of("[LIVE] 송밤 / 작두 - 딥플로우 (Feat, 넉살, 허클베리피)", "[LIVE]%20송밤%20%2F%20작두%20%2D%20딥플로우%20%28Feat%2C%20넉살%2C%20허클베리피%29"),
-                Arguments.of("[REMAKE]  하디아 - 망창가", "[REMAKE]%20%20하디아%20%2D%20망창가")
+                Arguments.of("[LIVE] 송밤 / 작두 - 딥플로우 (Feat, 넉살, 허클베리피)", "[LIVE]%20송밤%20%2F%20작두%20%20%20딥플로우%20%28Feat%2C%20넉살%2C%20허클베리피%29"),
+                Arguments.of("[REMAKE]  하디아 - 망창가", "[REMAKE]%20%20하디아%20%20%20망창가")
         );
     }
 
@@ -36,11 +36,11 @@ class AsciiEncoderTest {
     }
 
     @Test
-    @DisplayName("맨 처음 '-'는 제거한다.")
+    @DisplayName("'-'는 전부 %20으로 대체한다.")
     void encode_removeFirstBar() {
-        String original = "-롤 애니메이션";
+        String original = "-롤 애니메이션-";
         String encoded = AsciiEncoder.encode(original, 10);
 
-        assertThat(encoded).isEqualTo("롤%20애니메이션");
+        assertThat(encoded).isEqualTo("%20롤%20애니메이션%20");
     }
 }
