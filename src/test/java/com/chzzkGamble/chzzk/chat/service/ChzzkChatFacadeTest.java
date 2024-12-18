@@ -29,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 class ChzzkChatFacadeTest {
 
     @Autowired
-    private ChzzkChatFacade chzzkChatFacade;
+    private ChzzkChatService chzzkChatService;
 
     @Autowired
     private ChatRepository chatRepository;
@@ -71,7 +71,7 @@ class ChzzkChatFacadeTest {
             executorService.execute(() -> {
                 try {
                     startLatch.await();
-                    chzzkChatFacade.connectChatRoom(channelName);
+                    chzzkChatService.connectChatRoom(channelName);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } finally {

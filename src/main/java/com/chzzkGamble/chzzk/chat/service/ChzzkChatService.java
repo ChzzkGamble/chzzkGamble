@@ -49,7 +49,7 @@ public class ChzzkChatService {
     }
 
     private boolean isChatAlreadyOpen(String channelName) {
-        return chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
+        return redissonClient.getBucket(channelName).isExists();
     }
 
     private void validateConnectionLimit() {
@@ -65,11 +65,11 @@ public class ChzzkChatService {
     }
 
     private void createNewChat(String channelName) {
-        Chat chat = new Chat(channelName);
-        chat.open();
         RBucket<Object> bucket = redissonClient.getBucket(channelName);
         bucket.set(true);
 
+        Chat chat = new Chat(channelName);
+        chat.open();
         chatRepository.save(chat);
     }
 

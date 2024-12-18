@@ -1,17 +1,11 @@
 package com.chzzkGamble.chzzk.nickname;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
-import com.chzzkGamble.chzzk.chat.service.ChzzkChatFacade;
-import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
-import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
-import com.chzzkGamble.chzzk.nickname.domain.ChannelName;
 import com.chzzkGamble.chzzk.nickname.service.ChzzkNicknameService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
