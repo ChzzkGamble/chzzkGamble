@@ -56,6 +56,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.redisson/redisson
     implementation 'org.redisson:redisson:3.23.3'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {
