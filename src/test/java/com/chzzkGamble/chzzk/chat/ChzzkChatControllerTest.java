@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk;
+package com.chzzkGamble.chzzk.chat;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.controller.ChzzkChatController;

@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.chat.service;
+package com.chzzkGamble.chzzk.chat;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
+import com.chzzkGamble.chzzk.chat.service.WebSocketConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ChzzkChatFacadeTest {
+class ChzzkChatConcurrencyTest {
 
     @Autowired
     private ChzzkChatService chzzkChatService;

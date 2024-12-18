@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk;
+package com.chzzkGamble.chzzk.chat;
 
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.DonationMessage;
