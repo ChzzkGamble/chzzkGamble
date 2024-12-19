@@ -41,6 +41,7 @@ public class AdvertiseController {
         return ResponseEntity.ok().body(responses);
     }
 
+    @RequireApiKey
     @GetMapping("advertises/approval")
     public ResponseEntity<List<ApprovalAdvertiseResponse>> getApprovalAdvertises() {
         List<ApprovalAdvertiseResponse> responses = advertiseService.getApprovalAdvertise();

@@ -1,6 +1,7 @@
 package com.chzzkGamble.advertise.service;
 
 import com.chzzkGamble.advertise.domain.Advertise;
+import com.chzzkGamble.advertise.domain.AdvertiseMap;
 import com.chzzkGamble.advertise.dto.ApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.dto.NotApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
@@ -63,7 +64,7 @@ public class AdvertiseServiceTest {
     }
 
     @Test
-    @DisplayName("10일이 지난 광고는 업데이트되지 않는다.")
+    @DisplayName("광고기한이 지난 광고는 업데이트되지 않는다.")
     void updateAdvertiseMap_after10Days() {
         // given
         Advertise advertise = new Advertise("따효니", "image1", 1000L, 10);
@@ -77,7 +78,7 @@ public class AdvertiseServiceTest {
         advertiseService.updateAdvertiseMap();
 
         // then
-        assertThat(advertiseService.getAdvertise().getName()).isEqualTo("Default Advertise");
+        assertThat(advertiseService.getAdvertise().getName()).isEqualTo(AdvertiseMap.DEFAULT_ADVERTISE_NAME);
     }
 
     @Test

@@ -32,7 +32,7 @@ public class AdvertiseService {
     public AdvertiseService(AdvertiseRepository advertiseRepository, Clock clock) {
         this.advertiseRepository = advertiseRepository;
         this.clock = clock;
-        this.advertiseMap = AdvertiseMap.from(Collections.emptyList(), clock);
+        this.advertiseMap = AdvertiseMap.from(Collections.emptyList());
     }
 
     public AdvertiseCreateResponse createAdvertise(Advertise advertise) {
@@ -86,7 +86,7 @@ public class AdvertiseService {
     @Scheduled(fixedDelayString = "${advertise.update-interval}")
     public void updateAdvertiseMap() {
         List<Advertise> validAdvertise = advertiseRepository.findActiveAdvertisesWithinDate(LocalDateTime.now(clock));
-        advertiseMap = AdvertiseMap.from(validAdvertise, clock);
+        advertiseMap = AdvertiseMap.from(validAdvertise);
 
         logger.info("updated : {}", advertiseMap);
     }

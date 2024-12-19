@@ -17,6 +17,7 @@ public enum AdvertiseExceptionCode implements ChzOnMeExceptionCode {
     )),
     ALREADY_APPROVED_AD(HttpStatus.BAD_REQUEST, 2_002, "이미 승인된 광고입니다."),
     AD_NOT_APPROVED(HttpStatus.BAD_REQUEST, 2_003, "아직 승인되지 않은 광고입니다."),
+    COST_UNDER_ZERO(HttpStatus.BAD_REQUEST, 2_004, "광고 금액은 양수여야 합니다."),
     ;
 
     private final HttpStatus httpStatus;

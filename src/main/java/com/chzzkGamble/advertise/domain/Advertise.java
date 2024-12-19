@@ -45,12 +45,23 @@ public class Advertise extends BaseEntity {
     private Integer adPeriod;
 
     public Advertise(String name, String imageUrl, Long cost, Integer adPeriod) {
-        validateAdPeriod(adPeriod);
+        validate(cost, adPeriod);
         this.name = name;
         this.imageUrl = imageUrl;
         this.cost = cost;
         this.active = false;
         this.adPeriod = adPeriod;
+    }
+    
+    private void validate(Long cost, Integer adPeriod) {
+        validateCost(cost);
+        validateAdPeriod(adPeriod);
+    }
+
+    private void validateCost(Long cost) {
+        if (cost <= 0) {
+            throw new AdvertiseException(AdvertiseExceptionCode.COST_UNDER_ZERO);
+        }
     }
 
     private void validateAdPeriod(Integer adPeriod) {
@@ -73,6 +84,10 @@ public class Advertise extends BaseEntity {
             throw new AdvertiseException(AdvertiseExceptionCode.AD_NOT_APPROVED);
         }
         active = false;
+    }
+
+    public long getAdjustedCost() {
+        return cost / adPeriod;
     }
 
     @Override
