@@ -23,7 +23,6 @@ public class Advertise extends BaseEntity {
 
     public static final int MIN_AD_PERIOD = 1;
     public static final int MAX_AD_PERIOD = 30;
-    public static final int COST_UNIT = 1000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,9 +61,6 @@ public class Advertise extends BaseEntity {
     private void validateCost(Long cost) {
         if (cost <= 0) {
             throw new AdvertiseException(AdvertiseExceptionCode.COST_UNDER_ZERO);
-        }
-        if (cost % COST_UNIT != 0) {
-            throw new AdvertiseException(AdvertiseExceptionCode.COST_INVALID_UNIT);
         }
     }
 
