@@ -8,7 +8,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdvertiseMap {
 
-    private static final Advertise DEFAULT_ADVERTISE = new Advertise("Default Advertise", "IMAGE_URL_HERE", 1000L, 10);
+    public static final String DEFAULT_ADVERTISE_NAME = "광고 한번 해보세요";
+    private static final Advertise DEFAULT_ADVERTISE = new Advertise(DEFAULT_ADVERTISE_NAME, "IMAGE_URL_HERE", 1000L, 10);
+    public static final double DEFAULT_ADVERTISE_PROBABILITY = 0.1;
 
     private final Map<Advertise, Long> adCumulativeCosts;
     private final Map<Advertise, Double> adProbabilities;
@@ -39,7 +41,7 @@ public class AdvertiseMap {
     public Advertise getRandom() {
         if (totalAmount == 0) return DEFAULT_ADVERTISE;
 
-        long threshold = ThreadLocalRandom.current().nextLong(totalAmount);
+        long threshold = ThreadLocalRandom.current().nextLong((long) (totalAmount + (totalAmount * DEFAULT_ADVERTISE_PROBABILITY)));
         return adCumulativeCosts.entrySet().stream()
                 .filter(entry -> threshold <= entry.getValue())
                 .findFirst()

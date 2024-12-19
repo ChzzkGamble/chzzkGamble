@@ -1,6 +1,7 @@
 package com.chzzkGamble.advertise.service;
 
 import com.chzzkGamble.advertise.domain.Advertise;
+import com.chzzkGamble.advertise.domain.AdvertiseMap;
 import com.chzzkGamble.advertise.dto.ApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.dto.NotApprovalAdvertiseResponse;
 import com.chzzkGamble.advertise.repository.AdvertiseRepository;
@@ -77,7 +78,7 @@ public class AdvertiseServiceTest {
         advertiseService.updateAdvertiseMap();
 
         // then
-        assertThat(advertiseService.getAdvertise().getName()).isEqualTo("Default Advertise");
+        assertThat(advertiseService.getAdvertise().getName()).isEqualTo(AdvertiseMap.DEFAULT_ADVERTISE_NAME);
     }
 
     @Test

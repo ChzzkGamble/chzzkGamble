@@ -102,18 +102,21 @@ public class AdvertiseMapTest {
         AdvertiseMap advertiseMap = AdvertiseMap.from(List.of(ad1, ad2, ad3));
 
         // when
+        int def_count = 0;
         int ad1Count = 0;
         int ad2Count = 0;
         int ad3Count = 0;
 
-        for (int i = 0; i < 9000; i++) {
+        for (int i = 0; i < 9900; i++) {
             Advertise ad = advertiseMap.getRandom();
-            if (ad.equals(ad1)) ad1Count++;
-            if (ad.equals(ad2)) ad2Count++;
-            if (ad.equals(ad3)) ad3Count++;
+            if (ad.getName().equals(AdvertiseMap.DEFAULT_ADVERTISE_NAME)) def_count++;
+            if (ad.getName().equals("ad1")) ad1Count++;
+            if (ad.getName().equals("ad2")) ad2Count++;
+            if (ad.getName().equals("ad3")) ad3Count++;
         }
 
         // then
+        assertThat(def_count).isBetween(400, 1400);
         assertThat(ad1Count).isBetween(500, 1500);
         assertThat(ad2Count).isBetween(2500, 3500);
         assertThat(ad3Count).isBetween(4500, 5500);
@@ -126,6 +129,6 @@ public class AdvertiseMapTest {
         AdvertiseMap advertiseMap = AdvertiseMap.from(Collections.emptyList());
 
         // when & then
-        assertThat(advertiseMap.getRandom().getName()).isEqualTo("Default Advertise");
+        assertThat(advertiseMap.getRandom().getName()).isEqualTo(AdvertiseMap.DEFAULT_ADVERTISE_NAME);
     }
 }
