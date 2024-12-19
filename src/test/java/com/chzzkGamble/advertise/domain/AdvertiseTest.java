@@ -45,4 +45,12 @@ class AdvertiseTest {
                 .isInstanceOf(AdvertiseException.class)
                 .hasMessage(AdvertiseExceptionCode.AD_NOT_APPROVED.getMessage());
     }
+
+    @Test
+    @DisplayName("0원 이하의 금액을 입력하면 예외를 발생시킨다")
+    void invalidCost() {
+        assertThatThrownBy(() -> new Advertise("name", "imageUrl", 0L, 10))
+                .isInstanceOf(AdvertiseException.class)
+                .hasMessage(AdvertiseExceptionCode.COST_UNDER_ZERO.getMessage());
+    }
 }
