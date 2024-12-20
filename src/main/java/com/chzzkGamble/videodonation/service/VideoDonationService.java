@@ -25,13 +25,13 @@ public class VideoDonationService {
         videoDonationRepository.save(new VideoDonation(channelName, cheese, videoId, msg));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<VideoDonation> getRecentlyVideoDonation(String channelName) {
         Chat chat = chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                 .orElseThrow(() -> new IllegalStateException("최근 연결된 채팅방을 찾을 수 없습니다."));
 
         LocalDateTime recent = chat.getCreatedAt();
-        System.out.println(recent);
+
         return videoDonationRepository.findByChannelNameAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(channelName,
                 recent);
     }
