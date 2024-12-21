@@ -7,8 +7,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
+import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +31,8 @@ public class RouletteServiceTest {
     RouletteService rouletteService;
     @Autowired
     RouletteElementRepository rouletteElementRepository;
+    @Autowired
+    private RouletteRepository rouletteRepository;
 
     @Test
     @DisplayName("룰렛을 생성할 수 있다.")
@@ -196,5 +200,19 @@ public class RouletteServiceTest {
         // when & then
         assertThatThrownBy(() -> rouletteService.updateRouletteUnit(roulette.getId(), 0))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("룰렛 투표를 멈출 수 있다.")
+    void endVote(){
+        //given
+        Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME, ROULETTE_UNIT);
+        roulette.startVote();
+
+        //when
+        Roulette actual = rouletteService.endVote(roulette.getId());
+
+        //then
+        assertThat(actual.isVoting()).isFalse();
     }
 }

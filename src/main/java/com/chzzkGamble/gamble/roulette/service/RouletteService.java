@@ -76,9 +76,7 @@ public class RouletteService {
 
     @Transactional
     public void updateRouletteUnit(UUID rouletteId, int newRouletteUnit) {
-        Roulette roulette = rouletteRepository.findById(rouletteId).orElseThrow(() -> new GambleException(
-                GambleExceptionCode.ROULETTE_NOT_FOUND,
-                "rouletteId : " + rouletteId));
+        Roulette roulette = readRoulette(rouletteId);
 
         roulette.updateRouletteUnit(newRouletteUnit);
     }

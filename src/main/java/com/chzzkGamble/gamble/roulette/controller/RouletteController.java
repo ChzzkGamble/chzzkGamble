@@ -53,6 +53,12 @@ public class RouletteController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/stop")
+    public ResponseEntity<?> stop(@CookieValue(name="rouletteId") Cookie cookie){
+        rouletteService.endVote(UUID.fromString(cookie.getValue()));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     public List<RouletteElementResponse> readRoulette(@CookieValue(name = "rouletteId") Cookie cookie) {
         UUID rouletteId = UUID.fromString(cookie.getValue());
