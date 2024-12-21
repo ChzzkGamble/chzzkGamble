@@ -77,7 +77,7 @@ public class YoutubeClient {
         Item videoItem = response.items().stream()
                 .filter(item -> item.snippet().title().equals(title))
                 .findFirst()
-                .orElseThrow(() -> new YoutubeException(YoutubeExceptionCode.YOUTUBE_TITLE_INVALID, response.toString()));
+                .orElseThrow(() -> new YoutubeException(YoutubeExceptionCode.YOUTUBE_TITLE_INVALID, getUri(title).toString()));
         return videoItem.id().videoId();
     }
 }
