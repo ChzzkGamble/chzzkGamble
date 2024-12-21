@@ -21,7 +21,7 @@ public class AsciiEncoder {
         ASCII_ENCODINGS.put('*', "%2A");
         ASCII_ENCODINGS.put('+', "%2B");
         ASCII_ENCODINGS.put(',', "%2C");
-        ASCII_ENCODINGS.put('-', "%20");  // because google does not search "-[keyword]"
+        ASCII_ENCODINGS.put('-', "%2D");
         ASCII_ENCODINGS.put('.', "%2E");
         ASCII_ENCODINGS.put('/', "%2F");
         ASCII_ENCODINGS.put('{', "%7B");
