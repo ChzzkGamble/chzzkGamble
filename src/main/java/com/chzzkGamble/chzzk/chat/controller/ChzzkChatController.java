@@ -8,12 +8,16 @@ import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RKeys;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class ChzzkChatController {
 
     private final ChzzkChatService chzzkChatService;
     private final ChzzkApiService chzzkApiService;
+    private final RedissonClient redissonClient;
 
     @PostMapping("/connect")
     public ResponseEntity<?> connect(@RequestBody @Valid ChatConnectRequest request) {
@@ -44,5 +49,14 @@ public class ChzzkChatController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/connections")
+    public ResponseEntity<List<String>> getCurrentConnections() {
+        List<String> channelNames = new ArrayList<>();
+        RKeys keys = redissonClient.getKeys();
+        keys.getKeys().forEach(channelNames::add);
+
+        return ResponseEntity.ok(channelNames);
     }
 }
