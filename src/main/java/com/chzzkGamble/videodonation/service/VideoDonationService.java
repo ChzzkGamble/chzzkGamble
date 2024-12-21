@@ -25,7 +25,7 @@ public class VideoDonationService {
         videoDonationRepository.save(new VideoDonation(channelName, cheese, videoId, msg));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<VideoDonation> getRecentlyVideoDonation(String channelName) {
         Chat chat = chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                 .orElseThrow(() -> new IllegalStateException("최근 연결된 채팅방을 찾을 수 없습니다."));
