@@ -124,12 +124,10 @@ public class ChzzkChatService {
     }
 
     @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
+    @Transactional
     @PreDestroy
-    private void disconnectAll() {
+    protected void disconnectAll() {
         connectionManager.getAllChannelNames()
-                .forEach(channelName -> {
-                    connectionManager.disconnect(channelName);
-                    redissonClient.getBucket(channelName).delete();
-                });
+                .forEach(this::disconnectChatRoom);
     }
 }
