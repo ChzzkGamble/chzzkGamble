@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
@@ -125,8 +124,7 @@ public class ChzzkChatService {
 
     @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
     @Transactional
-    @PreDestroy
-    protected void disconnectAll() {
+    public void disconnectAll() {
         connectionManager.getAllChannelNames()
                 .forEach(this::disconnectChatRoom);
     }
