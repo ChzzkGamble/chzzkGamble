@@ -3,6 +3,7 @@ package com.chzzkGamble.chzzk.chat.service;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,12 @@ public class WebSocketConnectionManager {
 
     public boolean isConnected(String channelName) {
         return chatClients.containsKey(channelName) && chatClients.get(channelName).isConnected();
+    }
+
+    public List<String> getAllChannelNames() {
+        return chatClients.keySet()
+                .stream()
+                .toList();
     }
 }
 
