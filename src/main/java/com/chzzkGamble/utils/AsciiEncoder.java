@@ -29,9 +29,9 @@ public class AsciiEncoder {
         ASCII_ENCODINGS.put('}', "%7D");
     }
 
-    public static String encode(String s, int limit) {
+    public static String encode(String s) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < Math.min(s.length(), limit); i++) {
+        for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (ASCII_ENCODINGS.containsKey(c)) {
                 sb.append(ASCII_ENCODINGS.get(c));

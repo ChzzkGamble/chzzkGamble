@@ -4,6 +4,7 @@ import com.chzzkGamble.exception.YoutubeException;
 import com.chzzkGamble.exception.YoutubeExceptionCode;
 import com.chzzkGamble.utils.AsciiEncoder;
 import com.chzzkGamble.utils.KJENParser;
+import com.chzzkGamble.utils.WordDivider;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -64,10 +65,17 @@ public class YoutubeClient {
                     config.part(),
                     config.chart(),
                     config.maxResults(),
-                    AsciiEncoder.encode(KJENParser.extractKJEN(title), MAX_TITLE_LENGTH),
+                    uriTitle(title),
                     config.type(),
                     config.key())
         );
+    }
+
+    private String uriTitle(String title) {
+        String KJENtitle = KJENParser.extractKJEN(title);
+        String splitWord = WordDivider.divideSpace(KJENtitle, MAX_TITLE_LENGTH)[0];
+
+        return AsciiEncoder.encode(splitWord);
     }
 
     private String extractedVideoId(YouTubeApiResponse response, String title) {
