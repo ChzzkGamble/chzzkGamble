@@ -57,14 +57,14 @@ public class RouletteService {
 
     @Transactional
     public Roulette startVote(UUID rouletteId) {
-        Roulette roulette = readRoulette(rouletteId);
+        Roulette roulette = getRouletteByIdWithXLock(rouletteId);
         roulette.startVote();
         return rouletteRepository.save(roulette);
     }
 
     @Transactional
     public Roulette endVote(UUID rouletteId) {
-        Roulette roulette = readRoulette(rouletteId);
+        Roulette roulette = getRouletteByIdWithXLock(rouletteId);
         roulette.endVote();
         return rouletteRepository.save(roulette);
     }
@@ -76,10 +76,15 @@ public class RouletteService {
 
     @Transactional
     public void updateRouletteUnit(UUID rouletteId, int newRouletteUnit) {
-        Roulette roulette = rouletteRepository.findById(rouletteId).orElseThrow(() -> new GambleException(
-                GambleExceptionCode.ROULETTE_NOT_FOUND,
-                "rouletteId : " + rouletteId));
+        Roulette roulette = getRouletteByIdWithXLock(rouletteId);
 
         roulette.updateRouletteUnit(newRouletteUnit);
+    }
+
+    private Roulette getRouletteByIdWithXLock(UUID rouletteId){
+        return rouletteRepository.findByIdAndCreatedAtAfterWithLock(rouletteId, LocalDateTime.now(clock).minusHours(HOUR_LIMIT))
+                .orElseThrow(() -> new GambleException(
+                        GambleExceptionCode.ROULETTE_NOT_FOUND,
+                        "rouletteId : " + rouletteId));
     }
 }
