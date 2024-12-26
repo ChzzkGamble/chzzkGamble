@@ -15,8 +15,8 @@ public class KJENParser {
     private static final String HIRAGANA = "[\u3040-\u309F]";
     private static final String KATAKANA = "[\u30A0-\u30FF]";
     private static final String KANA_EXTENDED = "[\u31F0-\u31FF]";
-    private static final String CJK_IDEOGRAPHS = "\u4E00-\u9FFF";
-    private static final String CJK_IDEOGRAPHS_EXTENSION_A = "\u3400-\u4DBF";
+    private static final String CJK_IDEOGRAPHS = "[\u4E00-\u9FFF]";
+    private static final String CJK_IDEOGRAPHS_EXTENSION_A = "[\u3400-\u4DBF]";
     private static final String CJK_IDEOGRAPHS_EXTENSION_B = "[\uD842\uDC00-\uD87F\uDFFF]";
     private static final String CJK_IDEOGRAPHS_EXTENSION_C = "[\uD88F\uDC00-\uD89F\uDFFF]";
     private static final String CJK_IDEOGRAPHS_EXTENSION_D = "[\uD89F\uDC00-\uD8AF\uDFFF]";

@@ -1,5 +1,7 @@
 package com.chzzkGamble.videodonation;
 
+import com.chzzkGamble.event.DonationEvent;
+import com.chzzkGamble.support.StubDonationEvent;
 import com.chzzkGamble.videodonation.youtube.YoutubeClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.annotation.DirtiesContext;
 import java.util.stream.Stream;
 
@@ -54,5 +57,25 @@ class YoutubeClientTest {
 
         //then
         assertThat(actual).isNull();
+    }
+
+    @Autowired
+    ApplicationEventPublisher publisher;
+
+    @Disabled("실제 Youtube api를 날리는 요청이므로 할당량 소모에 주의할 것")
+    @ParameterizedTest
+    @MethodSource("youtubeTitles")
+    @DisplayName("유튜브 API로 찾지 못한 영상을 확인해보는 테스트입니다.")
+    void notFoundInYoutube(String title) throws InterruptedException {
+        DonationEvent event = StubDonationEvent.ofVideo("channelName", title, 1000);
+        publisher.publishEvent(event);
+
+        Thread.sleep(5000L);
+    }
+
+    private static Stream<Arguments> youtubeTitles() {
+        return Stream.of(
+                Arguments.of("[메이플스토리M] 엔젤릭버스터 「Star Bubble」 Official Lyric Video")
+        );
     }
 }

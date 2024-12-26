@@ -3,6 +3,7 @@ package com.chzzkGamble.chzzk.chat.service;
 import com.chzzkGamble.chzzk.chat.domain.Chat;
 import com.chzzkGamble.chzzk.chat.repository.ChatRepository;
 import com.chzzkGamble.chzzk.dto.DonationMessage;
+import com.chzzkGamble.config.DistributedLock;
 import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
@@ -14,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,9 @@ public class ChzzkChatService {
     private final Clock clock;
     private final WebSocketConnectionManager connectionManager;
     private final Map<String, LocalDateTime> lastEventPublished = new ConcurrentHashMap<>();
+    private final RedissonClient redissonClient;
 
+    @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
     @Transactional
     public void connectChatRoom(String channelName) {
         if (isChatAlreadyOpen(channelName) && connectionManager.isConnected(channelName)) {
@@ -44,7 +49,7 @@ public class ChzzkChatService {
     }
 
     private boolean isChatAlreadyOpen(String channelName) {
-        return chatRepository.existsByChannelNameAndOpenedIsTrue(channelName);
+        return redissonClient.getBucket(channelName).isExists();
     }
 
     private void validateConnectionLimit() {
@@ -60,6 +65,9 @@ public class ChzzkChatService {
     }
 
     private void createNewChat(String channelName) {
+        RBucket<Object> bucket = redissonClient.getBucket(channelName);
+        bucket.set(true);
+
         Chat chat = new Chat(channelName);
         chat.open();
         chatRepository.save(chat);
@@ -84,6 +92,7 @@ public class ChzzkChatService {
         lastEventPublished.put(channelName, LocalDateTime.now(clock));
     }
 
+    @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
     @Transactional
     @Scheduled(fixedDelayString = "${chat.close-interval}")
     public void disconnectChatRoom() {
@@ -105,10 +114,18 @@ public class ChzzkChatService {
     private void disconnectChatRoom(String channelName) {
         connectionManager.disconnect(channelName);
         chatRepository.findByChannelNameAndOpenedIsTrue(channelName).ifPresent(Chat::close);
+        redissonClient.getBucket(channelName).delete();
         log.info("connection with {} is closed by timeout", channelName);
     }
 
     public boolean isConnected(String channelName) {
         return connectionManager.isConnected(channelName);
+    }
+
+    @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
+    @Transactional
+    public void disconnectAll() {
+        connectionManager.getAllChannelNames()
+                .forEach(this::disconnectChatRoom);
     }
 }

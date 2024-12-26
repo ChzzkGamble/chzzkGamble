@@ -31,7 +31,7 @@ public class VideoDonationService {
                 .orElseThrow(() -> new IllegalStateException("최근 연결된 채팅방을 찾을 수 없습니다."));
 
         LocalDateTime recent = chat.getCreatedAt();
-        System.out.println(recent);
+
         return videoDonationRepository.findByChannelNameAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(channelName,
                 recent);
     }

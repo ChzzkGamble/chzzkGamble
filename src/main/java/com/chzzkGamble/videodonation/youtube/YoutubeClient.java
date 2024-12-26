@@ -4,6 +4,7 @@ import com.chzzkGamble.exception.YoutubeException;
 import com.chzzkGamble.exception.YoutubeExceptionCode;
 import com.chzzkGamble.utils.AsciiEncoder;
 import com.chzzkGamble.utils.KJENParser;
+import com.chzzkGamble.utils.WordDivider;
 import com.chzzkGamble.videodonation.youtube.YouTubeApiResponse.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class YoutubeClient {
 
     private static final String API_URL_FORMAT =
             "https://www.googleapis.com/youtube/v3/search?part=%s&chart=%s&maxResults=%d&q=%s&type=%s&key=%s";
-    private static final int MAX_TITLE_LENGTH = 30;
+    private static final int MAX_TITLE_LENGTH = 50;
 
     private final RestClient restClient;
     private final YoutubeClientConfig config;
@@ -64,10 +65,17 @@ public class YoutubeClient {
                     config.part(),
                     config.chart(),
                     config.maxResults(),
-                    AsciiEncoder.encode(KJENParser.extractKJEN(title), MAX_TITLE_LENGTH),
+                    uriTitle(title),
                     config.type(),
                     config.key())
         );
+    }
+
+    private String uriTitle(String title) {
+        String KJENtitle = KJENParser.extractKJEN(title);
+        String splitWord = WordDivider.divideSpace(KJENtitle, MAX_TITLE_LENGTH)[0];
+
+        return AsciiEncoder.encode(splitWord);
     }
 
     private String extractedVideoId(YouTubeApiResponse response, String title) {
@@ -77,7 +85,7 @@ public class YoutubeClient {
         Item videoItem = response.items().stream()
                 .filter(item -> item.snippet().title().equals(title))
                 .findFirst()
-                .orElseThrow(() -> new YoutubeException(YoutubeExceptionCode.YOUTUBE_TITLE_INVALID));
+                .orElseThrow(() -> new YoutubeException(YoutubeExceptionCode.YOUTUBE_TITLE_INVALID, getUri(title).toString()));
         return videoItem.id().videoId();
     }
 }

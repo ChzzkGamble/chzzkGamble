@@ -1,9 +1,9 @@
-package com.chzzkGamble.chzzk;
+package com.chzzkGamble.chzzk.chat;
 
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.chzzk.chat.controller.ChzzkChatController;
 import com.chzzkGamble.chzzk.chat.dto.ChatConnectRequest;
-import com.chzzkGamble.chzzk.chat.service.ChzzkChatFacade;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.exception.ChzzkException;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ public class ChzzkChatControllerTest {
     ChzzkApiService chzzkApiService;
 
     @MockBean
-    ChzzkChatFacade chzzkChatFacade;
+    ChzzkChatService chzzkChatService;
 
     @Test
     @DisplayName("채널명이 일치하지 않는 경우 연결할 수 없다.")
@@ -35,7 +35,7 @@ public class ChzzkChatControllerTest {
         ChannelInfoApiResponse response = new ChannelInfoApiResponse("channelId", "명훈", "url", true, true);
 
         when(chzzkApiService.getChannelInfo(any())).thenReturn(response);
-        doNothing().when(chzzkChatFacade).connectChatRoom(any());
+        doNothing().when(chzzkChatService).connectChatRoom(any());
 
         assertThatThrownBy(() -> chzzkChatController.connect(new ChatConnectRequest("명예훈장")))
                 .isInstanceOf(ChzzkException.class);
@@ -47,7 +47,7 @@ public class ChzzkChatControllerTest {
         ChannelInfoApiResponse response = new ChannelInfoApiResponse("channelId", "명예훈장", "url", true, false);
 
         when(chzzkApiService.getChannelInfo("명예훈장")).thenReturn(response);
-        doNothing().when(chzzkChatFacade).connectChatRoom(any());
+        doNothing().when(chzzkChatService).connectChatRoom(any());
 
         assertThatThrownBy(() -> chzzkChatController.connect(new ChatConnectRequest("명예훈장")))
                 .isInstanceOf(ChzzkException.class);

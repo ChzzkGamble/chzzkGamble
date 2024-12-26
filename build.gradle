@@ -53,6 +53,10 @@ dependencies {
 
     // html escape 문자 디코딩 용
     implementation 'org.apache.commons:commons-text'
+
+    // https://mvnrepository.com/artifact/org.redisson/redisson
+    implementation 'org.redisson:redisson:3.23.3'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {

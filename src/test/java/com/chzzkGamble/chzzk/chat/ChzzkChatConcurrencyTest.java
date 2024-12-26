@@ -1,4 +1,4 @@
-package com.chzzkGamble.chzzk.chat.service;
+package com.chzzkGamble.chzzk.chat;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
+import com.chzzkGamble.chzzk.chat.service.WebSocketConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,12 +26,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+// 12/18 기준 local 컴퓨터에 redis를 설치, 실행해야 정상적으로 동작합니다.
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ChzzkChatFacadeTest {
+class ChzzkChatConcurrencyTest {
 
     @Autowired
-    private ChzzkChatFacade chzzkChatFacade;
+    private ChzzkChatService chzzkChatService;
 
     @Autowired
     private ChatRepository chatRepository;
@@ -71,7 +74,7 @@ class ChzzkChatFacadeTest {
             executorService.execute(() -> {
                 try {
                     startLatch.await();
-                    chzzkChatFacade.connectChatRoom(channelName);
+                    chzzkChatService.connectChatRoom(channelName);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } finally {
