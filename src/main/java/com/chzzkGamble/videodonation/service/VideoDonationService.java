@@ -8,6 +8,7 @@ import com.chzzkGamble.videodonation.youtube.YoutubeClient;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class VideoDonationService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "videoDonation", key = "#channelName")
     public List<VideoDonation> getRecentlyVideoDonation(String channelName) {
         Chat chat = chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                 .orElseThrow(() -> new IllegalStateException("최근 연결된 채팅방을 찾을 수 없습니다."));
