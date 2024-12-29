@@ -3,6 +3,7 @@ package com.chzzkGamble.chzzk.chat.service;
 import com.chzzkGamble.chzzk.api.ChzzkApiService;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
+import java.net.ConnectException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,10 +22,15 @@ public class WebSocketConnectionManager {
     private final ApplicationEventPublisher publisher;
     private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
 
-    public void connect(String channelName) {
+    public void connect(String channelName) throws InterruptedException, ConnectException {
         WebSocketHandler handler = new ChzzkSessionHandler(apiService, publisher, channelName);
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(handler, channelName);
         socketClient.connect();
+        Thread.sleep(2000L); // interval for connection to be stable
+        if (!socketClient.isConnected()) {
+            throw new ConnectException();
+        }
+
         chatClients.put(channelName, socketClient);
         log.info("WebSocket connection established for channel '{}'", channelName);
     }

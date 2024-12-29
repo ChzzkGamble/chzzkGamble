@@ -8,6 +8,7 @@ import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
+import java.net.ConnectException;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,7 +60,13 @@ public class ChzzkChatService {
     }
 
     private void initiateNewChatConnection(String channelName) {
-        connectionManager.connect(channelName);
+        try {
+            connectionManager.connect(channelName);
+        } catch (ConnectException e) {
+            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         lastEventPublished.put(channelName, LocalDateTime.now(clock));
         createNewChat(channelName);
     }
