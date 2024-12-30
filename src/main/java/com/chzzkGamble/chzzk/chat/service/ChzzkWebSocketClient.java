@@ -5,6 +5,7 @@ import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.chzzkGamble.utils.MessageSender;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +46,11 @@ public class ChzzkWebSocketClient {
             session = client.execute(handler, CHZZK_CHAT_SERVER + serverId + CHZZK_CHAT_SERVER2)
                     .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             session.setTextMessageSizeLimit(MESSAGE_SIZE_LIMIT);
-        } catch (TimeoutException | ExecutionException e) {
+            Thread.sleep(2000L); // interval for connection to be stable
+            if (!isConnected()) {
+                throw new ConnectException("연결에 실패했습니다.");
+            }
+        } catch (TimeoutException | ExecutionException | ConnectException e) {
             throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR, e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

@@ -22,15 +22,10 @@ public class WebSocketConnectionManager {
     private final ApplicationEventPublisher publisher;
     private final Map<String, ChzzkWebSocketClient> chatClients = new ConcurrentHashMap<>();
 
-    public void connect(String channelName) throws InterruptedException, ConnectException {
+    public void connect(String channelName) {
         WebSocketHandler handler = new ChzzkSessionHandler(apiService, publisher, channelName);
         ChzzkWebSocketClient socketClient = new ChzzkWebSocketClient(handler, channelName);
         socketClient.connect();
-        Thread.sleep(2000L); // interval for connection to be stable
-        if (!socketClient.isConnected()) {
-            throw new ConnectException();
-        }
-
         chatClients.put(channelName, socketClient);
         log.info("WebSocket connection established for channel '{}'", channelName);
     }

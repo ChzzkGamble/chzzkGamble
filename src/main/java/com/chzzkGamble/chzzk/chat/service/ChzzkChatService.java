@@ -60,13 +60,7 @@ public class ChzzkChatService {
     }
 
     private void initiateNewChatConnection(String channelName) {
-        try {
-            connectionManager.connect(channelName);
-        } catch (ConnectException e) {
-            throw new ChzzkException(ChzzkExceptionCode.CHAT_CONNECTION_ERROR);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        connectionManager.connect(channelName);
         lastEventPublished.put(channelName, LocalDateTime.now(clock));
         createNewChat(channelName);
     }
