@@ -4,6 +4,5 @@ advertise:
 chat:
   close-interval: 1000 # 1 second
 
-redis:
-  host: 127.0.0.1
-  port: 6379
+env:
+  instance-id : test
