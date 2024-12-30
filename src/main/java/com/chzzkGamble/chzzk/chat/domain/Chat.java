@@ -1,6 +1,7 @@
 package com.chzzkGamble.chzzk.chat.domain;
 
 import com.chzzkGamble.config.BaseEntity;
+import com.chzzkGamble.config.EnvironmentVariables;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -28,9 +29,12 @@ public class Chat extends BaseEntity {
 
     private Boolean opened;
 
+    private String instanceId;
+
     public Chat(String channelName) {
         this.channelName = channelName;
         this.opened = false;
+        this.instanceId = EnvironmentVariables.INSTANCE_ID;
     }
 
     public void open() {
