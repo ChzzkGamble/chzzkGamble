@@ -9,6 +9,7 @@ public class KJENParser {
     private static final String ENGLISH_LOWERCASE = "[a-z]";
     private static final String DIGITS = "[0-9]";
     private static final String BASIC_PUNCTUATION = "[\u0020-\u002F\u003A-\u0040\u007B-\u007E]";
+    private static final String LATIN_1_SUPPLEMENT = "[\u0080-\u00FF]";
     private static final String HANGUL_JAMO = "[\u1100-\u11FF]";
     private static final String HANGUL_COMPATIBILITY_JAMO = "[\u3130-\u318F]";
     private static final String HANGUL_SYLLABIC_BLOCKS = "[가-힣]";
@@ -27,6 +28,7 @@ public class KJENParser {
             "|" + ENGLISH_LOWERCASE +
             "|" + DIGITS +
             "|" + BASIC_PUNCTUATION +
+            "|" + LATIN_1_SUPPLEMENT +
             "|" + HANGUL_JAMO +
             "|" + HANGUL_COMPATIBILITY_JAMO +
             "|" + HANGUL_SYLLABIC_BLOCKS +
