@@ -27,6 +27,7 @@ public enum ChzzkExceptionCode implements ChzOnMeExceptionCode {
     CHAT_RECONNECTION_ERROR(INTERNAL_SERVER_ERROR, 2_006, "채팅방 재연결에 실패했습니다."),
     CHAT_IS_CONNECTING(BAD_REQUEST, 2_007, "채팅방에 연결중입니다."),
     CHAT_ACCESS_ERROR(INTERNAL_SERVER_ERROR, 2_008, "채팅방에 연결할 수 없습니다."),
+    CHAT_FROM_OTHERS(BAD_REQUEST, 2_009, "다른 인스턴스에 의해 연결된 채팅입니다."),
 
     // json 3_xxx
     JSON_CONVERT(INTERNAL_SERVER_ERROR, 3_001, "JSON 변환 중 오류가 생겼습니다."),

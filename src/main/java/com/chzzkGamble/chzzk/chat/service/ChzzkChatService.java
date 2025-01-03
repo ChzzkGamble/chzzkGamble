@@ -4,6 +4,7 @@ import com.chzzkGamble.chzzk.chat.domain.Chat;
 import com.chzzkGamble.chzzk.chat.repository.ChatRepository;
 import com.chzzkGamble.chzzk.dto.DonationMessage;
 import com.chzzkGamble.config.DistributedLock;
+import com.chzzkGamble.config.EnvironmentVariables;
 import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
@@ -40,7 +41,6 @@ public class ChzzkChatService {
     @Transactional
     public void connectChatRoom(String channelName) {
         if (isChatAlreadyOpen(channelName)) {
-            lastEventPublished.put(channelName, LocalDateTime.now(clock));
             return;
         }
 
@@ -112,8 +112,16 @@ public class ChzzkChatService {
     }
 
     private void disconnectChatRoom(String channelName) {
+        // 본인(서버)가 연결한 채널만 가져오도록 필터링이 필요하다.
+        chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
+                        .ifPresent(chat -> {
+                            if (!chat.getInstanceId().equals(EnvironmentVariables.INSTANCE_ID)) {
+                                throw new ChzzkException(ChzzkExceptionCode.CHAT_FROM_OTHERS);
+                            }
+                            chat.close();
+                        });
+
         connectionManager.disconnect(channelName);
-        chatRepository.findByChannelNameAndOpenedIsTrue(channelName).ifPresent(Chat::close);
         redissonClient.getBucket(channelName).delete();
         log.info("connection with {} is closed by timeout", channelName);
     }
