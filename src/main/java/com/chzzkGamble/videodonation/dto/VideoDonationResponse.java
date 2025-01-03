@@ -15,7 +15,7 @@ public class VideoDonationResponse {
     private final Integer cheese;
     private final LocalDateTime createdAt;
 
-    public static VideoDonationResponse of(VideoDonation videoDonation) {
+    public static VideoDonationResponse from(VideoDonation videoDonation) {
         return new VideoDonationResponse(
                 videoDonation.getVideoName(),
                 videoDonation.getVideoId(),

@@ -23,7 +23,7 @@ public class VideoDonationController {
         List<VideoDonation> recentlyVideoDonation = videoDonationService.getRecentlyVideoDonation(channelName);
 
         return ResponseEntity.ok(recentlyVideoDonation.stream()
-                .map(VideoDonationResponse::of)
+                .map(VideoDonationResponse::from)
                 .toList());
     }
 }
