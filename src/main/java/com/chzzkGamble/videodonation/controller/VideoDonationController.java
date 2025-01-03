@@ -1,6 +1,8 @@
 package com.chzzkGamble.videodonation.controller;
 
 import com.chzzkGamble.videodonation.domain.VideoDonation;
+import com.chzzkGamble.videodonation.dto.Criteria;
+import com.chzzkGamble.videodonation.dto.VideoDonationRankingResponses;
 import com.chzzkGamble.videodonation.dto.VideoDonationResponse;
 import com.chzzkGamble.videodonation.service.VideoDonationService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +27,12 @@ public class VideoDonationController {
         return ResponseEntity.ok(recentlyVideoDonation.stream()
                 .map(VideoDonationResponse::from)
                 .toList());
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<?> getRankByCriteria(@RequestParam Criteria criteria) {
+        VideoDonationRankingResponses rankings = videoDonationService.getRankingByCriteria(criteria);
+
+        return ResponseEntity.ok(rankings);
     }
 }
