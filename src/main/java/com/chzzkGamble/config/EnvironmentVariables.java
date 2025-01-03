@@ -8,7 +8,7 @@ public class EnvironmentVariables {
 
     public static String INSTANCE_ID;
 
-    @Value("${env.instance-id}")
+    @Value("${env.instance-id:app}")
     private void setInstanceId(String instanceId) {
         INSTANCE_ID = instanceId;
     }
