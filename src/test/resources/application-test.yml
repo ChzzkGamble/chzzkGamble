@@ -4,5 +4,4 @@ advertise:
 chat:
   close-interval: 1000 # 1 second
 
-env:
-  instance-id : test
+INSTANCE_ID : test
