@@ -8,7 +8,6 @@ import com.chzzkGamble.event.AbnormalWebSocketClosedEvent;
 import com.chzzkGamble.event.DonationEvent;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
-import java.net.ConnectException;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,7 +39,7 @@ public class ChzzkChatService {
     @DistributedLock(key = "chat", waitTime = 20L, leaseTime = 10L)
     @Transactional
     public void connectChatRoom(String channelName) {
-        if (isChatAlreadyOpen(channelName) && connectionManager.isConnected(channelName)) {
+        if (isChatAlreadyOpen(channelName)) {
             lastEventPublished.put(channelName, LocalDateTime.now(clock));
             return;
         }
