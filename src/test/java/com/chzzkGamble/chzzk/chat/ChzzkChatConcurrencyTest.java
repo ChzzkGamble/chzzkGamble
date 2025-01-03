@@ -18,9 +18,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.chzzk.chat.service.WebSocketConnectionManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,12 +39,20 @@ class ChzzkChatConcurrencyTest {
     @Autowired
     private ChatRepository chatRepository;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     @MockBean
     private WebSocketConnectionManager connectionManager;
 
     @BeforeEach
     void setUp() {
         chatRepository.deleteAllInBatch();
+    }
+
+    @AfterEach
+    void deleteCache() {
+        redissonClient.getBucket("테스트").delete();
     }
 
     @Test
