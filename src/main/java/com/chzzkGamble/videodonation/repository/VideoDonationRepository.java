@@ -40,6 +40,6 @@ public interface VideoDonationRepository extends JpaRepository<VideoDonation, Lo
             "AND v.createdAt > :from " +
             "AND v.createdAt <= :to " +
             "GROUP BY v.videoId, v.videoName ")
-    List<VideoDonationRankingResponse> findVideoDonations(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to, Pageable pageable);
+    List<VideoDonationRankingResponse> findVideoDonations(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
 }

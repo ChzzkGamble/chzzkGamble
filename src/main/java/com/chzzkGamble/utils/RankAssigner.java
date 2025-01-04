@@ -1,6 +1,5 @@
 package com.chzzkGamble.utils;
 
-import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,6 +24,9 @@ public class RankAssigner {
     }
 
     private static <T, R> List<Ranking<T>> getRankings(List<Element<T, R>> elements) {
+        if (elements.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<Ranking<T>> rankings = new ArrayList<>();
         int rank = 1;
         int rankWeight = 1;
@@ -34,7 +36,7 @@ public class RankAssigner {
 
         for (int i = 1; i < elements.size(); i++) {
             Element<T, R> element = elements.get(i);
-            if (prevElement.value == element.value) {
+            if (prevElement.value.equals(element.value)) {
                 rankWeight++;
             } else {
                 rank += rankWeight;
