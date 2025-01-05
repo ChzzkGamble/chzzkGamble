@@ -49,24 +49,27 @@ public class VideoDonationService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "videoDonation", key = "#criteria", cacheManager = "rankingCacheManager")
     public VideoDonationRankingResponses getRankingByCriteria(Criteria criteria) {
-        LocalDateTime now = LocalDateTime.now(clock);
-        List<Ranking<VideoDonationRankingResponse>> ranking = getRanking(criteria, now);
+        LocalDateTime onTime = LocalDateTime.now(clock)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        List<Ranking<VideoDonationRankingResponse>> ranking = getRanking(criteria, onTime);
 
-        return new VideoDonationRankingResponses(ranking, now);
+        return new VideoDonationRankingResponses(ranking, onTime);
     }
 
-    private List<Ranking<VideoDonationRankingResponse>> getRanking(Criteria criteria, LocalDateTime now) {
+    private List<Ranking<VideoDonationRankingResponse>> getRanking(Criteria criteria, LocalDateTime onTime) {
         PageRequest pageable = PageRequest.of(0, 10);
         if (criteria == Criteria.CHEESE) {
-            List<VideoDonationRankingResponse> rankingByCheese = videoDonationRepository.findRankingByCheese(now.minusWeeks(1), now, pageable);
+            List<VideoDonationRankingResponse> rankingByCheese = videoDonationRepository.findRankingByCheese(onTime.minusWeeks(1), onTime, pageable);
             return RankAssigner.assignRanking(rankingByCheese, VideoDonationRankingResponse::getCheese);
         }
         if (criteria == Criteria.COUNT) {
-            List<VideoDonationRankingResponse> rankingByCount = videoDonationRepository.findRankingByCount(now.minusWeeks(1), now, pageable);
+            List<VideoDonationRankingResponse> rankingByCount = videoDonationRepository.findRankingByCount(onTime.minusWeeks(1), onTime, pageable);
             return RankAssigner.assignRanking(rankingByCount, VideoDonationRankingResponse::getCount);
         }
         if (criteria == Criteria.COMBINED) {
-            List<VideoDonationRankingResponse> videoDonations = videoDonationRepository.findVideoDonations(now.minusWeeks(1), now);
+            List<VideoDonationRankingResponse> videoDonations = videoDonationRepository.findVideoDonations(onTime.minusWeeks(1), onTime);
             return getCombinedRanking(videoDonations).subList(0, Math.min(videoDonations.size(), 10));
 
         }
