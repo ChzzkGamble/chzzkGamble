@@ -34,7 +34,7 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(
                 Caffeine.newBuilder()
-                        .expireAfterWrite(1, TimeUnit.HOURS)
+                        .expireAfterWrite(10, TimeUnit.MINUTES)
                         .removalListener(((key, value, cause) -> log.info("캐시가 제거되었습니다. key : {}", key)))
         );
 
